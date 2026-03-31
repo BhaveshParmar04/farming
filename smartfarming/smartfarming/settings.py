@@ -1,4 +1,5 @@
 ﻿from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,6 +21,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -72,7 +74,11 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -83,3 +89,5 @@ AGMARKNET_API_KEY = "579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b"
 OPENWEATHER_API_KEY = ""
 GEMINI_API_KEY = ""
 OPENAI_API_KEY = "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"
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

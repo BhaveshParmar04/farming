@@ -1,0 +1,11 @@
+/* Remove active border/highlight from topmenu nav links */
+#jazzy-navbar .navbar-nav .nav-item.active > .nav-link,
+#jazzy-navbar .navbar-nav .nav-item > .nav-link.active {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font-weight: 400 !important;
+  border-radius: 0 !important;
+  color: rgba(255,255,255,0.8) !important;
+}
