@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}News Details - Agrikon{% endblock %}
+{% block content %}
+
+{% include 'includes/_slider_base.html' with slider_id="news_details" slider_title="News Details" slider_crumb="News Details" slide1="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1470" slide2="https://images.unsplash.com/photo-1495020689067-958852a7765e?q=80&w=1470" slide3="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?q=80&w=1470" %}
+
+<section class="blog-details">
+    <div class="container">
+        {% if error_message %}
+        <div class="alert alert-danger" style="margin-bottom: 30px;">
+            <strong>Error:</strong> {{ error_message }}
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="blog-details__image">
+                    <img src="{% if article.urlToImage %}{{ article.urlToImage }}{% else %}{% static 'assets/images/blog/blog-d-1-1.jpg' %}{% endif %}"
+                         class="img-fluid"
+                         alt="{{ article.title|default:'Agriculture News' }}">
+                </div>
+
+                <div class="blog-card__content">
+                    <div class="blog-card__date">
+                        {% if article.publishedAt %}
+                            {{ article.publishedAt|slice:":10" }}
+                        {% else %}
+                            Latest
+                        {% endif %}
+                    </div>
+
+                    <div class="blog-card__meta">
+                        <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer">
+                            <i class="far fa-user-circle"></i>
+                            {% if article.source.name %}{{ article.source.name }}{% else %}News Source{% endif %}
+                        </a>
+
+                        {% if article.author %}
+                        <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer">
+                            <i class="far fa-newspaper"></i> {{ article.author }}
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <h3>{{ article.title }}</h3>
+                </div>
+
+                <div class="blog-details__content">
+                    {% if article.description %}
+                    <p><strong>{{ article.description }}</strong></p>
+                    {% endif %}
+
+                    {% if article.content %}
+                    <p>{{ article.content }}</p>
+                    {% else %}
+                    <p>
+                        Full article content is not available in the API response for this news item.
+                        You can open the original source to read the complete article.
+                    </p>
+                    {% endif %}
+
+                    {% if article.url %}
+                    <p>
+                        <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer" class="thm-btn">
+                            Open Original Article
+                        </a>
+                    </p>
+                    {% endif %}
+                </div>
+
+                <div class="blog-details__meta">
+                    <div class="blog-details__tags">
+                        <span>Tags:</span>
+                        <a href="#">Agriculture,</a>
+                        <a href="#">Farming,</a>
+                        <a href="#">Agri News</a>
+                    </div>
+                    <div class="blog-details__social">
+                        {% if article.url %}
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ article.url|urlencode }}" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url={{ article.url|urlencode }}&text={{ article.title|urlencode }}" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ article.url|urlencode }}" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-4">
+                <div class="blog-sidebar">
+
+                    <div class="blog-sidebar__search">
+                        <form action="{% url 'agriculture_news' %}" method="get">
+                            <input type="text" placeholder="Search news" disabled>
+                            <button type="submit"><i class="agrikon-icon-magnifying-glass"></i></button>
+                        </form>
+                    </div>
+
+                    <div class="blog-sidebar__posts">
+                        <h3>Recent Posts</h3>
+                        <ul>
+                            {% for recent in recent_articles %}
+                            <li>
+                                <img src="{% if recent.urlToImage %}{{ recent.urlToImage }}{% else %}{% static 'assets/images/blog/blog-s-1-1.jpg' %}{% endif %}" alt="{{ recent.title }}">
+                                <span>
+                                    {% if recent.publishedAt %}
+                                        {{ recent.publishedAt|slice:":10" }}
+                                    {% else %}
+                                        Latest
+                                    {% endif %}
+                                </span>
+                                <h4>
+                                    <a href="{% url 'news_details' recent.id %}">
+                                        {{ recent.title|truncatechars:55 }}
+                                    </a>
+                                </h4>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="blog-sidebar__categories">
+                        <h3>Categories</h3>
+                        <ul>
+                            <li><a href="#"><i class="agrikon-icon-right-arrow"></i>Agriculture</a></li>
+                            <li><a href="#"><i class="agrikon-icon-right-arrow"></i>Crop News</a></li>
+                            <li><a href="#"><i class="agrikon-icon-right-arrow"></i>Farmer Updates</a></li>
+                            <li><a href="#"><i class="agrikon-icon-right-arrow"></i>Agri Technology</a></li>
+                            <li><a href="#"><i class="agrikon-icon-right-arrow"></i>Weather & Market</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="blog-sidebar__tags">
+                        <h3>Tags</h3>
+                        <div class="blog-sidebar__tags-links">
+                            <a href="#">Agriculture,</a>
+                            <a href="#">Farming,</a>
+                            <a href="#">Crop,</a>
+                            <a href="#">Weather,</a>
+                            <a href="#">Tools,</a>
+                            <a href="#">Farmers,</a>
+                            <a href="#">Market</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

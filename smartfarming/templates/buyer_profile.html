@@ -1,0 +1,153 @@
+{% extends "buyer_base.html" %}
+{% load static %}
+{% block title %}My Profile - KisanBazaar{% endblock %}
+
+{% block content %}
+<div class="bp-hero" style="padding:32px 28px 28px;">
+  <div class="bp-hero-inner" style="text-align:center;">
+    <div class="bp-hero-badge"><i class="fas fa-user-circle" style="font-size:0.7rem;"></i> Account Settings</div>
+    <h1><i class="fas fa-user-circle" style="margin-right:10px;opacity:0.9;"></i>My Profile</h1>
+    <p>Tari profile ane locations update karo</p>
+  </div>
+</div>
+
+<div style="max-width:720px;margin:32px auto;padding:0 20px 80px;">
+  {% if messages %}
+    {% for msg in messages %}
+    <div class="bp-alert-success"><i class="fas fa-check-circle"></i> {{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="bp-card" style="padding:32px;">
+    <form method="POST" id="profileForm">
+      {% csrf_token %}
+      <input type="hidden" id="locations_json" name="locations_json" value="{{ locations_json }}">
+      <input type="hidden" id="crops_hidden" name="interested_crops" value="{{ buyer.interested_crops }}">
+
+      <!-- Basic Info -->
+      <div class="bp-section-title">
+        <div class="title-icon"><i class="fas fa-user"></i></div>
+        Basic Information
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px;">
+        <div>
+          <label class="bp-label"><i class="fas fa-user me-1"></i> Full Name</label>
+          <input type="text" name="full_name" value="{{ buyer.full_name }}" class="bp-input">
+        </div>
+        <div>
+          <label class="bp-label"><i class="fas fa-building me-1"></i> Company / Shop</label>
+          <input type="text" name="company" value="{{ buyer.company|default:'' }}" class="bp-input">
+        </div>
+      </div>
+
+      <!-- Locations -->
+      <div class="bp-section-title">
+        <div class="title-icon"><i class="fas fa-map-marker-alt"></i></div>
+        Kaam na Areas
+      </div>
+      <div id="locationsList" style="margin-bottom:12px;"></div>
+      <div style="background:#f9fff9;border:1.5px dashed var(--green-border);border-radius:12px;padding:18px;margin-bottom:28px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+          <div>
+            <label class="bp-label">State</label>
+            <select id="loc_state" class="bp-input" style="padding:10px 12px;">
+              <option value="">-- Select --</option>
+              {% for val, label in states %}
+              <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="bp-label">District</label>
+            <input type="text" id="loc_district" placeholder="District" class="bp-input">
+          </div>
+          <div>
+            <label class="bp-label">Taluka</label>
+            <input type="text" id="loc_taluka" placeholder="Optional" class="bp-input">
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button type="button" id="addLocBtn" style="background:var(--green-pale);color:var(--green);border:1.5px solid var(--green-border);padding:9px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.88rem;font-family:'Poppins',sans-serif;">
+            <i class="fas fa-plus me-1"></i> Add Location
+          </button>
+          <span id="locError" style="color:#ef5350;font-size:0.82rem;"></span>
+        </div>
+      </div>
+
+      <!-- Crops -->
+      <div class="bp-section-title">
+        <div class="title-icon"><i class="fas fa-leaf"></i></div>
+        Su Su Kharido Karo?
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:28px;">
+        {% for val, label in crop_choices %}
+        <label class="crop-check-label">
+          <input type="checkbox" name="crop_check" value="{{ val }}" {% if val in selected_crops %}checked{% endif %} style="width:16px;height:16px;accent-color:var(--green);">
+          <span style="font-size:0.85rem;color:var(--text-dark);font-weight:500;">{{ label }}</span>
+        </label>
+        {% endfor %}
+      </div>
+
+      <!-- Notes -->
+      <div class="bp-section-title">
+        <div class="title-icon"><i class="fas fa-sticky-note"></i></div>
+        Notes / Requirements
+      </div>
+      <div style="margin-bottom:28px;">
+        <textarea name="notes" rows="3" class="bp-input" style="resize:vertical;" placeholder="e.g. Minimum 10 quintal, direct farm pickup...">{{ buyer.notes|default:'' }}</textarea>
+      </div>
+
+      <button type="button" onclick="saveProfile()" class="bp-btn-primary">
+        <i class="fas fa-save"></i> Save Changes
+      </button>
+    </form>
+  </div>
+</div>
+
+<script>
+let locations = {{ locations_json|safe }};
+renderLocations();
+
+document.getElementById('addLocBtn').addEventListener('click', function() {
+  const state = document.getElementById('loc_state').value.trim();
+  const district = document.getElementById('loc_district').value.trim();
+  const taluka = document.getElementById('loc_taluka').value.trim();
+  const err = document.getElementById('locError');
+  if (!state || !district) { err.textContent = 'State ane District jaruri che.'; return; }
+  if (locations.length >= 6) { err.textContent = 'Maximum 6 locations.'; return; }
+  err.textContent = '';
+  locations.push({state, district, taluka});
+  document.getElementById('loc_state').value = '';
+  document.getElementById('loc_district').value = '';
+  document.getElementById('loc_taluka').value = '';
+  renderLocations();
+});
+
+function renderLocations() {
+  const el = document.getElementById('locationsList');
+  if (!locations.length) {
+    el.innerHTML = '<p style="color:#bbb;font-size:0.85rem;margin-bottom:8px;font-style:italic;">No locations added yet.</p>';
+    return;
+  }
+  el.innerHTML = locations.map((l, i) => `
+    <div class="loc-tag">
+      <span class="loc-tag-text">
+        <i class="fas fa-map-pin" style="color:var(--green-light);"></i>
+        ${l.district}${l.taluka ? ', ' + l.taluka : ''} <span style="color:var(--text-muted);font-weight:400;">(${l.state})</span>
+      </span>
+      <button type="button" class="loc-remove" onclick="removeLoc(${i})"><i class="fas fa-times"></i></button>
+    </div>
+  `).join('');
+  document.getElementById('locations_json').value = JSON.stringify(locations);
+}
+
+function removeLoc(i) { locations.splice(i, 1); renderLocations(); }
+
+function saveProfile() {
+  const checked = [...document.querySelectorAll('input[name="crop_check"]:checked')].map(c => c.value);
+  document.getElementById('crops_hidden').value = checked.join(',');
+  document.getElementById('locations_json').value = JSON.stringify(locations);
+  document.getElementById('profileForm').submit();
+}
+</script>
+{% endblock %}

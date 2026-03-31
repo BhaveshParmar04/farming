@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Search — {{ query }}{% endblock %}
+
+{% block styles %}{{ block.super }}
+<style>
+.sr-wrap{max-width:960px;margin:40px auto 80px;padding:0 20px;}
+.sr-hero{background:linear-gradient(135deg,#1b5e20,#2e7d32);border-radius:14px;padding:28px 32px;color:#fff;margin-bottom:28px;}
+.sr-hero h1{font-size:1.4rem;font-weight:800;margin:0 0 14px;display:flex;align-items:center;gap:8px;}
+.sr-form{display:flex;gap:10px;}
+.sr-form input{flex:1;border:none;border-radius:8px;padding:12px 18px;font-size:1rem;outline:none;}
+.sr-form button{background:#fff;color:#2e7d32;border:none;padding:12px 24px;border-radius:8px;font-weight:700;cursor:pointer;font-size:.95rem;}
+.sr-not-found{background:#ffebee;border:1.5px solid #ef9a9a;border-radius:12px;padding:40px;text-align:center;color:#c62828;}
+.sr-not-found i{font-size:2.5rem;display:block;margin-bottom:12px;}
+.sr-not-found h3{font-size:1.2rem;font-weight:700;margin:0 0 8px;}
+.sr-section{margin-bottom:28px;}
+.sr-section-head{font-size:.95rem;font-weight:700;color:#1b5e20;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #e8f5e9;display:flex;align-items:center;gap:8px;}
+.sr-section-head .sr-count{background:#e8f5e9;color:#2e7d32;padding:2px 8px;border-radius:10px;font-size:.75rem;}
+.sr-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+.sr-card{background:#fff;border:1px solid #e8f5e9;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:.2s;}
+.sr-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,60,0,.1);}
+.sr-card h4{font-size:.92rem;font-weight:700;color:#1b3a1b;margin:0 0 6px;}
+.sr-card p{font-size:.82rem;color:#666;margin:0 0 10px;line-height:1.5;}
+.sr-card a{font-size:.8rem;color:#2e7d32;font-weight:600;text-decoration:none;}
+.sr-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.72rem;font-weight:700;background:#e8f5e9;color:#2e7d32;margin-bottom:8px;}
+.sr-badge-blue{background:#e3f2fd;color:#1565c0;}
+.sr-badge-orange{background:#fff3e0;color:#e65100;}
+.sr-owner{font-size:.72rem;background:#f3e5f5;color:#6a1b9a;padding:2px 8px;border-radius:10px;font-weight:700;margin-bottom:8px;display:inline-block;}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="sr-wrap">
+  <div class="sr-hero">
+    <h1>🔍 Search Agrikon</h1>
+    <form class="sr-form" method="GET" action="{% url 'search' %}">
+      <input type="text" name="q" value="{{ query }}" placeholder="Search your lands, crops, tools, schemes..." autofocus>
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  {% if not query %}
+  <p style="color:#888;text-align:center;padding:40px 0;">Enter a search term to find your lands, crops, tools and government schemes.</p>
+
+  {% elif not_found %}
+  <div class="sr-not-found">
+    <i class="fas fa-search-minus"></i>
+    <h3>No results found for "{{ query }}"</h3>
+    <p>Try: land name, crop name, scheme name, or tool category.</p>
+  </div>
+
+  {% else %}
+
+  {% if results.lands %}
+  <div class="sr-section">
+    <div class="sr-section-head">🗺️ My Lands <span class="sr-count">{{ results.lands|length }}</span></div>
+    <div class="sr-cards">
+      {% for land in results.lands %}
+      <div class="sr-card">
+        <span class="sr-owner">My Land</span>
+        <h4>{{ land.land_name }}</h4>
+        <p>Area: {{ land.land_area }} · Water: {{ land.water_supply }}</p>
+        <a href="{% url 'add_land' %}">View My Lands →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if results.my_crops %}
+  <div class="sr-section">
+    <div class="sr-section-head">🌽 My Crop Listings <span class="sr-count">{{ results.my_crops|length }}</span></div>
+    <div class="sr-cards">
+      {% for crop in results.my_crops %}
+      <div class="sr-card">
+        <span class="sr-owner">My Listing</span>
+        <span class="sr-badge">{{ crop.get_type_display }}</span>
+        <h4>{{ crop.name }}</h4>
+        <p>{{ crop.quantity }} {{ crop.get_unit_display }} · ₹{{ crop.price }}/{{ crop.get_unit_display }}</p>
+        <a href="{% url 'crops_marketplace' %}">View Marketplace →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if results.my_tools %}
+  <div class="sr-section">
+    <div class="sr-section-head">🔧 My Tool Listings <span class="sr-count">{{ results.my_tools|length }}</span></div>
+    <div class="sr-cards">
+      {% for tool in results.my_tools %}
+      <div class="sr-card">
+        <span class="sr-owner">My Listing</span>
+        <span class="sr-badge">{{ tool.category }}</span>
+        <h4>{{ tool.name }}</h4>
+        <p>₹{{ tool.price }} · {{ tool.condition }}</p>
+        <a href="{% url 'farming_tools' %}">View Tools →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if results.schemes %}
+  <div class="sr-section">
+    <div class="sr-section-head">🏛️ Government Schemes <span class="sr-count">{{ results.schemes|length }}</span></div>
+    <div class="sr-cards">
+      {% for scheme in results.schemes %}
+      <div class="sr-card">
+        <span class="sr-badge sr-badge-blue">{{ scheme.category }}</span>
+        <h4>{{ scheme.title }}</h4>
+        <p>{{ scheme.short_description|truncatechars:80 }}</p>
+        <a href="{% url 'govt_scheme_detail' scheme.pk %}">View Scheme →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if results.market_crops %}
+  <div class="sr-section">
+    <div class="sr-section-head">🛒 Crops in Marketplace <span class="sr-count">{{ results.market_crops|length }}</span></div>
+    <div class="sr-cards">
+      {% for crop in results.market_crops %}
+      <div class="sr-card">
+        <span class="sr-badge sr-badge-orange">{{ crop.get_type_display }}</span>
+        <h4>{{ crop.name }}</h4>
+        <p>{{ crop.quantity }} {{ crop.get_unit_display }} · ₹{{ crop.price }}<br>
+        <i class="fas fa-user" style="color:#4caf50;"></i> {{ crop.farmer.full_name }} · {{ crop.farmer.district }}</p>
+        <a href="{% url 'crops_marketplace' %}">Buy Crops →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if results.market_tools %}
+  <div class="sr-section">
+    <div class="sr-section-head">🔧 Tools in Marketplace <span class="sr-count">{{ results.market_tools|length }}</span></div>
+    <div class="sr-cards">
+      {% for tool in results.market_tools %}
+      <div class="sr-card">
+        <span class="sr-badge sr-badge-orange">{{ tool.category }}</span>
+        <h4>{{ tool.name }}</h4>
+        <p>₹{{ tool.price }} · {{ tool.condition }}<br>
+        <i class="fas fa-user" style="color:#4caf50;"></i> {{ tool.farmer.full_name }} · {{ tool.farmer.district }}</p>
+        <a href="{% url 'farming_tools' %}">View Tools →</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% endif %}
+</div>
+{% endblock %}

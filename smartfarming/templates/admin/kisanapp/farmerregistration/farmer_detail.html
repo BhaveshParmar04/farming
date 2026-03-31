@@ -1,0 +1,316 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extrahead %}
+<style>
+  .fd-wrap { max-width: 1100px; margin: 20px auto; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .fd-back { display:inline-flex; align-items:center; gap:6px; margin-bottom:18px; color:#417690; text-decoration:none; font-weight:600; }
+  .fd-back:hover { color:#205067; }
+  .fd-hero { background: linear-gradient(135deg,#1a6b3c 0%,#2e9e5b 100%); border-radius:14px; padding:28px 32px; color:#fff; display:flex; align-items:center; gap:24px; margin-bottom:24px; }
+  .fd-avatar { width:72px; height:72px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-size:2rem; flex-shrink:0; }
+  .fd-hero h1 { margin:0 0 4px; font-size:1.6rem; }
+  .fd-hero p { margin:0; opacity:.85; font-size:.95rem; }
+  .fd-badges { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .fd-badge { background:rgba(255,255,255,0.2); border-radius:20px; padding:3px 12px; font-size:.8rem; }
+  .fd-badge.verified { background:#27ae60; }
+  .fd-section { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.08); margin-bottom:20px; overflow:hidden; }
+  .fd-section-head { padding:14px 20px; border-bottom:1px solid #f0f0f0; display:flex; align-items:center; gap:10px; }
+  .fd-section-head h2 { margin:0; font-size:1rem; color:#333; }
+  .fd-section-icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+  .fd-section-body { padding:20px; }
+  .fd-info-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+  .fd-info-item label { display:block; font-size:.75rem; color:#888; text-transform:uppercase; letter-spacing:.5px; margin-bottom:3px; }
+  .fd-info-item span { font-size:.95rem; color:#222; font-weight:500; }
+  /* Land cards */
+  .fd-land-card { border:1px solid #e8e8e8; border-radius:10px; margin-bottom:14px; overflow:hidden; }
+  .fd-land-head { background:#f7f9fc; padding:12px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #e8e8e8; }
+  .fd-land-head h3 { margin:0; font-size:.95rem; color:#333; }
+  .fd-land-meta { display:flex; gap:16px; flex-wrap:wrap; padding:12px 16px; }
+  .fd-land-meta span { font-size:.85rem; color:#555; }
+  .fd-land-meta span b { color:#222; }
+  .fd-soil-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  .fd-soil-table th { background:#f0f4f0; padding:7px 12px; text-align:left; color:#555; font-weight:600; border-bottom:1px solid #e0e0e0; }
+  .fd-soil-table td { padding:7px 12px; border-bottom:1px solid #f0f0f0; color:#333; }
+  .fd-soil-table tr:last-child td { border-bottom:none; }
+  /* Crop table */
+  .fd-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+  .fd-table th { background:#f7f9fc; padding:9px 14px; text-align:left; color:#555; font-weight:600; border-bottom:2px solid #e8e8e8; }
+  .fd-table td { padding:9px 14px; border-bottom:1px solid #f0f0f0; color:#333; }
+  .fd-table tr:last-child td { border-bottom:none; }
+  .fd-table tr:hover td { background:#fafafa; }
+  /* Status badges */
+  .st { display:inline-block; padding:2px 10px; border-radius:12px; font-size:.78rem; font-weight:600; }
+  .st-pending { background:#fff3cd; color:#856404; }
+  .st-done { background:#d1e7dd; color:#0f5132; }
+  .st-skipped { background:#f8d7da; color:#842029; }
+  .st-applied { background:#cfe2ff; color:#084298; }
+  .st-approved { background:#d1e7dd; color:#0f5132; }
+  .st-rejected { background:#f8d7da; color:#842029; }
+  .st-active { background:#d1e7dd; color:#0f5132; }
+  .st-inactive { background:#e2e3e5; color:#41464b; }
+  /* Activity type icons */
+  .act-icon { display:inline-block; width:28px; height:28px; border-radius:6px; text-align:center; line-height:28px; font-size:.85rem; margin-right:6px; }
+  .act-watering { background:#cfe2ff; }
+  .act-fertilizer { background:#d1e7dd; }
+  .act-pesticide { background:#f8d7da; }
+  .act-harvesting { background:#fff3cd; }
+  .act-sowing { background:#e2d9f3; }
+  .act-general { background:#e2e3e5; }
+  /* Notification */
+  .fd-notif { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid #f0f0f0; }
+  .fd-notif:last-child { border-bottom:none; }
+  .fd-notif-dot { width:10px; height:10px; border-radius:50%; background:#2e9e5b; margin-top:5px; flex-shrink:0; }
+  .fd-notif-dot.unread { background:#e74c3c; }
+  .fd-notif-title { font-size:.9rem; font-weight:600; color:#222; margin-bottom:2px; }
+  .fd-notif-msg { font-size:.82rem; color:#666; }
+  .fd-notif-time { font-size:.75rem; color:#aaa; margin-top:3px; }
+  .fd-empty { text-align:center; padding:30px; color:#aaa; font-size:.9rem; }
+  .fd-count-chip { background:#e8f5e9; color:#2e7d32; border-radius:12px; padding:2px 10px; font-size:.78rem; font-weight:700; margin-left:auto; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="fd-wrap">
+  <a class="fd-back" href="{% url 'admin:kisanapp_farmerregistration_changelist' %}">← Back to Farmers List</a>
+
+  <!-- Hero -->
+  <div class="fd-hero">
+    <div class="fd-avatar">🧑‍🌾</div>
+    <div>
+      <h1>{{ farmer.full_name }}</h1>
+      <p>📱 {{ farmer.mobile }} &nbsp;|&nbsp; 📍 {{ farmer.village }}, {{ farmer.taluka }}, {{ farmer.district }}, {{ farmer.state }}</p>
+      <div class="fd-badges">
+        {% if farmer.mobile_verified %}
+          <span class="fd-badge verified">✓ Verified</span>
+        {% else %}
+          <span class="fd-badge">✗ Not Verified</span>
+        {% endif %}
+        <span class="fd-badge">🌾 {{ lands|length }} Land{{ lands|length|pluralize }}</span>
+        <span class="fd-badge">🌱 {{ crops|length }} Crop{{ crops|length|pluralize }}</span>
+        <span class="fd-badge">📋 {{ scheme_apps|length }} Scheme{{ scheme_apps|length|pluralize }}</span>
+        <span class="fd-badge">Joined: {{ farmer.created_at|date:"d M Y" }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Info -->
+  <div class="fd-section">
+    <div class="fd-section-head">
+      <div class="fd-section-icon" style="background:#e8f5e9;">👤</div>
+      <h2>Personal Information</h2>
+    </div>
+    <div class="fd-section-body">
+      <div class="fd-info-grid">
+        <div class="fd-info-item"><label>Full Name</label><span>{{ farmer.full_name }}</span></div>
+        <div class="fd-info-item"><label>Mobile</label><span>{{ farmer.mobile }}</span></div>
+        <div class="fd-info-item"><label>Verified</label><span>{% if farmer.mobile_verified %}✅ Yes{% else %}❌ No{% endif %}</span></div>
+        <div class="fd-info-item"><label>Land Record</label><span>{{ farmer.land_record|default:"—" }}</span></div>
+        <div class="fd-info-item"><label>State</label><span>{{ farmer.state }}</span></div>
+        <div class="fd-info-item"><label>District</label><span>{{ farmer.district }}</span></div>
+        <div class="fd-info-item"><label>Taluka</label><span>{{ farmer.taluka }}</span></div>
+        <div class="fd-info-item"><label>Village</label><span>{{ farmer.village }}</span></div>
+        <div class="fd-info-item"><label>Registered On</label><span>{{ farmer.created_at|date:"d M Y, H:i" }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lands -->
+  <div class="fd-section">
+    <div class="fd-section-head">
+      <div class="fd-section-icon" style="background:#fff3e0;">🗺️</div>
+      <h2>Lands</h2>
+      <span class="fd-count-chip">{{ lands|length }}</span>
+    </div>
+    <div class="fd-section-body">
+      {% if lands %}
+        {% for land in lands %}
+        <div class="fd-land-card">
+          <div class="fd-land-head">
+            <span>🌾</span>
+            <h3>{{ land.land_name }}</h3>
+          </div>
+          <div class="fd-land-meta">
+            <span><b>Area:</b> {{ land.land_area }}</span>
+            <span><b>Water:</b> {{ land.get_water_supply_display }}</span>
+            <span><b>Soil Method:</b> {{ land.get_soil_method_display }}</span>
+            {% if land.soil_report %}
+              <span><a href="{{ land.soil_report.url }}" target="_blank">📄 View Report</a></span>
+            {% endif %}
+          </div>
+          {% if land.soil_method == "manual" %}
+          <div style="padding:0 16px 14px;">
+            <table class="fd-soil-table">
+              <thead><tr><th>Parameter</th><th>Value</th><th>Parameter</th><th>Value</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>pH</td><td>{{ land.ph|default:"—" }}</td>
+                  <td>EC</td><td>{{ land.ec|default:"—" }}</td>
+                </tr>
+                <tr>
+                  <td>Organic Carbon</td><td>{{ land.organic_carbon|default:"—" }}</td>
+                  <td>Nitrogen</td><td>{{ land.nitrogen|default:"—" }}</td>
+                </tr>
+                <tr>
+                  <td>Phosphorus</td><td>{{ land.phosphorus|default:"—" }}</td>
+                  <td>Potassium</td><td>{{ land.potassium|default:"—" }}</td>
+                </tr>
+                <tr>
+                  <td>Sulphur</td><td>{{ land.sulphur|default:"—" }}</td>
+                  <td>Zinc</td><td>{{ land.zinc|default:"—" }}</td>
+                </tr>
+                <tr>
+                  <td>Iron</td><td>{{ land.iron|default:"—" }}</td>
+                  <td>Manganese</td><td>{{ land.manganese|default:"—" }}</td>
+                </tr>
+                <tr>
+                  <td>Copper</td><td>{{ land.copper|default:"—" }}</td>
+                  <td>Boron</td><td>{{ land.boron|default:"—" }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="fd-empty">No lands added yet.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Crop Listings -->
+  <div class="fd-section">
+    <div class="fd-section-head">
+      <div class="fd-section-icon" style="background:#e8f5e9;">🌱</div>
+      <h2>Crop Listings</h2>
+      <span class="fd-count-chip">{{ crops|length }}</span>
+    </div>
+    <div class="fd-section-body">
+      {% if crops %}
+      <table class="fd-table">
+        <thead>
+          <tr><th>Crop</th><th>Type</th><th>Quantity</th><th>Price (₹)</th><th>Status</th><th>Added</th></tr>
+        </thead>
+        <tbody>
+          {% for crop in crops %}
+          <tr>
+            <td><b>{{ crop.name }}</b></td>
+            <td>{{ crop.type }}</td>
+            <td>{{ crop.quantity }} {{ crop.unit }}</td>
+            <td>₹{{ crop.price }}</td>
+            <td>{% if crop.is_active %}<span class="st st-active">Active</span>{% else %}<span class="st st-inactive">Inactive</span>{% endif %}</td>
+            <td>{{ crop.created_at|date:"d M Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="fd-empty">No crop listings yet.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Crop Activities / Suggestions -->
+  <div class="fd-section">
+    <div class="fd-section-head">
+      <div class="fd-section-icon" style="background:#e3f2fd;">📅</div>
+      <h2>Crop Activities &amp; Suggestions</h2>
+      <span class="fd-count-chip">{{ activities|length }}</span>
+    </div>
+    <div class="fd-section-body">
+      {% if activities %}
+      <table class="fd-table">
+        <thead>
+          <tr><th>Crop</th><th>Land</th><th>Activity</th><th>Title</th><th>Due Date</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          {% for act in activities %}
+          <tr>
+            <td>{{ act.crop_name }}</td>
+            <td>{{ act.land.land_name }}</td>
+            <td>
+              <span class="act-icon act-{{ act.activity_type }}">
+                {% if act.activity_type == "watering" %}💧
+                {% elif act.activity_type == "fertilizer" %}🌿
+                {% elif act.activity_type == "pesticide" %}🧪
+                {% elif act.activity_type == "harvesting" %}🌾
+                {% elif act.activity_type == "sowing" %}🌱
+                {% else %}📌{% endif %}
+              </span>
+              {{ act.get_activity_type_display }}
+            </td>
+            <td>{{ act.title }}</td>
+            <td>{{ act.due_date|date:"d M Y" }}</td>
+            <td>
+              <span class="st st-{{ act.status }}">{{ act.get_status_display }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="fd-empty">No crop activities yet.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Govt Scheme Applications -->
+  <div class="fd-section">
+    <div class="fd-section-head">
+      <div class="fd-section-icon" style="background:#fce4ec;">🏛️</div>
+      <h2>Government Scheme Applications</h2>
+      <span class="fd-count-chip">{{ scheme_apps|length }}</span>
+    </div>
+    <div class="fd-section-body">
+      {% if scheme_apps %}
+      <table class="fd-table">
+        <thead>
+          <tr><th>Scheme</th><th>Category</th><th>Status</th><th>Notes</th><th>Applied On</th></tr>
+        </thead>
+        <tbody>
+          {% for app in scheme_apps %}
+          <tr>
+            <td><b>{{ app.scheme.title }}</b></td>
+            <td>{{ app.scheme.get_category_display }}</td>
+            <td><span class="st st-{{ app.status }}">{{ app.get_status_display }}</span></td>
+            <td>{{ app.notes|default:"—" }}</td>
+            <td>{{ app.applied_at|date:"d M Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="fd-empty">No scheme applications yet.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent Notifications -->
+  <div class="fd-section">
+    <div class="fd-section-head">
+      <div class="fd-section-icon" style="background:#f3e5f5;">🔔</div>
+      <h2>Recent Notifications</h2>
+      <span class="fd-count-chip">{{ notifications|length }}</span>
+    </div>
+    <div class="fd-section-body">
+      {% if notifications %}
+        {% for notif in notifications %}
+        <div class="fd-notif">
+          <div class="fd-notif-dot {% if not notif.is_read %}unread{% endif %}"></div>
+          <div>
+            <div class="fd-notif-title">{{ notif.title }}</div>
+            <div class="fd-notif-msg">{{ notif.message }}</div>
+            <div class="fd-notif-time">{{ notif.time_ago }} &nbsp;|&nbsp; {{ notif.notif_type|capfirst }} {% if notif.land %}&nbsp;|&nbsp; {{ notif.land.land_name }}{% endif %}</div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="fd-empty">No notifications yet.</div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

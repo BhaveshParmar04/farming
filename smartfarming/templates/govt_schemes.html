@@ -1,0 +1,561 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Government Schemes - Agrikon{% endblock %}
+
+{% block styles %}
+{{ block.super }}
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+  }
+
+  body {
+    background-color: #ffffff;
+    color: #1e2a2e;
+    line-height: 1.5;
+  }
+
+  :root {
+    --dark-green: #1b5e20;
+    --light-green: #66bb6a;
+    --white: #ffffff;
+    --light-bg: #f8fbf8;
+    --border-light: #d0e0d0;
+    --text-dark: #1f2a1f;
+  }
+
+  .gs-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .hero {
+    background: linear-gradient(95deg, rgba(0, 40, 0, 0.75), rgba(27, 94, 32, 0.65)),
+                url('https://images.unsplash.com/photo-1595841696677-6489ff3f8cd1?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    color: white;
+    text-shadow: 0 2px 6px #1f2a1f;
+    margin-bottom: 32px;
+  }
+
+  .hero-content {
+    padding: 48px 24px;
+    max-width: 700px;
+  }
+
+  .hero-content h2 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .hero-content p {
+    font-size: 1.3rem;
+    opacity: 0.95;
+  }
+
+  .search-section {
+    background-color: var(--light-bg);
+    padding: 28px 0;
+    border-radius: 0 0 30px 30px;
+    margin-top: -20px;
+    box-shadow: 0 8px 16px rgba(0,60,0,0.05);
+  }
+
+  .search-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    flex: 1 1 360px;
+    display: flex;
+    background: white;
+    border-radius: 60px;
+    border: 1px solid #c8e0c8;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,30,0,0.02);
+  }
+
+  .search-box i {
+    width: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark-green);
+    background: #ecf7ec;
+    font-size: 1.2rem;
+  }
+
+  .search-box input {
+    flex: 1;
+    border: none;
+    padding: 16px 12px;
+    font-size: 1rem;
+    outline: none;
+    min-width: 200px;
+  }
+
+  .search-box button {
+    background: var(--dark-green);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0 32px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+    border-radius: 0 60px 60px 0;
+  }
+
+  .search-box button:hover {
+    background: #0f4612;
+  }
+
+  .filter-tags {
+    display: flex;
+    gap: 8px 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 16px;
+  }
+
+  .filter-tag {
+    background: white;
+    border: 1px solid var(--light-green);
+    color: var(--dark-green);
+    padding: 6px 18px;
+    border-radius: 40px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+    text-decoration: none;
+  }
+
+  .filter-tag:hover,
+  .filter-tag.active {
+    background: var(--dark-green);
+    color: white;
+    border-color: var(--dark-green);
+  }
+
+  .section-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #1b4c1b;
+    margin: 48px 0 24px;
+    border-left: 8px solid #f3b33d;
+    padding-left: 24px;
+  }
+
+  .schemes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 28px;
+    margin-bottom: 40px;
+  }
+
+  .scheme-card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 22px rgba(0, 40, 0, 0.06);
+    padding: 24px 20px;
+    border: 1px solid #e2f0e2;
+    transition: transform 0.15s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+  }
+
+  .scheme-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 28px rgba(27, 94, 32, 0.15);
+    border-color: var(--light-green);
+  }
+
+  .card-icon {
+    background: #e4f1e4;
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark-green);
+    font-size: 2rem;
+    margin-bottom: 16px;
+  }
+
+  .scheme-card h3 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--dark-green);
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 76px;
+  }
+
+  .scheme-desc {
+    color: #2a4b2a;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 68px;
+  }
+
+  .eligibility-badge {
+    background: #e2f0e2;
+    border-radius: 30px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    color: #154215;
+    display: inline-block;
+    margin: 6px 0 4px;
+    font-weight: 600;
+  }
+
+  .benefits {
+    font-weight: 500;
+    color: #1b5e20;
+    margin: 8px 0 16px;
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
+
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: auto;
+    flex-wrap: wrap;
+  }
+
+  .btn-apply {
+    background: var(--dark-green);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 12px rgba(27,94,32,0.3);
+    border: 1px solid #1b5e20;
+    text-decoration: none;
+  }
+
+  .btn-apply i {
+    font-size: 1rem;
+  }
+
+  .btn-apply:hover {
+    background: #0e4813;
+    transform: scale(1.02);
+    color: white;
+  }
+
+  .view-link {
+    color: var(--dark-green);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: 0.2s;
+  }
+
+  .view-link:hover {
+    border-bottom-color: var(--dark-green);
+  }
+
+  .extra-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    margin: 32px 0;
+  }
+
+  .info-card {
+    background: #f3faf3;
+    border-radius: 32px;
+    padding: 28px;
+    border: 1px solid #d0e6d0;
+  }
+
+  .info-card h3 {
+    color: var(--dark-green);
+    font-size: 1.8rem;
+    margin-bottom: 18px;
+    border-bottom: 2px solid #bcdcb0;
+    padding-bottom: 10px;
+  }
+
+  .announcement-list li {
+    list-style: none;
+    padding: 12px 0;
+    border-bottom: 1px dashed #b8d9b8;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .announcement-list i {
+    color: #f3b33d;
+  }
+
+  .subsidy-item {
+    background: white;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-weight: 500;
+    border: 1px solid #d0e6d0;
+  }
+
+  .faq-item {
+    margin: 16px 0;
+  }
+
+  .faq-question {
+    font-weight: 700;
+    color: #1b5e20;
+    margin-bottom: 4px;
+  }
+
+  /* Profile Score Banner */
+  .profile-score-banner {
+    background: linear-gradient(135deg,#1a6b3c,#2e9e5b);
+    border-radius:14px; padding:16px 24px; margin:20px 0;
+    display:flex; align-items:center; gap:16px; flex-wrap:wrap; color:#fff;
+  }
+  .psb-score { font-size:2rem; font-weight:800; background:rgba(255,255,255,.2); border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .psb-info h3 { margin:0 0 2px; font-size:1rem; }
+  .psb-info p { margin:0; opacity:.85; font-size:.85rem; }
+  .psb-bar-wrap { flex:1; min-width:120px; background:rgba(255,255,255,.2); border-radius:20px; height:8px; }
+  .psb-bar { height:100%; border-radius:20px; background:#fff; }
+  .psb-btn { background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.5); color:#fff; padding:8px 18px; border-radius:20px; font-weight:600; font-size:.85rem; text-decoration:none; white-space:nowrap; }
+  .psb-btn:hover { background:rgba(255,255,255,.35); color:#fff; }
+
+  /* Scheme Notifications Panel */
+  .sn-panel { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.08); margin:0 0 24px; overflow:hidden; }
+  .sn-head { background:#f0f7ff; padding:14px 20px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #dce8f5; }
+  .sn-head h3 { margin:0; font-size:1rem; color:#1565c0; font-weight:700; }
+  .sn-badge { background:#e74c3c; color:#fff; border-radius:12px; padding:2px 8px; font-size:.75rem; font-weight:700; }
+  .sn-mark-read { margin-left:auto; background:none; border:1px solid #1565c0; color:#1565c0; border-radius:8px; padding:4px 12px; font-size:.8rem; cursor:pointer; }
+  .sn-mark-read:hover { background:#1565c0; color:#fff; }
+  .sn-list { max-height:220px; overflow-y:auto; }
+  .sn-item { display:flex; gap:12px; padding:12px 20px; border-bottom:1px solid #f0f0f0; }
+  .sn-item:last-child { border-bottom:none; }
+  .sn-dot { width:10px; height:10px; border-radius:50%; background:#1565c0; margin-top:5px; flex-shrink:0; }
+  .sn-dot.read { background:#ccc; }
+  .sn-item-title { font-size:.9rem; font-weight:600; color:#222; margin-bottom:2px; }
+  .sn-item-msg { font-size:.82rem; color:#666; }
+  .sn-empty { text-align:center; padding:20px; color:#aaa; font-size:.9rem; }
+
+  /* Applied badge on card */
+  .applied-badge { background:#d1e7dd; color:#0f5132; border-radius:20px; padding:4px 12px; font-size:.8rem; font-weight:700; display:inline-flex; align-items:center; gap:5px; }
+  .btn-apply-direct { background:#1b5e20; color:white; border:none; padding:10px 20px; border-radius:40px; font-weight:600; font-size:.9rem; cursor:pointer; transition:.2s; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(27,94,32,.3); }
+  .btn-apply-direct:hover { background:#0e4813; transform:scale(1.02); }
+
+  @media (max-width: 700px) {
+    .hero-content h2 {
+      font-size: 2rem;
+    }
+
+    .search-box button {
+      padding: 0 16px;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% include 'includes/_slider_base.html' with slider_id="govt_schemes" slider_title="Government Schemes for Farmers" slider_crumb="Government Schemes" slide1="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1470" slide2="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1470" slide3="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1470" slide4="https://images.unsplash.com/photo-1595841696677-6489ff3f8cd1?q=80&w=1470" %}
+
+<section class="search-section">
+  <div class="gs-container">
+    <form method="get">
+      <div class="search-container">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input
+            type="text"
+            name="q"
+            id="schemeSearch"
+            value="{{ search_query }}"
+            placeholder="Search by crop, subsidy, equipment, irrigation, insurance..."
+          >
+          <button type="submit" id="searchBtn">Search</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="filter-tags">
+      <a href="?category=all{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+         class="filter-tag {% if active_category == 'all' %}active{% endif %}">
+        All
+      </a>
+
+      <a href="?category=crop{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+         class="filter-tag {% if active_category == 'crop' %}active{% endif %}">
+        🌾 Crop
+      </a>
+
+      <a href="?category=subsidy{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+         class="filter-tag {% if active_category == 'subsidy' %}active{% endif %}">
+        💰 Subsidy
+      </a>
+
+      <a href="?category=equipment{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+         class="filter-tag {% if active_category == 'equipment' %}active{% endif %}">
+        🚜 Equipment
+      </a>
+
+      <a href="?category=irrigation{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+         class="filter-tag {% if active_category == 'irrigation' %}active{% endif %}">
+        💧 Irrigation
+      </a>
+
+      <a href="?category=insurance{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+         class="filter-tag {% if active_category == 'insurance' %}active{% endif %}">
+        🛡️ Insurance
+      </a>
+    </div>
+  </div>
+</section>
+
+<main class="gs-container">
+  <h2 class="section-title">Farmer Welfare Schemes</h2>
+
+  <!-- Profile Score Banner -->
+  {% if profile %}
+  <div class="profile-score-banner">
+    <div class="psb-score">{{ profile_score }}</div>
+    <div class="psb-info">
+      <h3>Tamaro Profile Score: {{ profile_score }}/100</h3>
+      <p>{% if profile_score >= 80 %}🟢 Excellent! Tame badhi schemes direct apply kari shako cho.{% elif profile_score >= 50 %}🟡 Good. Thodi vahu details add karo — apply faster thase.{% else %}🔴 Profile incomplete. Scheme apply karvama taklif padse.{% endif %}</p>
+    </div>
+    <div class="psb-bar-wrap"><div class="psb-bar" style="width:{{ profile_score }}%;"></div></div>
+    <a href="{% url 'farmer_profile_form' %}" class="psb-btn">📋 Profile Update Karo</a>
+  </div>
+  {% endif %}
+
+  <!-- Scheme Notifications Panel -->
+  {% if scheme_notifs %}
+  <div class="sn-panel" id="snPanel">
+    <div class="sn-head">
+      <span>🔔</span>
+      <h3>Scheme Notifications</h3>
+      {% if unread_scheme_notif_count > 0 %}
+        <span class="sn-badge">{{ unread_scheme_notif_count }} New</span>
+      {% endif %}
+      <button class="sn-mark-read" onclick="markSchemeNotifsRead()">Mark All Read</button>
+    </div>
+    <div class="sn-list">
+      {% for notif in scheme_notifs %}
+      <div class="sn-item">
+        <div class="sn-dot {% if notif.is_read %}read{% endif %}"></div>
+        <div>
+          <div class="sn-item-title">{{ notif.title }}</div>
+          <div class="sn-item-msg">{{ notif.message }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="schemes-grid" id="schemesGrid">
+    {% for scheme in schemes %}
+      <div class="scheme-card">
+        <div class="card-icon">
+          <i class="{{ scheme.icon_class }}"></i>
+        </div>
+
+        <h3>{{ scheme.title }}</h3>
+
+        <div class="scheme-desc">
+          {{ scheme.short_description }}
+        </div>
+
+        {% if scheme.eligibility %}
+          <div class="eligibility-badge">
+            <i class="fas fa-check-circle"></i> {{ scheme.eligibility|truncatechars:60 }}
+          </div>
+        {% endif %}
+
+        {% if scheme.benefits %}
+          <div class="benefits">
+            <i class="fas fa-gift" style="color:#1b5e20;"></i>
+            {{ scheme.benefits|truncatechars:70 }}
+          </div>
+        {% endif %}
+
+        <div class="card-actions">
+          {% if scheme.id in applied_ids %}
+            <span class="applied-badge">✅ Applied</span>
+          {% else %}
+            <form method="post" action="{% url 'scheme_apply' scheme.id %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn-apply-direct">
+                <i class="fas fa-bolt"></i> Direct Apply
+              </button>
+            </form>
+          {% endif %}
+
+          <a href="{{ scheme.apply_url }}" target="_blank" rel="noopener noreferrer" class="btn-apply">
+            <i class="fas fa-external-link-alt"></i> Official Site
+          </a>
+
+          <a href="{% url 'govt_scheme_detail' scheme.id %}" class="view-link">
+            Details <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    {% empty %}
+      <p style="grid-column:1/-1; padding:40px; text-align:center;">
+        No schemes found. Try another keyword or filter.
+      </p>
+    {% endfor %}
+  </div>
+</main>
+
+<script>
+function markSchemeNotifsRead() {
+  fetch("{% url 'mark_scheme_notifs_read' %}", {
+    method: "GET",
+    headers: {"X-CSRFToken": "{{ csrf_token }}"}
+  }).then(() => {
+    document.querySelectorAll(".sn-dot").forEach(d => d.classList.add("read"));
+    const badge = document.querySelector(".sn-badge");
+    if (badge) badge.remove();
+  });
+}
+</script>
+{% endblock %}

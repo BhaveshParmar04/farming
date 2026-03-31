@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Notifications - Agrikon{% endblock %}
+
+{% block styles %}{{ block.super }}
+<style>
+.np-wrap{max-width:900px;margin:0 auto;padding:36px 20px 60px;}
+.np-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
+.np-header h2{font-size:1.6rem;font-weight:800;color:#1a4f1a;margin:0;}
+.np-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;}
+.np-stat{background:#fff;border-radius:12px;padding:12px 20px;border:1px solid #c8e6c9;display:flex;align-items:center;gap:8px;font-weight:600;color:#1a4f1a;font-size:.88rem;}
+.np-stat.red{border-color:#ef9a9a;background:#fff8f8;color:#c62828;}
+.np-stat i{font-size:1.1rem;}
+
+/* Land section */
+.land-section{background:#fff;border-radius:16px;border:1px solid #e0f0e0;margin-bottom:20px;overflow:hidden;box-shadow:0 2px 10px rgba(0,40,0,.06);}
+.land-header{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #c8e6c9;}
+.land-header h3{margin:0;font-size:1rem;font-weight:700;color:#1b5e20;flex:1;}
+.land-header .lh-badge{background:#2e7d32;color:#fff;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;}
+.land-header .lh-badge.red{background:#e53935;}
+.land-body{padding:12px 16px;}
+
+/* Activity card */
+.act-card{display:flex;align-items:flex-start;gap:14px;padding:12px;border-radius:10px;margin-bottom:8px;border:1px solid #f0f0f0;transition:.2s;}
+.act-card:last-child{margin-bottom:0;}
+.act-card:hover{background:#f9fff9;border-color:#c8e6c9;}
+.act-card.urgent{border-left:3px solid #e53935;background:#fff8f8;}
+.act-card.upcoming{border-left:3px solid #4caf50;}
+.act-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.ic-watering{background:#e3f2fd;color:#1565c0;}
+.ic-fertilizer{background:#f3e5f5;color:#6a1b9a;}
+.ic-pesticide{background:#fff3e0;color:#e65100;}
+.ic-harvesting{background:#e8f5e9;color:#2e7d32;}
+.ic-sowing{background:#fce4ec;color:#880e4f;}
+.act-body{flex:1;}
+.act-title{font-size:.9rem;font-weight:700;color:#1a4f1a;margin-bottom:3px;}
+.act-msg{font-size:.8rem;color:#555;margin-bottom:5px;line-height:1.5;}
+.act-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:.75rem;color:#888;}
+.act-meta .overdue{color:#e53935;font-weight:700;}
+.act-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn-done{background:#2e7d32;color:#fff;border:none;padding:6px 12px;border-radius:7px;font-size:.78rem;font-weight:600;cursor:pointer;}
+.btn-skip{background:#f5f5f5;color:#666;border:1px solid #ddd;padding:6px 10px;border-radius:7px;font-size:.78rem;cursor:pointer;}
+
+/* Scheme notifications */
+.scheme-notif{background:#fff;border-radius:12px;border:1px solid #bbdefb;padding:14px 18px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;}
+.scheme-notif-icon{width:38px;height:38px;background:#e3f2fd;color:#1565c0;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.scheme-notif-body h4{font-size:.9rem;font-weight:700;color:#1565c0;margin:0 0 3px;}
+.scheme-notif-body p{font-size:.8rem;color:#555;margin:0;}
+
+.sec-title{font-size:.95rem;font-weight:700;color:#1a4f1a;margin:24px 0 12px;display:flex;align-items:center;gap:8px;}
+.sec-title::after{content:'';flex:1;height:1px;background:#e8f5e9;}
+.empty-box{text-align:center;padding:40px 20px;color:#aaa;}
+.empty-box i{font-size:2.5rem;color:#c8e6c9;display:block;margin-bottom:10px;}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/_slider_base.html' with slider_id="notifications" slider_title="Notifications" slider_crumb="Notifications" slide1="https://images.unsplash.com/photo-1523348831708-113d3c9dbdad?q=80&w=1470" %}
+
+<div class="np-wrap">
+
+{% if not request.session.farmer_id %}
+<div style="text-align:center;padding:60px 20px;background:#fff;border-radius:18px;border:2px dashed #c8e6c9;">
+  <i class="fas fa-bell-slash" style="font-size:3rem;color:#c8e6c9;display:block;margin-bottom:14px;"></i>
+  <h3 style="color:#1a4f1a;margin-bottom:8px;">Login Required</h3>
+  <a href="{% url 'login' %}" style="background:#2e7d32;color:#fff;padding:10px 28px;border-radius:30px;font-weight:700;text-decoration:none;">Login</a>
+</div>
+
+{% else %}
+
+<div class="np-header">
+  <h2><i class="fas fa-bell me-2" style="color:#4caf50;"></i>Notifications</h2>
+  <a href="{% url 'farming_guide' %}" style="background:#e8f5e9;border:1px solid #c8e6c9;border-radius:10px;padding:10px 18px;font-weight:600;color:#2e7d32;text-decoration:none;font-size:.88rem;">
+    <i class="fas fa-plus me-1"></i> Add Crop Plan
+  </a>
+</div>
+
+<div class="np-stats">
+  <div class="np-stat red"><i class="fas fa-exclamation-circle"></i> {{ urgent_count }} Overdue</div>
+  <div class="np-stat"><i class="fas fa-calendar-alt"></i> {{ upcoming|length }} Upcoming</div>
+  <div class="np-stat"><i class="fas fa-layer-group"></i> {{ land_groups|length }} Lands</div>
+</div>
+
+<!-- Govt Scheme Notifications -->
+{% if scheme_notifs %}
+<div class="sec-title"><i class="fas fa-landmark" style="color:#1565c0;"></i> Government Scheme Alerts</div>
+{% for sn in scheme_notifs %}
+<div class="scheme-notif">
+  <div class="scheme-notif-icon"><i class="fas fa-landmark"></i></div>
+  <div class="scheme-notif-body">
+    <h4>{{ sn.title }}</h4>
+    <p>{{ sn.message|truncatechars:120 }}</p>
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<!-- Land-wise Activity Sections -->
+{% if land_groups %}
+  {% for land_name, groups in land_groups.items %}
+  <div class="land-section">
+    <div class="land-header">
+      <i class="fas fa-map-marker-alt" style="color:#2e7d32;"></i>
+      <h3>{{ land_name }}</h3>
+      {% if groups.urgent %}<span class="lh-badge red">{{ groups.urgent|length }} Overdue</span>{% endif %}
+      {% if groups.upcoming %}<span class="lh-badge">{{ groups.upcoming|length }} Upcoming</span>{% endif %}
+    </div>
+    <div class="land-body">
+
+      {% for act in groups.urgent %}
+      <div class="act-card urgent">
+        <div class="act-icon ic-{{ act.activity_type }}">
+          {% if act.activity_type == 'watering' %}<i class="fas fa-tint"></i>
+          {% elif act.activity_type == 'fertilizer' %}<i class="fas fa-flask"></i>
+          {% elif act.activity_type == 'pesticide' %}<i class="fas fa-bug"></i>
+          {% elif act.activity_type == 'harvesting' %}<i class="fas fa-tractor"></i>
+          {% else %}<i class="fas fa-seedling"></i>{% endif %}
+        </div>
+        <div class="act-body">
+          <div class="act-title">{{ act.title }}</div>
+          <div class="act-msg">{{ act.message }}</div>
+          <div class="act-meta">
+            <span>🌱 {{ act.crop_name }}</span>
+            <span class="overdue"><i class="fas fa-clock"></i> Due: {{ act.due_date|date:"d M Y" }}</span>
+          </div>
+        </div>
+        <div class="act-actions">
+          <form method="POST" action="{% url 'mark_activity_done' act.id %}">{% csrf_token %}<input type="hidden" name="status" value="done"><button class="btn-done">✅ Done</button></form>
+          <form method="POST" action="{% url 'mark_activity_done' act.id %}">{% csrf_token %}<input type="hidden" name="status" value="skipped"><button class="btn-skip">Skip</button></form>
+        </div>
+      </div>
+      {% endfor %}
+
+      {% for act in groups.upcoming %}
+      <div class="act-card upcoming">
+        <div class="act-icon ic-{{ act.activity_type }}">
+          {% if act.activity_type == 'watering' %}<i class="fas fa-tint"></i>
+          {% elif act.activity_type == 'fertilizer' %}<i class="fas fa-flask"></i>
+          {% elif act.activity_type == 'pesticide' %}<i class="fas fa-bug"></i>
+          {% elif act.activity_type == 'harvesting' %}<i class="fas fa-tractor"></i>
+          {% else %}<i class="fas fa-seedling"></i>{% endif %}
+        </div>
+        <div class="act-body">
+          <div class="act-title">{{ act.title }}</div>
+          <div class="act-msg">{{ act.message }}</div>
+          <div class="act-meta">
+            <span>🌱 {{ act.crop_name }}</span>
+            <span><i class="fas fa-calendar"></i> {{ act.due_date|date:"d M Y" }}</span>
+          </div>
+        </div>
+        <div class="act-actions">
+          <form method="POST" action="{% url 'mark_activity_done' act.id %}">{% csrf_token %}<input type="hidden" name="status" value="done"><button class="btn-done">✅ Done</button></form>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+  {% endfor %}
+
+{% else %}
+<div class="empty-box">
+  <i class="fas fa-check-circle" style="color:#4caf50;"></i>
+  <p>No pending activities. Add a crop plan in Farming Guide!</p>
+  <a href="{% url 'farming_guide' %}" style="display:inline-block;margin-top:14px;background:#2e7d32;color:#fff;padding:10px 24px;border-radius:30px;font-weight:700;text-decoration:none;">
+    <i class="fas fa-seedling me-1"></i> Farming Guide
+  </a>
+</div>
+{% endif %}
+
+{% endif %}
+</div>
+{% endblock %}

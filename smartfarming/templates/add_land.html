@@ -1,0 +1,515 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Add Land - Agrikon{% endblock %}
+
+{% block styles %}
+{{ block.super }}
+<style>
+  .container-custom { max-width: 1200px; margin: 0 auto 60px; padding: 0 20px; }
+
+  .add-land-btn {
+    background: linear-gradient(145deg, #2e7d32, #4caf50);
+    border: none; color: white; font-weight: 700;
+    padding: 14px 36px; border-radius: 8px; font-size: 1.1rem;
+    box-shadow: 0 8px 20px -6px #1f5a1f; transition: 0.2s;
+    margin-bottom: 24px; cursor: pointer;
+  }
+  .add-land-btn:hover { background: linear-gradient(145deg,#1f6823,#3e9e41); }
+  .add-land-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .form-card {
+    background: #fff; border-radius: 14px; padding: 28px;
+    box-shadow: 0 8px 30px rgba(0,40,0,0.12); border: 1px solid #c8e6c9;
+    margin-bottom: 36px; display: none;
+  }
+  .form-card.show { display: block; animation: slideIn 0.25s ease-out; }
+  @keyframes slideIn { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+
+  .form-title { font-size: 1.4rem; font-weight: 700; color: #1d571d; border-left: 6px solid #4caf50; padding-left: 14px; margin-bottom: 22px; }
+
+  .field-row {
+    display: flex; align-items: center;
+    background: #f4fef0; border-radius: 8px; margin-bottom: 16px;
+    border: 1.5px solid #b2dba0; transition: 0.15s;
+  }
+  .field-row:focus-within { border-color: #2e7d32; box-shadow: 0 0 0 3px rgba(46,125,50,0.12); }
+  .field-row i { width: 46px; text-align: center; font-size: 1.2rem; color: #2b732b; }
+  .field-row input, .field-row select {
+    flex: 1; border: none; background: transparent;
+    padding: 13px 14px 13px 4px; font-size: 0.97rem; outline: none; color: #143014;
+  }
+
+  .soil-radio-group {
+    background: #e8f5e0; border-radius: 8px; padding: 14px 20px;
+    margin: 16px 0; display: flex; gap: 30px; flex-wrap: wrap;
+  }
+  .soil-radio-group label { display: flex; align-items: center; gap: 7px; color: #124012; font-weight: 600; cursor: pointer; }
+
+  .upload-area {
+    background: #f0faf0; border-radius: 8px; padding: 20px;
+    border: 2px dashed #6da86d; text-align: center; margin-top: 10px;
+  }
+  .upload-area input[type="file"] { display: none; }
+  .upload-btn {
+    background: #2e7d32; color: white; border: none;
+    padding: 10px 24px; border-radius: 6px; font-size: 1rem;
+    font-weight: 600; cursor: pointer; display: inline-block;
+  }
+  .upload-btn:hover { background: #1b5e20; }
+  .file-preview {
+    margin-top: 12px; background: #d2efca; border-radius: 6px;
+    padding: 10px 14px; color: #154015;
+  }
+
+  .manual-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    background: #e7f5e0; border-radius: 8px; padding: 18px; margin-top: 10px;
+  }
+  .param-item {
+    background: white; border-radius: 6px; display: flex;
+    align-items: center; border: 1px solid #b8daa8; overflow: hidden;
+  }
+  .param-item i { width: 38px; text-align: center; color: #2a802a; font-size: 0.9rem; }
+  .param-item input { flex: 1; border: none; background: transparent; padding: 10px 8px; font-size: 0.9rem; outline: none; }
+
+  .form-actions { display: flex; gap: 14px; margin-top: 22px; flex-wrap: wrap; }
+  .btn-save {
+    background: linear-gradient(145deg,#2e7d32,#4caf50); color: white;
+    border: none; padding: 12px 36px; border-radius: 8px; font-weight: 700;
+    font-size: 1rem; cursor: pointer; transition: 0.2s;
+  }
+  .btn-save:hover { background: linear-gradient(145deg,#1f6823,#3e9e41); }
+  .btn-cancel {
+    background: #f0f7ea; border: 2px solid #3f9142; color: #1d571d;
+    padding: 10px 28px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer;
+  }
+  .btn-cancel:hover { background: white; }
+
+  .lands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 22px; margin-top: 24px; }
+  .land-card {
+    background: white; border-radius: 14px; padding: 22px;
+    box-shadow: 0 6px 20px rgba(0,40,0,0.10); border: 1px solid #c8e6c9;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .land-card:hover { transform: translateY(-4px); box-shadow: 0 14px 28px rgba(0,40,0,0.15); }
+  .land-card-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 2px solid #e8f5e9; padding-bottom: 12px; margin-bottom: 14px;
+  }
+  .land-card-header h3 { font-size: 1.2rem; color: #1a551a; font-weight: 700; margin: 0; }
+  .card-actions button { background: none; border: none; font-size: 1.1rem; margin-left: 8px; cursor: pointer; transition: 0.15s; }
+  .card-actions .edit-btn { color: #2e7d32; }
+  .card-actions .delete-btn { color: #d32f2f; }
+  .card-actions button:hover { transform: scale(1.2); }
+  .land-detail { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.95rem; color: #154015; }
+  .land-detail i { width: 22px; color: #2e7d32; }
+  .soil-badge {
+    background: #e8f5e0; border-radius: 20px; padding: 6px 14px;
+    display: inline-block; margin-top: 8px; font-size: 0.85rem; font-weight: 500; color: #1b4d23;
+  }
+
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 9999; overflow-y: auto;
+  }
+  .modal-overlay.open { display: block; }
+  .modal-box {
+    background: #fff; max-width: 680px; margin: 40px auto;
+    border-radius: 16px; padding: 30px; position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 14px; right: 18px; background: none;
+    border: none; font-size: 1.5rem; cursor: pointer; color: #555;
+  }
+
+  .section-header { display: flex; align-items: center; margin-bottom: 16px; }
+  .land-count-badge { background: #e8f5e9; color: #2e7d32; padding: 6px 16px; border-radius: 20px; font-weight: 600; font-size: 0.95rem; }
+
+  @media (max-width: 600px) {
+    .manual-grid { grid-template-columns: 1fr 1fr; }
+    .form-actions { flex-direction: column; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/_slider_base.html' with slider_id="add_land" slider_title="My Lands" slider_crumb="Add Land" slide1="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1470" slide2="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?q=80&w=1470" slide3="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1470" slide4="https://images.unsplash.com/photo-1574943320219-553eb213f72d?q=80&w=1470" %}
+
+<div class="container-custom" style="margin-top: 40px;">
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show" role="alert" style="border-radius:8px;margin-bottom:16px;">
+        <i class="fas fa-{% if msg.tags == 'error' %}exclamation-circle{% else %}check-circle{% endif %} me-2"></i>{{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Top bar -->
+  <div class="section-header">
+    <button class="add-land-btn" id="addLandBtn" {% if lands|length >= 10 %}disabled{% endif %}>
+      <i class="fas fa-plus-circle me-2"></i>Add Land
+    </button>
+    <span class="land-count-badge"><i class="fas fa-map-marked-alt me-1"></i>{{ lands|length }} / 10 Lands</span>
+  </div>
+
+  <!-- Add Land Form -->
+  <div id="formCard" class="form-card">
+    <div class="form-title"><i class="fas fa-pen-alt me-2"></i>New Land Record</div>
+    <form method="POST" action="{% url 'add_land' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="field-row">
+        <i class="fas fa-tag"></i>
+        <input type="text" name="land_name" placeholder="Land name (e.g., North Field)" required>
+      </div>
+      <div class="field-row">
+        <i class="fas fa-ruler-combined"></i>
+        <input type="text" name="land_area" placeholder="Total area (e.g., 2.5 acres)" required>
+      </div>
+      <div class="field-row">
+        <i class="fas fa-water"></i>
+        <select name="water_supply">
+          <option value="Borewell">Borewell</option>
+          <option value="Canal">Canal</option>
+          <option value="River">River</option>
+          <option value="Rain Water">Rain Water</option>
+          <option value="Drip Irrigation">Drip Irrigation</option>
+        </select>
+      </div>
+      <div class="soil-radio-group">
+        <label><input type="radio" name="soil_method" value="upload" checked onchange="toggleSoil(this)"> <i class="fas fa-cloud-upload-alt"></i> Upload Soil Report</label>
+        <label><input type="radio" name="soil_method" value="manual" onchange="toggleSoil(this)"> <i class="fas fa-pen-alt"></i> Enter Manually</label>
+      </div>
+
+      <!-- No Soil Report Banner -->
+      <div style="background:#fff8e1;border:1.5px solid #f9a825;border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div style="font-size:.88rem;color:#5d4037;">
+          <i class="fas fa-info-circle" style="color:#f9a825;margin-right:6px;"></i>
+          <strong>Don't have a soil report?</strong> Download our form, take it to your nearest Soil Testing Centre, and enter the results here.
+        </div>
+        <a href="{% url 'download_soil_form' %}" target="_blank"
+           style="background:linear-gradient(135deg,#f57f17,#f9a825);color:#fff;padding:8px 18px;border-radius:20px;font-size:.82rem;font-weight:700;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:6px;">
+          <i class="fas fa-download"></i> Download Soil Test Form
+        </a>
+      </div>
+      <div id="uploadSection" class="upload-area">
+        <input type="file" id="soilFile" name="soil_report" accept="image/*,application/pdf">
+        <label for="soilFile" class="upload-btn"><i class="fas fa-file-upload me-1"></i>Choose File</label>
+        <div id="filePreview" class="file-preview" style="display:none;">
+          <i class="fas fa-file-image"></i> <span id="fileName"></span>
+        </div>
+      </div>
+      <div id="manualSection" class="manual-grid" style="display:none;">
+        <div class="param-item"><i class="fas fa-flask"></i><input type="text" name="ph" placeholder="pH"></div>
+        <div class="param-item"><i class="fas fa-bolt"></i><input type="text" name="ec" placeholder="EC (dS/m)"></div>
+        <div class="param-item"><i class="fas fa-leaf"></i><input type="text" name="oc" placeholder="Organic Carbon %"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="n" placeholder="Nitrogen (N)"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="p" placeholder="Phosphorus (P)"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="k" placeholder="Potassium (K)"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="s" placeholder="Sulphur (S)"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="zn" placeholder="Zinc (Zn)"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="fe" placeholder="Iron (Fe)"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="mn" placeholder="Manganese (Mn)"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="cu" placeholder="Copper (Cu)"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="b" placeholder="Boron (B)"></div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-save"><i class="fas fa-save me-1"></i>Save Land</button>
+        <button type="button" class="btn-cancel" id="cancelBtn"><i class="fas fa-times me-1"></i>Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Lands Grid from DB -->
+  <div class="lands-grid">
+    {% if not lands %}
+      <div style="grid-column:1/-1;text-align:center;padding:50px 20px;color:#666;">
+        <i class="fas fa-map-marked-alt" style="font-size:3rem;color:#c8e6c9;margin-bottom:14px;display:block;"></i>
+        No lands added yet. Click "Add Land" to get started.
+      </div>
+    {% else %}
+      {% for land in lands %}
+      <div class="land-card">
+        <div class="land-card-header">
+          <h3><i class="fas fa-map-marker-alt me-2" style="color:#4caf50;"></i>{{ land.land_name }}</h3>
+          <div class="card-actions">
+            <button class="edit-btn" title="Edit"
+              onclick="openEdit(
+                {{ land.id }},
+                '{{ land.land_name|escapejs }}',
+                '{{ land.land_area|escapejs }}',
+                '{{ land.water_supply|escapejs }}',
+                '{{ land.soil_method|escapejs }}',
+                '{{ land.ph|default_if_none:""|escapejs }}',
+                '{{ land.ec|default_if_none:""|escapejs }}',
+                '{{ land.organic_carbon|default_if_none:""|escapejs }}',
+                '{{ land.nitrogen|default_if_none:""|escapejs }}',
+                '{{ land.phosphorus|default_if_none:""|escapejs }}',
+                '{{ land.potassium|default_if_none:""|escapejs }}',
+                '{{ land.sulphur|default_if_none:""|escapejs }}',
+                '{{ land.zinc|default_if_none:""|escapejs }}',
+                '{{ land.iron|default_if_none:""|escapejs }}',
+                '{{ land.manganese|default_if_none:""|escapejs }}',
+                '{{ land.copper|default_if_none:""|escapejs }}',
+                '{{ land.boron|default_if_none:""|escapejs }}'
+              )">
+              <i class="fas fa-edit"></i>
+            </button>
+            <form method="POST" action="{% url 'delete_land' land.id %}">
+              {% csrf_token %}
+              <button type="submit" class="delete-btn" title="Delete"><i class="fas fa-trash-alt"></i></button>
+            </form>
+          </div>
+        </div>
+        <div class="land-detail"><i class="fas fa-ruler-combined"></i> {{ land.land_area }}</div>
+        <div class="land-detail"><i class="fas fa-water"></i> {{ land.water_supply }}</div>
+        <div class="land-detail"><i class="fas fa-calendar-alt"></i> {{ land.created_at|date:"d M Y" }}</div>
+        {% if land.soil_method == 'upload' %}
+          <span class="soil-badge"><i class="fas fa-file-upload me-1"></i>
+            {% if land.soil_report %}Report uploaded{% else %}No report{% endif %}
+          </span>
+        {% else %}
+          <span class="soil-badge"><i class="fas fa-database me-1"></i>Manual soil data</span>
+          {% if land.ph %}
+          <div style="margin-top:10px;font-size:0.82rem;color:#2a5a2a;display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+            <span>pH: {{ land.ph }}</span>
+            {% if land.ec %}<span>EC: {{ land.ec }}</span>{% endif %}
+            {% if land.organic_carbon %}<span>OC: {{ land.organic_carbon }}%</span>{% endif %}
+            {% if land.nitrogen %}<span>N: {{ land.nitrogen }}</span>{% endif %}
+            {% if land.phosphorus %}<span>P: {{ land.phosphorus }}</span>{% endif %}
+            {% if land.potassium %}<span>K: {{ land.potassium }}</span>{% endif %}
+          </div>
+          {% endif %}
+        {% endif %}
+        <!-- AI Suggestion Button -->
+        {% if land.soil_method == 'manual' and land.ph or land.soil_report %}
+        <button class="ai-suggest-btn" onclick="getAISuggestion({{ land.id }}, '{{ land.land_name|escapejs }}')">
+          🤖 AI Soil Suggestion
+        </button>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeEdit()">&times;</button>
+      <div class="form-title"><i class="fas fa-edit me-2"></i>Edit Land</div>
+      <form method="POST" id="editForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="field-row">
+          <i class="fas fa-tag"></i>
+          <input type="text" name="land_name" id="e_name" placeholder="Land name" required>
+        </div>
+        <div class="field-row">
+          <i class="fas fa-ruler-combined"></i>
+          <input type="text" name="land_area" id="e_area" placeholder="Total area" required>
+        </div>
+        <div class="field-row">
+          <i class="fas fa-water"></i>
+          <select name="water_supply" id="e_water">
+            <option value="Borewell">Borewell</option>
+            <option value="Canal">Canal</option>
+            <option value="River">River</option>
+            <option value="Rain Water">Rain Water</option>
+            <option value="Drip Irrigation">Drip Irrigation</option>
+          </select>
+        </div>
+        <div class="soil-radio-group">
+          <label><input type="radio" name="soil_method" id="e_upload" value="upload" onchange="toggleEditSoil(this)"> <i class="fas fa-cloud-upload-alt"></i> Upload Report</label>
+          <label><input type="radio" name="soil_method" id="e_manual" value="manual" onchange="toggleEditSoil(this)"> <i class="fas fa-pen-alt"></i> Enter Manually</label>
+        </div>
+        <div id="e_uploadSection" class="upload-area">
+          <input type="file" id="e_soilFile" name="soil_report" accept="image/*,application/pdf">
+          <label for="e_soilFile" class="upload-btn"><i class="fas fa-file-upload me-1"></i>Choose File</label>
+        </div>
+        <div id="e_manualSection" class="manual-grid" style="display:none;">
+          <div class="param-item"><i class="fas fa-flask"></i><input type="text" name="ph" id="e_ph" placeholder="pH"></div>
+          <div class="param-item"><i class="fas fa-bolt"></i><input type="text" name="ec" id="e_ec" placeholder="EC (dS/m)"></div>
+          <div class="param-item"><i class="fas fa-leaf"></i><input type="text" name="oc" id="e_oc" placeholder="Organic Carbon %"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="n" id="e_n" placeholder="Nitrogen (N)"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="p" id="e_p" placeholder="Phosphorus (P)"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="k" id="e_k" placeholder="Potassium (K)"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="s" id="e_s" placeholder="Sulphur (S)"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="zn" id="e_zn" placeholder="Zinc (Zn)"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="fe" id="e_fe" placeholder="Iron (Fe)"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="mn" id="e_mn" placeholder="Manganese (Mn)"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="cu" id="e_cu" placeholder="Copper (Cu)"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="b" id="e_b" placeholder="Boron (B)"></div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-save"><i class="fas fa-save me-1"></i>Update Land</button>
+          <button type="button" class="btn-cancel" onclick="closeEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.getElementById('addLandBtn').addEventListener('click', function() {
+    document.getElementById('formCard').classList.toggle('show');
+  });
+  document.getElementById('cancelBtn').addEventListener('click', function() {
+    document.getElementById('formCard').classList.remove('show');
+  });
+
+  function toggleSoil(radio) {
+    const isUpload = radio.value === 'upload';
+    document.getElementById('uploadSection').style.display = isUpload ? 'block' : 'none';
+    document.getElementById('manualSection').style.display = isUpload ? 'none' : 'grid';
+  }
+
+  document.getElementById('soilFile').addEventListener('change', function() {
+    if (this.files.length > 0) {
+      document.getElementById('fileName').textContent = this.files[0].name;
+      document.getElementById('filePreview').style.display = 'block';
+    }
+  });
+
+  function openEdit(id, name, area, water, method, ph, ec, oc, n, p, k, s, zn, fe, mn, cu, b) {
+    document.getElementById('editForm').action = '/edit-land/' + id + '/';
+    document.getElementById('e_name').value = name;
+    document.getElementById('e_area').value = area;
+    document.getElementById('e_water').value = water;
+    document.getElementById('e_ph').value = ph;
+    document.getElementById('e_ec').value = ec;
+    document.getElementById('e_oc').value = oc;
+    document.getElementById('e_n').value = n;
+    document.getElementById('e_p').value = p;
+    document.getElementById('e_k').value = k;
+    document.getElementById('e_s').value = s;
+    document.getElementById('e_zn').value = zn;
+    document.getElementById('e_fe').value = fe;
+    document.getElementById('e_mn').value = mn;
+    document.getElementById('e_cu').value = cu;
+    document.getElementById('e_b').value = b;
+
+    if (method === 'manual') {
+      document.getElementById('e_manual').checked = true;
+      document.getElementById('e_uploadSection').style.display = 'none';
+      document.getElementById('e_manualSection').style.display = 'grid';
+    } else {
+      document.getElementById('e_upload').checked = true;
+      document.getElementById('e_uploadSection').style.display = 'block';
+      document.getElementById('e_manualSection').style.display = 'none';
+    }
+    document.getElementById('editModal').classList.add('open');
+  }
+
+  function closeEdit() {
+    document.getElementById('editModal').classList.remove('open');
+  }
+
+  function toggleEditSoil(radio) {
+    const isUpload = radio.value === 'upload';
+    document.getElementById('e_uploadSection').style.display = isUpload ? 'block' : 'none';
+    document.getElementById('e_manualSection').style.display = isUpload ? 'none' : 'grid';
+  }
+
+  document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) closeEdit();
+  });
+</script>
+
+<!-- AI Suggestion Modal -->
+<div id="aiModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:none;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:28px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;position:relative;">
+    <button onclick="document.getElementById('aiModal').style.display='none'" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.5rem;cursor:pointer;">×</button>
+    <h2 style="color:#1b5e20;margin:0 0 16px;font-size:1.3rem;">🤖 AI Soil Analysis</h2>
+    <div id="aiLoading" style="text-align:center;padding:30px;display:none;">
+      <div style="font-size:2rem;margin-bottom:10px;">⏳</div>
+      <p style="color:#666;">AI is analyzing your soil data... please wait</p>
+    </div>
+    <div id="aiResult"></div>
+  </div>
+</div>
+
+<style>
+.ai-suggest-btn {
+  margin-top:10px; width:100%; background:linear-gradient(135deg,#1565c0,#1976d2);
+  color:#fff; border:none; padding:9px 16px; border-radius:8px; font-size:.88rem;
+  font-weight:600; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.ai-suggest-btn:hover { background:linear-gradient(135deg,#0d47a1,#1565c0); transform:translateY(-1px); }
+.ai-crop-card { background:#e8f5e9; border-radius:10px; padding:12px 16px; margin-bottom:10px; border-left:4px solid #2e7d32; }
+.ai-crop-name { font-weight:700; color:#1b5e20; font-size:1rem; }
+.ai-crop-reason { font-size:.85rem; color:#555; margin-top:3px; }
+.ai-match { display:inline-block; padding:2px 8px; border-radius:10px; font-size:.75rem; font-weight:700; margin-left:8px; }
+.ai-match-high { background:#c8e6c9; color:#1b5e20; }
+.ai-match-medium { background:#fff9c4; color:#f57f17; }
+.ai-match-low { background:#ffcdd2; color:#b71c1c; }
+.ai-deficiency { background:#fff3e0; border-radius:8px; padding:8px 12px; margin-bottom:6px; font-size:.85rem; }
+.ai-section-title { font-weight:700; color:#333; margin:14px 0 8px; font-size:.95rem; }
+</style>
+
+<script>
+function getAISuggestion(landId, landName) {
+  const modal = document.getElementById('aiModal');
+  const loading = document.getElementById('aiLoading');
+  const result = document.getElementById('aiResult');
+  modal.style.display = 'flex';
+  loading.style.display = 'block';
+  result.innerHTML = '';
+
+  const formData = new FormData();
+  formData.append('land_id', landId);
+  formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+  fetch('{% url "soil_ai_suggest" %}', { method: 'POST', body: formData })
+    .then(r => r.json())
+    .then(data => {
+      loading.style.display = 'none';
+      if (!data.success) {
+        result.innerHTML = `<div style="color:#e74c3c;padding:20px;text-align:center;">❌ ${data.message}</div>`;
+        return;
+      }
+      const d = data.data;
+      let html = `<p style="color:#666;font-size:.85rem;margin-bottom:14px;">Land: <b>${data.land_name}</b></p>`;
+
+      // Soil Health
+      if (d.soil_health) {
+        const color = d.soil_health.overall === 'Good' ? '#27ae60' : d.soil_health.overall === 'Moderate' ? '#f39c12' : '#e74c3c';
+        html += `<div style="background:#f5f5f5;border-radius:10px;padding:12px 16px;margin-bottom:14px;">
+          <b>🌱 Soil Health: <span style="color:${color}">${d.soil_health.overall}</span></b>
+          <p style="margin:4px 0 0;font-size:.85rem;color:#555;">${d.soil_health.summary}</p>
+        </div>`;
+      }
+
+      // Recommended Crops
+      if (d.crops && d.crops.length) {
+        html += `<div class="ai-section-title">🌾 Recommended Crops</div>`;
+        d.crops.forEach(c => {
+          const matchClass = c.match === 'high' ? 'ai-match-high' : c.match === 'medium' ? 'ai-match-medium' : 'ai-match-low';
+          html += `<div class="ai-crop-card">
+            <div class="ai-crop-name">${c.name} <span class="ai-match ${matchClass}">${c.match} match</span></div>
+            <div class="ai-crop-reason">${c.reason}</div>
+          </div>`;
+        });
+      }
+
+      // Deficiencies
+      if (d.deficiencies && d.deficiencies.length) {
+        html += `<div class="ai-section-title">⚠️ Deficiencies & Fixes</div>`;
+        d.deficiencies.forEach(def => {
+          html += `<div class="ai-deficiency"><b>${def.nutrient}</b> (${def.level}) — ${def.fix}</div>`;
+        });
+      }
+
+      // Season & Tips
+      if (d.season) html += `<div style="background:#e3f2fd;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:.88rem;"><b>📅 Best Season:</b> ${d.season}</div>`;
+      if (d.tips) html += `<div style="background:#f3e5f5;border-radius:8px;padding:10px 14px;margin-top:8px;font-size:.85rem;"><b>💡 Tips:</b> ${d.tips}</div>`;
+
+      result.innerHTML = html;
+    })
+    .catch(() => {
+      loading.style.display = 'none';
+      result.innerHTML = '<div style="color:#e74c3c;padding:20px;text-align:center;">❌ Network error. Try again.</div>';
+    });
+}
+</script>
+{% endblock %}

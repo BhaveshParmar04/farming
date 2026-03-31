@@ -1,0 +1,232 @@
+{% extends "admin/base_site.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<style>
+.gp-wrap { max-width:1100px; }
+.gp-hero {
+  background:linear-gradient(135deg,#1a6b3c,#2e9e5b);
+  border-radius:12px; padding:24px 28px; color:#fff;
+  display:flex; align-items:center; gap:20px; margin-bottom:24px; flex-wrap:wrap;
+}
+.gp-hero h1 { margin:0 0 4px; font-size:1.5rem; font-weight:800; }
+.gp-hero p  { margin:0; opacity:.85; font-size:.9rem; }
+.gp-card { background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); margin-bottom:20px; overflow:hidden; }
+.gp-card-head {
+  background:#e8f5e9; padding:12px 20px;
+  display:flex; align-items:center; gap:10px; border-bottom:1px solid #c8e6c9;
+}
+.gp-card-head h2 { margin:0; font-size:1rem; color:#1b5e20; font-weight:700; }
+.gp-card-body { padding:20px; }
+.info-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+.info-item { background:#f4fef0; border:1px solid #c8e6c9; border-radius:8px; padding:12px 16px; }
+.info-item .lbl { font-size:.72rem; color:#558b2f; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px; }
+.info-item .val { font-size:.97rem; color:#1b3a1b; font-weight:600; }
+.doc-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #f0f0f0; }
+.doc-row:last-child { border-bottom:none; }
+.doc-label { width:180px; font-size:.88rem; color:#555; font-weight:600; }
+.doc-number { flex:1; font-size:.9rem; color:#222; }
+.doc-status { font-size:1rem; }
+.doc-img { width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid #c8e6c9; }
+.app-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+.app-table th { background:#e8f5e9; padding:10px 14px; text-align:left; color:#1b5e20; font-weight:700; }
+.app-table td { padding:10px 14px; border-bottom:1px solid #f0f0f0; }
+.badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:.78rem; font-weight:700; color:#fff; }
+.badge-pending  { background:#f39c12; }
+.badge-approved { background:#27ae60; }
+.badge-rejected { background:#e74c3c; }
+.badge-under_review { background:#2980b9; }
+.status-form select { padding:5px 10px; border:1.5px solid #c8e6c9; border-radius:6px; font-size:.85rem; }
+.status-form button { padding:5px 12px; background:#2e7d32; color:#fff; border:none; border-radius:6px; cursor:pointer; font-size:.85rem; }
+.score-pill {
+  display:inline-block; padding:4px 14px; border-radius:20px; font-weight:700; font-size:.9rem; color:#fff;
+}
+</style>
+
+<div class="gp-wrap">
+  <div class="gp-hero">
+    <div style="font-size:3rem">👤</div>
+    <div>
+      <h1>{{ farmer.full_name }}</h1>
+      <p>📱 {{ farmer.mobile }} &nbsp;|&nbsp; 📍 {{ farmer.village }}, {{ farmer.taluka }}, {{ farmer.district }}, {{ farmer.state }}</p>
+      {% if profile %}
+        {% with s=profile.score %}
+          <span class="score-pill" style="background:{% if s >= 80 %}#27ae60{% elif s >= 50 %}#f39c12{% else %}#e74c3c{% endif %};margin-top:8px;display:inline-block;">
+            Profile Score: {{ s }}/100
+          </span>
+        {% endwith %}
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Basic Info -->
+  <div class="gp-card">
+    <div class="gp-card-head"><span>🪪</span><h2>Basic Information</h2></div>
+    <div class="gp-card-body">
+      <div class="info-grid">
+        <div class="info-item"><div class="lbl">Full Name</div><div class="val">{{ farmer.full_name }}</div></div>
+        <div class="info-item"><div class="lbl">Mobile</div><div class="val">{{ farmer.mobile }}</div></div>
+        <div class="info-item"><div class="lbl">Land Record No.</div><div class="val">{{ farmer.land_record }}</div></div>
+        <div class="info-item"><div class="lbl">State</div><div class="val">{{ farmer.state }}</div></div>
+        <div class="info-item"><div class="lbl">District</div><div class="val">{{ farmer.district }}</div></div>
+        <div class="info-item"><div class="lbl">Taluka</div><div class="val">{{ farmer.taluka }}</div></div>
+        <div class="info-item"><div class="lbl">Village</div><div class="val">{{ farmer.village }}</div></div>
+        <div class="info-item"><div class="lbl">Registered On</div><div class="val">{{ farmer.created_at|date:"d M Y" }}</div></div>
+      </div>
+    </div>
+  </div>
+
+  {% if profile %}
+  <!-- Documents -->
+  <div class="gp-card">
+    <div class="gp-card-head"><span>📄</span><h2>Profile Documents</h2></div>
+    <div class="gp-card-body">
+
+      {% with docs=profile %}
+      <div class="doc-row">
+        <div class="doc-label">Aadhaar Card</div>
+        <div class="doc-number">{{ docs.aadhar_number|default:"—" }}</div>
+        <div class="doc-status">{% if docs.has_aadhar %}✅{% else %}❌{% endif %}</div>
+        {% if docs.aadhar_doc %}<a href="{{ docs.aadhar_doc.url }}" target="_blank"><img src="{{ docs.aadhar_doc.url }}" class="doc-img" alt="Aadhaar"></a>{% endif %}
+      </div>
+      <div class="doc-row">
+        <div class="doc-label">PAN Card</div>
+        <div class="doc-number">{{ docs.pan_number|default:"—" }}</div>
+        <div class="doc-status">{% if docs.has_pan %}✅{% else %}❌{% endif %}</div>
+        {% if docs.pan_doc %}<a href="{{ docs.pan_doc.url }}" target="_blank"><img src="{{ docs.pan_doc.url }}" class="doc-img" alt="PAN"></a>{% endif %}
+      </div>
+      <div class="doc-row">
+        <div class="doc-label">Bank Account</div>
+        <div class="doc-number">{{ docs.bank_name|default:"—" }} / {{ docs.account_number|default:"—" }} / {{ docs.ifsc_code|default:"—" }}</div>
+        <div class="doc-status">{% if docs.has_bank_account %}✅{% else %}❌{% endif %}</div>
+      </div>
+      <div class="doc-row">
+        <div class="doc-label">Land Record (7/12)</div>
+        <div class="doc-number">{{ docs.land_record_number|default:"—" }}</div>
+        <div class="doc-status">{% if docs.has_land_record %}✅{% else %}❌{% endif %}</div>
+        {% if docs.land_record_doc %}<a href="{{ docs.land_record_doc.url }}" target="_blank"><img src="{{ docs.land_record_doc.url }}" class="doc-img" alt="Land Record"></a>{% endif %}
+      </div>
+      <div class="doc-row">
+        <div class="doc-label">Soil Health Card</div>
+        <div class="doc-number">{{ docs.soil_health_card_number|default:"—" }}</div>
+        <div class="doc-status">{% if docs.has_soil_health_card %}✅{% else %}❌{% endif %}</div>
+        {% if docs.soil_health_card_doc %}<a href="{{ docs.soil_health_card_doc.url }}" target="_blank"><img src="{{ docs.soil_health_card_doc.url }}" class="doc-img" alt="Soil Card"></a>{% endif %}
+      </div>
+      <div class="doc-row">
+        <div class="doc-label">Income Certificate</div>
+        <div class="doc-number">{{ docs.income_cert_number|default:"—" }}</div>
+        <div class="doc-status">{% if docs.has_income_cert %}✅{% else %}❌{% endif %}</div>
+        {% if docs.income_cert_doc %}<a href="{{ docs.income_cert_doc.url }}" target="_blank"><img src="{{ docs.income_cert_doc.url }}" class="doc-img" alt="Income Cert"></a>{% endif %}
+      </div>
+      <div class="doc-row">
+        <div class="doc-label">Caste Certificate</div>
+        <div class="doc-number">{{ docs.caste_cert_number|default:"—" }} ({{ docs.caste_category|default:"—" }})</div>
+        <div class="doc-status">{% if docs.has_caste_cert %}✅{% else %}❌{% endif %}</div>
+        {% if docs.caste_cert_doc %}<a href="{{ docs.caste_cert_doc.url }}" target="_blank"><img src="{{ docs.caste_cert_doc.url }}" class="doc-img" alt="Caste Cert"></a>{% endif %}
+      </div>
+      <div class="doc-row">
+        <div class="doc-label">Ration Card</div>
+        <div class="doc-number">{{ docs.ration_card_number|default:"—" }}</div>
+        <div class="doc-status">{% if docs.has_ration_card %}✅{% else %}❌{% endif %}</div>
+        {% if docs.ration_card_doc %}<a href="{{ docs.ration_card_doc.url }}" target="_blank"><img src="{{ docs.ration_card_doc.url }}" class="doc-img" alt="Ration Card"></a>{% endif %}
+      </div>
+      <div class="doc-row">
+        <div class="doc-label">Annual Income</div>
+        <div class="doc-number">₹ {{ docs.annual_income|default:"—" }}</div>
+        <div class="doc-status">{% if docs.annual_income %}✅{% else %}❌{% endif %}</div>
+      </div>
+      <div class="doc-row">
+        <div class="doc-label">Email</div>
+        <div class="doc-number">{{ docs.email|default:"—" }}</div>
+        <div class="doc-status">{% if docs.email %}✅{% else %}❌{% endif %}</div>
+      </div>
+      {% if docs.farmer_photo %}
+      <div class="doc-row">
+        <div class="doc-label">Passport Photo</div>
+        <div class="doc-number">—</div>
+        <div class="doc-status">✅</div>
+        <a href="{{ docs.farmer_photo.url }}" target="_blank"><img src="{{ docs.farmer_photo.url }}" class="doc-img" style="border-radius:50%;" alt="Photo"></a>
+      </div>
+      {% endif %}
+      {% endwith %}
+
+    </div>
+  </div>
+  {% else %}
+  <div style="background:#fff8e1;border-left:4px solid #f9a825;border-radius:8px;padding:14px 18px;margin-bottom:20px;">
+    ⚠️ This farmer has not filled the profile form yet.
+  </div>
+  {% endif %}
+
+  <!-- Lands -->
+  {% if lands %}
+  <div class="gp-card">
+    <div class="gp-card-head"><span>🗺️</span><h2>Registered Lands ({{ lands|length }})</h2></div>
+    <div class="gp-card-body">
+      <div class="info-grid">
+        {% for land in lands %}
+        <div class="info-item">
+          <div class="lbl">{{ land.land_name }}</div>
+          <div class="val">{{ land.land_area }}</div>
+          <div style="font-size:.8rem;color:#666;margin-top:4px">💧 {{ land.water_supply }} | 🧪 {{ land.get_soil_method_display }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Scheme Applications -->
+  <div class="gp-card">
+    <div class="gp-card-head"><span>📋</span><h2>Scheme Applications ({{ applications|length }})</h2></div>
+    <div class="gp-card-body">
+      {% if applications %}
+      <table class="app-table">
+        <thead>
+          <tr>
+            <th>Scheme</th>
+            <th>Status</th>
+            <th>Applied On</th>
+            <th>Notes</th>
+            <th>Update Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in applications %}
+          <tr>
+            <td><b>{{ app.scheme.title }}</b></td>
+            <td>
+              <span class="badge badge-{{ app.status }}">
+                {% if app.status == 'pending' %}⏳{% elif app.status == 'approved' %}✅{% elif app.status == 'rejected' %}❌{% else %}🔍{% endif %}
+                {{ app.get_status_display }}
+              </span>
+            </td>
+            <td>{{ app.applied_at|date:"d M Y" }}</td>
+            <td style="font-size:.82rem;color:#666">{{ app.notes|default:"—" }}</td>
+            <td>
+              <form method="post" action="../../farmerregistration/update-status/{{ app.pk }}/" class="status-form" style="display:flex;gap:6px;align-items:center;">
+                {% csrf_token %}
+                <select name="status">
+                  <option value="applied"   {% if app.status == 'applied' %}selected{% endif %}>📝 Applied</option>
+                  <option value="pending"   {% if app.status == 'pending' %}selected{% endif %}>⏳ Pending</option>
+                  <option value="approved"  {% if app.status == 'approved' %}selected{% endif %}>✅ Approved</option>
+                  <option value="rejected"  {% if app.status == 'rejected' %}selected{% endif %}>❌ Rejected</option>
+                </select>
+                <button type="submit">Save</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <p style="color:#888;text-align:center;padding:20px 0;">No scheme applications yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div style="margin-top:16px;">
+    <a href="javascript:history.back()" style="color:#2e7d32;font-weight:600;text-decoration:none;">← Back</a>
+  </div>
+</div>
+{% endblock %}

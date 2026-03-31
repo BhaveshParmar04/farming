@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Direct Buyers - Agrikon{% endblock %}
+
+{% block styles %}
+{{ block.super }}
+<style>
+  .db-wrap { max-width:1200px;margin:0 auto;padding:36px 20px 60px; }
+  .db-topbar { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:24px; }
+  .db-topbar h1 { font-size:1.8rem;font-weight:700;color:#1a4f1a;display:flex;align-items:center;gap:10px; }
+  .filter-bar { display:flex;gap:10px;flex-wrap:wrap;background:#f4fef0;border-radius:14px;padding:14px 18px;border:1px solid #c8e6c9;margin-bottom:28px; }
+  .filter-bar input,.filter-bar select { flex:1;min-width:160px;border:1.5px solid #b2dba0;border-radius:30px;padding:9px 16px;font-size:0.9rem;outline:none;background:#fff; }
+  .filter-bar input:focus,.filter-bar select:focus { border-color:#2e7d32; }
+  .buyer-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:22px; }
+  .buyer-card { background:#fff;border-radius:18px;padding:22px;border:1px solid #e0f0e0;box-shadow:0 3px 14px rgba(0,40,0,0.07);transition:0.2s; }
+  .buyer-card:hover { transform:translateY(-4px);box-shadow:0 10px 28px rgba(0,40,0,0.12); }
+  .buyer-avatar { width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#2e7d32,#4caf50);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;font-weight:700;margin-bottom:12px; }
+  .buyer-name { font-size:1.1rem;font-weight:700;color:#1a4f1a;margin-bottom:2px; }
+  .buyer-company { font-size:0.82rem;color:#888;margin-bottom:10px; }
+  .buyer-meta { font-size:0.85rem;color:#555;display:flex;flex-direction:column;gap:5px;margin-bottom:14px; }
+  .buyer-meta span { display:flex;align-items:center;gap:6px; }
+  .crop-tags { display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px; }
+  .crop-tag { background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9;border-radius:20px;padding:3px 12px;font-size:0.78rem;font-weight:600; }
+  .btn-contact-buyer { width:100%;background:linear-gradient(145deg,#2e7d32,#4caf50);color:#fff;border:none;padding:10px;border-radius:10px;font-weight:700;font-size:0.9rem;cursor:pointer;transition:0.2s; }
+  .btn-contact-buyer:hover { background:linear-gradient(145deg,#1f6823,#3e9e41); }
+  .empty-db { grid-column:1/-1;text-align:center;padding:60px 20px;background:#f9fff9;border-radius:18px;border:2px dashed #c8e6c9; }
+  .contact-modal-bg { display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center; }
+  .contact-modal-bg.open { display:flex; }
+  .contact-box { background:#fff;border-radius:18px;padding:30px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,0.2); }
+  .contact-box h3 { color:#1a4f1a;font-size:1.3rem;font-weight:700;margin-bottom:16px; }
+  .contact-info-row { background:#f0faf0;border-radius:12px;padding:14px 18px;margin-bottom:14px;text-align:left; }
+  .contact-info-row p { color:#2e7d32;font-weight:600;font-size:0.95rem;margin:5px 0;display:flex;align-items:center;gap:8px; }
+  .btn-call { display:inline-block;background:#2e7d32;color:#fff;padding:10px 28px;border-radius:30px;font-weight:700;text-decoration:none;margin-top:8px; }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/_slider_base.html' with slider_id="direct_buyers" slider_title="Direct Buyers" slider_crumb="Direct Buyers" slide1="https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=1470" slide2="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1470" slide3="https://images.unsplash.com/photo-1471193945509-9ad0617afabf?q=80&w=1470" %}
+
+<div class="db-wrap">
+
+  {% if messages %}{% for msg in messages %}<div style="background:#e8f5e9;color:#2e7d32;padding:10px 16px;border-radius:8px;margin-bottom:14px;font-weight:600;">{{ msg }}</div>{% endfor %}{% endif %}
+
+  <div class="db-topbar">
+    <h1><i class="fas fa-handshake" style="color:#4caf50;"></i> Direct Buyers</h1>
+  </div>
+
+  <!-- Filter -->
+  <form method="GET" class="filter-bar">
+    <select name="crop">
+      <option value="">All Crops</option>
+      {% for crop in all_crops %}
+      <option value="{{ crop }}" {% if crop == crop_filter %}selected{% endif %}>{{ crop }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" style="background:#2e7d32;color:#fff;border:none;padding:9px 20px;border-radius:30px;font-weight:600;cursor:pointer;">Search</button>
+    <a href="{% url 'direct_buyers' %}" style="background:#f5f5f5;color:#555;border:1px solid #ddd;padding:9px 16px;border-radius:30px;font-weight:600;text-decoration:none;">Clear</a>
+  </form>
+
+  <!-- Info banner for farmer -->
+  {% if farmer %}
+  <div style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1px solid #c8e6c9;border-radius:14px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+    <i class="fas fa-map-marker-alt" style="color:#2e7d32;font-size:1.3rem;flex-shrink:0;"></i>
+    <div>
+      <strong style="color:#1a4f1a;">Direct Buyers in Your Area — {{ farmer.district }}, {{ farmer.state }}</strong>
+      <p style="margin:2px 0 0;color:#555;font-size:0.88rem;">
+        {% if same_district_count > 0 %}
+        <span style="color:#2e7d32;font-weight:600;">📍 {{ same_district_count }} buyer(s) in your district ({{ farmer.district }}).</span>
+        {% endif %}
+        {% if nearby_count > same_district_count %}
+        <span style="color:#1565c0;font-weight:600;margin-left:8px;">🗺️ {{ nearby_count }} buyer(s) in your state ({{ farmer.state }}).</span>
+        {% endif %}
+        {% if buyers|length == 0 %}
+        <span style="color:#e65100;font-weight:600;">No buyers registered yet in your area.</span>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+  {% endif %}
+
+  <p style="color:#666;font-size:0.9rem;margin-bottom:16px;">
+    Showing buyers{% if state_filter %} in <strong>{{ state_filter }}</strong>{% endif %}{% if crop_filter %} interested in <strong>{{ crop_filter }}</strong>{% endif %} — <strong>{{ buyers|length }}</strong> found
+  </p>
+
+  <div class="buyer-grid">
+    {% for buyer in buyers %}
+    <div class="buyer-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div class="buyer-avatar">{{ buyer.full_name|first|upper }}</div>
+        {% if farmer %}
+          {% for loc in buyer.locations %}
+            {% if loc.district == farmer.district and loc.state == farmer.state %}
+              <span style="background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;border:1px solid #c8e6c9;">📍 Same District</span>
+            {% elif loc.state == farmer.state %}
+              <span style="background:#e3f2fd;color:#1565c0;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:700;border:1px solid #bbdefb;">🗺️ Same State</span>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+      <div class="buyer-name">{{ buyer.full_name }}</div>
+      {% if buyer.company %}<div class="buyer-company"><i class="fas fa-building me-1"></i>{{ buyer.company }}</div>{% endif %}
+      <div class="buyer-meta">
+        <span><i class="fas fa-map-marker-alt" style="color:#4caf50;"></i>
+          {% for loc in buyer.locations %}{{ loc.district }}{% if loc.taluka %}, {{ loc.taluka }}{% endif %} ({{ loc.state }}){% if not forloop.last %} &nbsp;·&nbsp; {% endif %}{% endfor %}
+        </span>
+        {% if buyer.notes %}<span><i class="fas fa-info-circle" style="color:#4caf50;"></i> {{ buyer.notes|truncatechars:60 }}</span>{% endif %}
+      </div>
+      <div class="crop-tags">
+        {% for crop in buyer.crop_list %}
+        <span class="crop-tag">🌾 {{ crop }}</span>
+        {% endfor %}
+      </div>
+      <button class="btn-contact-buyer" onclick="showBuyerContact('{{ buyer.full_name|escapejs }}','{{ buyer.mobile }}','{% for loc in buyer.locations %}{{ loc.district|escapejs }}{% if not forloop.last %}, {% endif %}{% endfor %}','{{ buyer.company|default:''|escapejs }}')">
+        <i class="fas fa-phone-alt me-1"></i> Contact Buyer
+      </button>
+    </div>
+    {% empty %}
+    <div class="empty-db">
+      <i class="fas fa-users" style="font-size:3rem;color:#c8e6c9;display:block;margin-bottom:14px;"></i>
+      <p style="color:#888;font-size:1.05rem;">No buyers found. Try different filters.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Contact Modal -->
+<div class="contact-modal-bg" id="buyerContactModal">
+  <div class="contact-box">
+    <h3><i class="fas fa-handshake me-2" style="color:#4caf50;"></i>Buyer Contact</h3>
+    <div class="contact-info-row">
+      <p id="bc_name"></p>
+      <p id="bc_company" style="display:none;"></p>
+      <p id="bc_mobile"></p>
+      <p id="bc_location"></p>
+    </div>
+    <a id="bc_call_link" href="#" class="btn-call"><i class="fas fa-phone me-1"></i> Call Now</a>
+    <br><br>
+    <button onclick="document.getElementById('buyerContactModal').classList.remove('open')" style="background:#f5f5f5;border:none;padding:9px 24px;border-radius:8px;font-weight:600;cursor:pointer;color:#555;">Close</button>
+  </div>
+</div>
+
+<script>
+function showBuyerContact(name, mobile, districts, company) {
+  document.getElementById('bc_name').innerHTML = '<i class="fas fa-user me-2"></i>' + name;
+  const comp = document.getElementById('bc_company');
+  if (company) { comp.style.display='flex'; comp.innerHTML='<i class="fas fa-building me-2"></i>'+company; }
+  else { comp.style.display='none'; }
+  document.getElementById('bc_mobile').innerHTML = '<i class="fas fa-phone me-2"></i>+91 ' + mobile;
+  document.getElementById('bc_location').innerHTML = '<i class="fas fa-map-marker-alt me-2"></i>' + districts;
+  document.getElementById('bc_call_link').href = 'tel:+91' + mobile;
+  document.getElementById('buyerContactModal').classList.add('open');
+}
+document.getElementById('buyerContactModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Contact Us - Agrikon{% endblock %}
+{% block content %}
+{% include 'includes/_slider_base.html' with slider_id="contact" slider_title="Contact Us" slider_crumb="Contact" slide1="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?q=80&w=1470" slide2="https://images.unsplash.com/photo-1534536281715-e28d76689b4d?q=80&w=1470" slide3="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1470" %}
+
+        <section class="contact-one">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4">
+                        <div class="contact-one__content">
+                            <div class="block-title">
+                                <div class="block-title__image"></div><!-- /.block-title__image -->
+                                <p>Contact now</p>
+                                <h3>Leave A Message</h3>
+                            </div><!-- /.block-title -->
+                            <div class="contact-one__summery">
+                                <p>Lorem ipsum dolor sit amet, consectetur notted adipisicing elit sed do eiusmod tempor
+                                    incididunt ut labore et dolore magna aliqua lonm andhn. Aenean tincidunt id mauris id
+                                    auctor. Donec at ligula lacus dignissim mi quis simply neque.</p>
+                            </div><!-- /.contact-one__summery -->
+                            <div class="contact-one__social">
+                                <a href="#"><i class="fab fa-facebook-square"></i></a>
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                            </div><!-- /.contact-one__social -->
+                        </div><!-- /.contact-one__content -->
+                    </div><!-- /.col-sm-12 -->
+                    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-8">
+                        {% if messages %}{% for msg in messages %}<div style="background:#e8f5e9;color:#2e7d32;padding:12px 16px;border-radius:8px;margin-bottom:14px;font-weight:600;border:1px solid #c8e6c9;"><i class="fas fa-check-circle me-2"></i>{{ msg }}</div>{% endfor %}{% endif %}
+                        <form method="POST" action="{% url 'contact' %}" class="contact-one__form">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <input type="text" name="name" placeholder="Full Name" required value="{% if farmer %}{{ farmer.full_name }}{% endif %}">
+                                </div>
+                                <div class="col-lg-6">
+                                    <input type="email" name="email" placeholder="Email Address">
+                                </div>
+                                <div class="col-lg-6">
+                                    <input type="text" name="phone" placeholder="Phone Number" value="{% if farmer %}{{ farmer.mobile }}{% endif %}">
+                                </div>
+                                <div class="col-lg-6">
+                                    <input type="text" name="subject" placeholder="Subject">
+                                </div>
+                                <div class="col-lg-12">
+                                    <textarea name="message" placeholder="Write Message" required></textarea>
+                                </div>
+                                <div class="col-lg-12">
+                                    <button type="submit" class="thm-btn">Send a Message</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div><!-- /.col-sm-12 col-md-6 col-lg-8 -->
+                </div><!-- /.row -->
+            </div><!-- /.container -->
+        </section><!-- /.contact-one -->
+
+        <section class="contact-infos">
+            <div class="container">
+                <div class="inner-container wow fadeInUp" data-wow-duration="1500ms">
+                    <div class="row no-gutters">
+                        <div class="col-sm-12 col-md-12 col-lg-4">
+                            <div class="contact-infos__single">
+                                <h3>About Company</h3>
+                                <p>Lorem ipsum dolor sit amet consectetur adipiscing elit nulla sit amet lectus neque.</p>
+                            </div><!-- /.contact-infos__single -->
+                        </div><!-- /.col-sm-12 col-md-12 col-lg-4 -->
+                        <div class="col-sm-12 col-md-12 col-lg-4">
+                            <div class="contact-infos__single">
+                                <h3>Visit Company</h3>
+                                <p>66 broklyn golden street line, New York. United States of America.</p>
+                            </div><!-- /.contact-infos__single -->
+                        </div><!-- /.col-sm-12 col-md-12 col-lg-4 -->
+                        <div class="col-sm-12 col-md-12 col-lg-4">
+                            <div class="contact-infos__single">
+                                <h3>Call or Email</h3>
+                                <p><a href="mailto:needhelp@company.com">needhelp@company.com</a><br>
+                                    <a href="mailto:info@company.com">info@company.com</a><br>
+                                    <a href="tel:666-888-0000">666 888 0000</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>        
+        </section>
+
+        <div class="google-map__home-two">
+            <iframe title="template google map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4562.753041141002!2d-118.80123790098536!3d34.152323469614075!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80e82469c2162619%3A0xba03efb7998eef6d!2sCostco+Wholesale!5e0!3m2!1sbn!2sbd!4v1562518641290!5m2!1sbn!2sbd" class="map__home-two" allowfullscreen></iframe>
+        </div><!-- /.google-map -->
+{% endblock %}

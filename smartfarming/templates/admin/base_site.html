@@ -1,0 +1,96 @@
+﻿{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+:root{--g1:#1b5e20;--g2:#2e7d32;--g3:#43a047;--pale:#e8f5e9;--border:#c8e6c9;}
+
+#header{background:linear-gradient(135deg,var(--g1),var(--g2))!important;color:#fff;padding-bottom:0!important;}
+#header a:link,#header a:visited{color:#fff;}
+#branding h1,#branding h1 a{color:#fff!important;font-weight:800;}
+
+/* Panel switcher row */
+#kisan-panels{
+  display:flex;gap:6px;padding:5px 16px 6px;
+  background:rgba(0,0,0,.2);
+  border-top:1px solid rgba(255,255,255,.12);
+}
+#kisan-panels a{
+  padding:3px 14px;border-radius:20px;font-size:12px;font-weight:700;
+  text-decoration:none;color:rgba(255,255,255,.8);
+  border:1px solid rgba(255,255,255,.25);transition:.15s;
+}
+#kisan-panels a:hover,#kisan-panels a.kp-active{
+  background:rgba(255,255,255,.22);color:#fff;
+  border-color:rgba(255,255,255,.6);
+}
+
+#nav-sidebar{background:#1a3a1a;}
+#nav-sidebar .module th{background:var(--g1);color:#fff;}
+#nav-sidebar a{color:#a5d6a7!important;}
+#nav-sidebar a:hover{color:#fff!important;}
+.toggle-nav-sidebar{background:var(--g2)!important;color:#fff!important;}
+
+#content{background:#f4fef4;}
+#content h1{color:var(--g1);}
+.breadcrumbs{background:var(--pale);border-bottom:1px solid var(--border);}
+.breadcrumbs a{color:var(--g2);}
+
+.module h2,.module caption{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;}
+.module{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;}
+#result_list thead th{background:var(--pale);color:var(--g1);border-bottom:2px solid var(--border);}
+#result_list thead th a{color:var(--g1);}
+#result_list tbody tr:hover td{background:#f0fff0;}
+tr.selected td{background:#e8f5e9!important;}
+
+.button,.submit-row input,.submit-row a.closelink,
+input[type=submit],a.button{
+  background:linear-gradient(135deg,var(--g2),var(--g3))!important;
+  border:none!important;color:#fff!important;border-radius:6px!important;
+  font-weight:600!important;padding:6px 14px!important;
+}
+.button:hover,input[type=submit]:hover{background:var(--g1)!important;}
+.button.default{background:var(--g1)!important;}
+a.deletelink{background:linear-gradient(135deg,#c62828,#ef5350)!important;}
+
+#changelist-filter{background:#fff;border-left:1px solid var(--border);}
+#changelist-filter h2{background:linear-gradient(135deg,var(--g1),var(--g2));color:#fff;}
+#changelist-filter h3{color:var(--g1);font-weight:700;}
+#changelist-filter a{color:var(--g2);}
+#changelist-filter li.selected a{background:var(--g2);color:#fff;border-radius:4px;padding:1px 6px;}
+
+.form-row{border-bottom:1px solid var(--border);}
+input:focus,select:focus,textarea:focus{border-color:var(--g2)!important;outline:none;box-shadow:0 0 0 2px rgba(46,125,50,.15)!important;}
+.submit-row{background:var(--pale);border-top:1px solid var(--border);}
+.paginator a{color:var(--g2);}
+.paginator .this-page{background:var(--g2);color:#fff;border-radius:4px;padding:2px 8px;}
+</style>
+{% endblock %}
+
+{% block branding %}
+{{ block.super }}
+<div id="kisan-panels">
+  <a href="/admin/" {% if request.resolver_match.namespace == "farming_admin" %}class="kp-active"{% endif %}>🌾 Farming Admin</a>
+  <a href="/govt-admin/" {% if request.resolver_match.namespace == "govt_admin" %}class="kp-active"{% endif %}>🏛️ Govt Admin</a>
+  <a href="/buyer-admin/" {% if request.resolver_match.namespace == "buyer_admin" %}class="kp-active"{% endif %}>🛒 Buyer Admin</a>
+</div>
+{% endblock %}
+
+{% block usertools %}
+{% if request.resolver_match.namespace == "farming_admin" %}
+{% load i18n %}
+<style>
+.msg-bell{position:relative;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 12px;color:#fff;text-decoration:none;font-size:.82rem;font-weight:700;margin-right:12px;transition:.15s;}
+.msg-bell:hover{background:rgba(255,255,255,.25);color:#fff;}
+.msg-bell .mbadge{background:#e53935;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;}
+</style>
+<a href="/admin/kisanapp/contactmessage/?is_read__exact=0" class="msg-bell">
+  📬
+  {% if unread_messages_count and unread_messages_count > 0 %}
+  <span class="mbadge">{{ unread_messages_count }}</span>
+  {% endif %}
+  Messages
+</a>
+{% endif %}
+{{ block.super }}
+{% endblock %}

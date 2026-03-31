@@ -1,0 +1,571 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Crop Marketplace - Agrikon{% endblock %}
+
+{% block styles %}
+{{ block.super }}
+<style>
+  .mp-wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px 60px; }
+
+  /* ── Top bar ── */
+  .mp-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 14px; margin: 36px 0 28px;
+  }
+  .mp-topbar h1 { font-size: 2rem; font-weight: 700; color: #1a4f1a; display: flex; align-items: center; gap: 10px; }
+  .mp-topbar h1 i { color: #4caf50; }
+
+  .btn-sell {
+    background: linear-gradient(145deg, #2e7d32, #4caf50);
+    color: white; border: none; padding: 13px 28px; border-radius: 50px;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    box-shadow: 0 6px 18px -4px #1a5c1a; transition: 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-sell:hover { background: linear-gradient(145deg,#1f6823,#3e9e41); transform: translateY(-2px); }
+
+  /* ── Filter bar ── */
+  .filter-bar {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px;
+    background: #f4fef0; border-radius: 14px; padding: 14px 18px;
+    border: 1px solid #c8e6c9;
+  }
+  .filter-bar input[type="text"] {
+    flex: 1; min-width: 200px; border: 1.5px solid #b2dba0; border-radius: 30px;
+    padding: 10px 18px; font-size: 0.95rem; outline: none; background: white;
+  }
+  .filter-bar input:focus { border-color: #2e7d32; box-shadow: 0 0 0 3px rgba(46,125,50,0.1); }
+  .filter-btn {
+    background: white; border: 1.5px solid #b2dba0; border-radius: 30px;
+    padding: 9px 18px; font-size: 0.9rem; font-weight: 600; color: #2e7d32;
+    cursor: pointer; transition: 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: #2e7d32; color: white; border-color: #2e7d32; }
+
+  /* ── Tabs ── */
+  .mp-tabs {
+    display: flex; gap: 0; margin-bottom: 28px;
+    border-bottom: 2px solid #c8e6c9;
+  }
+  .mp-tab {
+    padding: 12px 28px; border: none; background: transparent;
+    font-size: 1rem; font-weight: 600; color: #666; cursor: pointer;
+    border-bottom: 3px solid transparent; margin-bottom: -2px; transition: 0.15s;
+  }
+  .mp-tab.active { color: #2e7d32; border-bottom-color: #2e7d32; }
+  .mp-tab i { margin-right: 6px; }
+
+  /* ── Grid ── */
+  .crop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 24px;
+  }
+
+  /* ── Crop Card ── */
+  .crop-card {
+    background: white; border-radius: 18px; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,40,0,0.08); border: 1px solid #e0f0e0;
+    transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column;
+  }
+  .crop-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,40,0,0.14); }
+
+  .card-img-wrap {
+    height: 190px; position: relative; overflow: hidden; background: #e8f5e9;
+  }
+  .card-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card-img-placeholder {
+    width: 100%; height: 100%; display: flex; align-items: center;
+    justify-content: center; font-size: 4rem; color: #a5d6a7;
+  }
+  .card-badge {
+    position: absolute; top: 12px; left: 12px;
+    background: rgba(46,125,50,0.9); color: white;
+    padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700;
+    backdrop-filter: blur(4px);
+  }
+  .card-img-count {
+    position: absolute; bottom: 10px; right: 10px;
+    background: rgba(0,0,0,0.55); color: white;
+    padding: 3px 10px; border-radius: 20px; font-size: 0.78rem;
+  }
+
+  .card-body { padding: 16px 18px; flex: 1; display: flex; flex-direction: column; }
+  .card-title { font-size: 1.2rem; font-weight: 700; color: #1a4f1a; margin-bottom: 6px; }
+  .card-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .meta-chip {
+    background: #f0faf0; border: 1px solid #c8e6c9; border-radius: 20px;
+    padding: 3px 12px; font-size: 0.82rem; color: #2e7d32; font-weight: 500;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .card-price {
+    font-size: 1.5rem; font-weight: 800; color: #2e7d32;
+    margin-bottom: 4px;
+  }
+  .card-price span { font-size: 0.85rem; font-weight: 500; color: #888; }
+
+  .card-seller {
+    font-size: 0.82rem; color: #666; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .card-actions { display: flex; gap: 8px; margin-top: auto; }
+  .btn-buy {
+    flex: 1; background: linear-gradient(145deg,#1565c0,#1e88e5);
+    color: white; border: none; padding: 10px; border-radius: 10px;
+    font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s;
+  }
+  .btn-buy:hover { background: linear-gradient(145deg,#0d47a1,#1565c0); }
+  .btn-contact {
+    flex: 1; background: linear-gradient(145deg,#2e7d32,#4caf50);
+    color: white; border: none; padding: 10px; border-radius: 10px;
+    font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s;
+  }
+  .btn-contact:hover { background: linear-gradient(145deg,#1f6823,#3e9e41); }
+  .btn-media {
+    background: #f0faf0; border: 1.5px solid #c8e6c9; color: #2e7d32;
+    padding: 10px 14px; border-radius: 10px; cursor: pointer; transition: 0.2s;
+    font-size: 0.9rem; font-weight: 600;
+  }
+  .btn-media:hover { background: #e8f5e9; }
+
+  /* ── Empty state ── */
+  .empty-state {
+    grid-column: 1/-1; text-align: center; padding: 60px 20px;
+    background: #f9fff9; border-radius: 18px; border: 2px dashed #c8e6c9;
+  }
+  .empty-state i { font-size: 3.5rem; color: #c8e6c9; display: block; margin-bottom: 14px; }
+  .empty-state p { color: #888; font-size: 1.1rem; }
+
+  /* ── Sell Modal ── */
+  .modal-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 9999;
+    overflow-y: auto; padding: 20px;
+  }
+  .modal-bg.open { display: flex; align-items: flex-start; justify-content: center; }
+  .modal-box {
+    background: white; border-radius: 20px; width: 100%; max-width: 620px;
+    padding: 32px; margin: auto; position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px; background: none;
+    border: none; font-size: 1.4rem; cursor: pointer; color: #888;
+  }
+  .modal-title { font-size: 1.5rem; font-weight: 700; color: #1a4f1a; margin-bottom: 22px;
+    display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #e8f5e9; padding-bottom: 14px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 0.88rem; font-weight: 600; color: #2e7d32; margin-bottom: 6px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 11px 16px; border: 1.5px solid #c8e6c9;
+    border-radius: 10px; font-size: 0.97rem; outline: none; background: #f9fdf9;
+    transition: border 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: #2e7d32; box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-note { font-size: 0.8rem; color: #888; margin-top: 4px; }
+  .modal-actions { display: flex; gap: 12px; margin-top: 22px; }
+  .btn-submit {
+    flex: 1; background: linear-gradient(145deg,#2e7d32,#4caf50);
+    color: white; border: none; padding: 13px; border-radius: 10px;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+  }
+  .btn-submit:hover { background: linear-gradient(145deg,#1f6823,#3e9e41); }
+  .btn-cancel-m {
+    background: #f5f5f5; border: none; padding: 13px 24px;
+    border-radius: 10px; font-weight: 600; cursor: pointer; color: #555;
+  }
+
+  /* ── Media lightbox ── */
+  .lightbox-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85); z-index: 10000;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .lightbox-bg.open { display: flex; }
+  .lightbox-box {
+    background: white; border-radius: 18px; padding: 24px;
+    max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto;
+  }
+  .lightbox-grid { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; justify-content: center; }
+  .lightbox-grid img { width: 180px; height: 160px; object-fit: cover; border-radius: 12px; border: 2px solid #c8e6c9; }
+  .lightbox-grid video { width: 100%; border-radius: 12px; margin-top: 8px; }
+  .btn-close-lb {
+    display: block; margin: 0 auto; background: #2e7d32; color: white;
+    border: none; padding: 10px 28px; border-radius: 30px; font-weight: 600; cursor: pointer;
+  }
+
+  /* ── Contact modal ── */
+  .contact-box {
+    background: white; border-radius: 18px; padding: 28px;
+    max-width: 420px; width: 100%; text-align: center;
+  }
+  .contact-box h3 { font-size: 1.3rem; color: #1a4f1a; margin-bottom: 16px; }
+  .contact-info { background: #f0faf0; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .contact-info p { font-size: 1rem; color: #2e7d32; font-weight: 600; margin: 6px 0; }
+
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .mp-topbar h1 { font-size: 1.5rem; }
+    .mp-tab { padding: 10px 16px; font-size: 0.9rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/_slider_base.html' with slider_id="crops_marketplace" slider_title="Crop Marketplace" slider_crumb="Marketplace" slide1="https://images.unsplash.com/photo-1471193945509-9ad0617afabf?q=80&w=1470" slide2="https://images.unsplash.com/photo-1518977676601-b53f82aba655?q=80&w=1470" slide3="https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=1470" slide4="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?q=80&w=1470" %}
+
+<div class="mp-wrap">
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show" role="alert" style="border-radius:10px;margin-top:16px;">
+        {{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <!-- Top bar -->
+  <div class="mp-topbar">
+    <h1><i class="fas fa-store"></i> Buy & Sell Crops</h1>
+    <button class="btn-sell" id="openSellModal">
+      <i class="fas fa-plus-circle"></i> Sell Your Crop
+    </button>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <input type="text" id="searchInput" placeholder="Search crop name...">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="Vegetable">Vegetable</button>
+    <button class="filter-btn" data-filter="Fruit">Fruit</button>
+    <button class="filter-btn" data-filter="Grain">Grain</button>
+    <button class="filter-btn" data-filter="Pulse">Pulse</button>
+    <button class="filter-btn" data-filter="Other">Other</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="mp-tabs">
+    <button class="mp-tab active" data-tab="buy"><i class="fas fa-shopping-basket"></i> Buy Crops</button>
+    <button class="mp-tab" data-tab="my"><i class="fas fa-tractor"></i> My Listings</button>
+  </div>
+
+  <!-- Crop Grid -->
+  <div class="crop-grid" id="cropGrid">
+    {% for crop in crops %}
+    <div class="crop-card"
+         data-type="{{ crop.get_type_display }}"
+         data-name="{{ crop.name|lower }}"
+         data-farmer="{{ crop.farmer.id }}"
+         data-images="[{% for img in crop.images.all %}&quot;{{ img.image.url }}&quot;{% if not forloop.last %},{% endif %}{% endfor %}]"
+         data-video="{% if crop.video %}{{ crop.video.url }}{% endif %}"
+         data-mobile="{{ crop.farmer.mobile }}"
+         data-seller="{{ crop.farmer.full_name }}">
+      <div class="card-img-wrap">
+        {% with first_img=crop.images.all|first %}
+        {% if first_img %}
+          <img src="{{ first_img.image.url }}" alt="{{ crop.name }}">
+        {% else %}
+          <div class="card-img-placeholder"><i class="fas fa-seedling"></i></div>
+        {% endif %}
+        {% endwith %}
+        <span class="card-badge">{{ crop.get_type_display }}</span>
+        {% with img_count=crop.images.all|length %}
+        {% if img_count > 1 %}
+          <span class="card-img-count"><i class="fas fa-images"></i> {{ img_count }}</span>
+        {% endif %}
+        {% endwith %}
+      </div>
+      <div class="card-body">
+        <div class="card-title">{{ crop.name }}</div>
+        <div class="card-meta">
+          <span class="meta-chip"><i class="fas fa-weight-hanging"></i> {{ crop.quantity }} {{ crop.get_unit_display }}</span>
+          <span class="meta-chip"><i class="fas fa-calendar-alt"></i> {{ crop.created_at|date:"d M Y" }}</span>
+        </div>
+        <div class="card-price">₹{{ crop.price }} <span>/ {{ crop.get_unit_display }}</span></div>
+        <div class="card-seller"><i class="fas fa-user-circle"></i> {{ crop.farmer.full_name }} · {{ crop.farmer.village }}, {{ crop.farmer.state }}</div>
+        <div class="card-actions">
+          {% if request.session.farmer_id == crop.farmer.id %}
+          {# Own listing — show Delete button #}
+          <a href="{% url 'delete_crop_listing' crop.id %}"
+             onclick="return confirm('Delete this listing?')"
+             style="flex:1;background:linear-gradient(135deg,#c62828,#ef5350);color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <i class="fas fa-trash-alt"></i> Delete Listing
+          </a>
+          {% else %}
+          {% if request.session.farmer_id %}
+          <button class="btn-buy" onclick="openBuyModal({{ crop.id }},'{{ crop.name|escapejs }}','{{ crop.quantity }} {{ crop.get_unit_display }}','{{ crop.price }}','{{ crop.get_unit_display }}')">
+            <i class="fas fa-shopping-cart me-1"></i> Buy
+          </button>
+          {% endif %}
+          <button class="btn-contact" onclick="showContact('{{ crop.farmer.full_name|escapejs }}','{{ crop.farmer.mobile }}','{{ crop.farmer.village|escapejs }}','{{ crop.farmer.state|escapejs }}')">
+            <i class="fas fa-phone-alt me-1"></i> Contact
+          </button>
+          {% endif %}
+          {% if crop.images.all|length or crop.video %}
+          <button class="btn-media view-media-btn"><i class="fas fa-images"></i></button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+      <i class="fas fa-store-slash"></i>
+      <p>No crops listed yet. Be the first to sell!</p>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<!-- ── SELL MODAL ── -->
+<div class="modal-bg" id="sellModal">
+  <div class="modal-box">
+    <button class="modal-close" id="closeSellModal">&times;</button>
+    <div class="modal-title"><i class="fas fa-leaf"></i> List Your Crop for Sale</div>
+    <form method="POST" action="{% url 'crops_marketplace' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group">
+          <label><i class="fas fa-tag me-1"></i>Crop Name</label>
+          <input type="text" name="name" placeholder="e.g. Organic Tomatoes" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-list me-1"></i>Crop Type</label>
+          <select name="type" required>
+            <option value="">-- Select --</option>
+            <option value="Vegetable">Vegetable</option>
+            <option value="Fruit">Fruit</option>
+            <option value="Grain">Grain</option>
+            <option value="Pulse">Pulse</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label><i class="fas fa-weight-hanging me-1"></i>Quantity</label>
+          <input type="number" name="quantity" min="0.1" step="0.1" placeholder="Amount" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-balance-scale me-1"></i>Unit</label>
+          <select name="unit">
+            <option value="kg">kg</option>
+            <option value="quintal">Quintal</option>
+            <option value="ton">Ton</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-rupee-sign me-1"></i>Price (₹ per unit)</label>
+        <input type="number" name="price" min="1" placeholder="Expected price" required>
+        <div class="form-note">Price can be negotiated with buyer.</div>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-images me-1"></i>Crop Photos (max 5)</label>
+        <input type="file" name="images" accept="image/*" multiple>
+        <div class="form-note">Upload clear photos of your crop.</div>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-video me-1"></i>Crop Video (optional)</label>
+        <input type="file" name="video" accept="video/*">
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-submit"><i class="fas fa-check me-1"></i>Submit Listing</button>
+        <button type="button" class="btn-cancel-m" id="cancelSell">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── MEDIA LIGHTBOX ── -->
+<div class="lightbox-bg" id="lightbox">
+  <div class="lightbox-box">
+    <h3 style="color:#1a4f1a;margin-bottom:4px;"><i class="fas fa-images me-2"></i>Crop Media</h3>
+    <div id="lightboxContent" class="lightbox-grid"></div>
+    <button class="btn-close-lb" id="closeLightbox">Close</button>
+  </div>
+</div>
+
+<!-- ── CONTACT MODAL ── -->
+<div class="modal-bg" id="contactModal">
+  <div class="contact-box">
+    <h3><i class="fas fa-phone-alt me-2" style="color:#4caf50;"></i>Seller Contact</h3>
+    <div class="contact-info">
+      <p id="cName"></p>
+      <p id="cMobile"></p>
+      <p id="cLocation"></p>
+    </div>
+    <button class="btn-submit" onclick="document.getElementById('contactModal').classList.remove('open')">Close</button>
+  </div>
+</div>
+
+<script>
+  // ── Sell modal ──
+  document.getElementById('openSellModal').addEventListener('click', () => {
+    document.getElementById('sellModal').classList.add('open');
+  });
+  ['closeSellModal','cancelSell'].forEach(id => {
+    document.getElementById(id).addEventListener('click', () => {
+      document.getElementById('sellModal').classList.remove('open');
+    });
+  });
+  document.getElementById('sellModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+
+  // ── Tabs ──
+  const tabBtns = document.querySelectorAll('.mp-tab');
+  const currentFarmerId = "{{ request.session.farmer_id|default:'' }}";
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const tab = this.dataset.tab;
+      document.querySelectorAll('.crop-card').forEach(card => {
+        if (tab === 'my') {
+          card.style.display = card.dataset.farmer === currentFarmerId ? '' : 'none';
+        } else {
+          card.style.display = '';
+        }
+      });
+      applyFilter();
+    });
+  });
+
+  // ── Filter ──
+  let activeFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      activeFilter = this.dataset.filter;
+      applyFilter();
+    });
+  });
+
+  document.getElementById('searchInput').addEventListener('input', applyFilter);
+
+  function applyFilter() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const activeTab = document.querySelector('.mp-tab.active').dataset.tab;
+    document.querySelectorAll('.crop-card').forEach(card => {
+      const typeMatch = activeFilter === 'all' || card.dataset.type === activeFilter;
+      const nameMatch = card.dataset.name.includes(q);
+      const tabMatch = activeTab === 'buy' || card.dataset.farmer === currentFarmerId;
+      card.style.display = (typeMatch && nameMatch && tabMatch) ? '' : 'none';
+    });
+  }
+
+  // ── Media lightbox ──
+  document.querySelectorAll('.view-media-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const card = this.closest('.crop-card');
+      const content = document.getElementById('lightboxContent');
+      content.innerHTML = '';
+      let images = [];
+      try { images = JSON.parse(card.dataset.images); } catch(e) {}
+      images.forEach(src => {
+        const img = document.createElement('img');
+        img.src = src; content.appendChild(img);
+      });
+      if (card.dataset.video) {
+        const v = document.createElement('video');
+        v.src = card.dataset.video; v.controls = true;
+        v.style.width = '100%'; content.appendChild(v);
+      }
+      document.getElementById('lightbox').classList.add('open');
+    });
+  });
+  document.getElementById('closeLightbox').addEventListener('click', () => {
+    document.getElementById('lightbox').classList.remove('open');
+  });
+  document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+
+  // ── Contact modal ──
+  function showContact(name, mobile, village, state) {
+    document.getElementById('cName').innerHTML = '<i class="fas fa-user me-2"></i>' + name;
+    document.getElementById('cMobile').innerHTML = '<i class="fas fa-phone me-2"></i>+91 ' + mobile;
+    document.getElementById('cLocation').innerHTML = '<i class="fas fa-map-marker-alt me-2"></i>' + village + ', ' + state;
+    document.getElementById('contactModal').classList.add('open');
+  }
+  document.getElementById('contactModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+</script>
+
+<!-- ── BUY REQUEST MODAL ── -->
+<div class="modal-bg" id="buyModal">
+  <div class="modal-box" style="max-width:480px;">
+    <button class="modal-close" onclick="document.getElementById('buyModal').classList.remove('open')">&times;</button>
+    <div class="modal-title"><i class="fas fa-shopping-cart"></i> Send Buy Request</div>
+    <div id="buyModalInfo" style="background:#f0faf0;border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:0.95rem;color:#1a4f1a;"></div>
+    <form id="buyForm">
+      {% csrf_token %}
+      <div class="form-group">
+        <label><i class="fas fa-weight-hanging me-1"></i>Quantity you want to buy</label>
+        <input type="number" id="buyQty" name="quantity" min="0.1" step="0.1" placeholder="Enter quantity" required>
+      </div>
+      <div class="form-group">
+        <label><i class="fas fa-comment me-1"></i>Message to seller (optional)</label>
+        <textarea id="buyMsg" name="message" rows="3" placeholder="e.g. I need fresh delivery by next week..."></textarea>
+      </div>
+      <div id="buyResult" style="display:none;padding:10px 14px;border-radius:8px;margin-bottom:12px;font-weight:600;"></div>
+      <div class="modal-actions">
+        <button type="submit" class="btn-submit" id="buySubmitBtn"><i class="fas fa-paper-plane me-1"></i>Send Request</button>
+        <button type="button" class="btn-cancel-m" onclick="document.getElementById('buyModal').classList.remove('open')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  let activeCropId = null;
+
+  function openBuyModal(cropId, name, qty, price, unit) {
+    activeCropId = cropId;
+    document.getElementById('buyModalInfo').innerHTML =
+      '<strong>' + name + '</strong> &nbsp;|&nbsp; Available: ' + qty +
+      ' &nbsp;|&nbsp; ₹' + price + ' / ' + unit;
+    document.getElementById('buyQty').value = '';
+    document.getElementById('buyMsg').value = '';
+    document.getElementById('buyResult').style.display = 'none';
+    document.getElementById('buyModal').classList.add('open');
+  }
+
+  document.getElementById('buyModal').addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+
+  document.getElementById('buyForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('buySubmitBtn');
+    btn.disabled = true; btn.textContent = 'Sending...';
+    const formData = new FormData(this);
+    fetch('/buy-request/' + activeCropId + '/', {
+      method: 'POST',
+      headers: {'X-CSRFToken': formData.get('csrfmiddlewaretoken')},
+      body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+      const res = document.getElementById('buyResult');
+      res.style.display = 'block';
+      res.style.background = data.success ? '#e8f5e9' : '#ffebee';
+      res.style.color = data.success ? '#2e7d32' : '#c62828';
+      res.textContent = data.message;
+      if (data.success) {
+        setTimeout(() => document.getElementById('buyModal').classList.remove('open'), 1800);
+      }
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Send Request';
+    });
+  });
+</script>
+{% endblock %}

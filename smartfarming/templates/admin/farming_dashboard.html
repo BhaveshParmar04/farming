@@ -1,0 +1,125 @@
+﻿{% extends "admin/base_site.html" %}
+{% load i18n static %}
+{% block title %}Farming Admin Dashboard{% endblock %}
+{% block content_title %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<style>
+.kd-hero{background:linear-gradient(135deg,#1b5e20,#2e7d32,#43a047);color:#fff;padding:40px 36px 36px;margin:-20px -15px 28px;position:relative;overflow:hidden;}
+.kd-hero h1{font-size:2rem;font-weight:900;margin:0 0 6px;line-height:1.2;color:#fff !important;}
+.kd-hero p{opacity:.85;font-size:.92rem;margin:0 0 18px;}
+.kd-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 14px;font-size:.74rem;font-weight:700;margin-bottom:12px;letter-spacing:.4px;}
+.kd-pills{display:flex;gap:8px;flex-wrap:wrap;}
+.kd-pill{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:.78rem;font-weight:700;}
+.kd-hero-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;position:relative;z-index:1;}
+.kd-hero-right{font-size:4rem;animation:kdFloat 3s ease-in-out infinite;flex-shrink:0;}
+@keyframes kdFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.kd-bg1{position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.05);top:-80px;right:-60px;}
+.kd-bg2{position:absolute;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.04);bottom:-50px;left:35%;}
+
+.kd-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-bottom:24px;}
+.kd-stat{background:#fff;border-radius:12px;padding:18px 14px;border:1px solid #c8e6c9;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center;position:relative;overflow:hidden;transition:.2s;}
+.kd-stat:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,60,0,.12);}
+.kd-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#2e7d32,#4caf50);}
+.kd-stat .si{font-size:1.6rem;margin-bottom:4px;}
+.kd-stat .sn{font-size:1.8rem;font-weight:800;color:#2e7d32;line-height:1;margin-bottom:4px;}
+.kd-stat .sl{font-size:.7rem;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:.4px;}
+
+.kd-quick{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:24px;}
+.kd-ql{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #c8e6c9;border-radius:10px;padding:12px 16px;text-decoration:none;color:#1b5e20;font-weight:600;font-size:.86rem;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.04);}
+.kd-ql:hover{background:#e8f5e9;transform:translateY(-2px);color:#1b5e20;border-color:#2e7d32;}
+.kd-ql .qi{font-size:1.3rem;}
+
+.kd-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.kd-card{background:#fff;border-radius:12px;border:1px solid #c8e6c9;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;}
+.kd-ch{background:#e8f5e9;padding:12px 18px;display:flex;align-items:center;border-bottom:1px solid #c8e6c9;}
+.kd-ch h2{margin:0;font-size:.9rem;color:#1b5e20;font-weight:700;flex:1;}
+.kd-ch a{font-size:.76rem;color:#2e7d32;font-weight:600;text-decoration:none;}
+.kd-cb{padding:12px 18px;}
+.kd-li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0f0f0;}
+.kd-li:last-child{border-bottom:none;}
+.kd-av{width:32px;height:32px;border-radius:8px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;font-weight:700;color:#2e7d32;font-size:.8rem;flex-shrink:0;}
+.kd-li-info{flex:1;}
+.kd-li-info .nm{font-size:.84rem;font-weight:600;color:#1b3a1b;}
+.kd-li-info .sb{font-size:.72rem;color:#888;}
+.kb{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.68rem;font-weight:700;color:#fff;}
+.kb-a{background:#27ae60;}.kb-i{background:#9e9e9e;}.kb-v{background:#1565c0;}
+@media(max-width:768px){.kd-grid{grid-template-columns:1fr;}.kd-hero-right{display:none;}}
+</style>
+
+<div class="kd-hero">
+  <div class="kd-bg1"></div>
+  <div class="kd-bg2"></div>
+  <div class="kd-hero-inner">
+    <div>
+      <div class="kd-badge">🌾 Farming Portal</div>
+      <h1 style="color:#fff;">Farmer<br>Admin Panel</h1>
+      <p>Manage farmers, crop listings, farming tools,<br>and monitor all activities in real-time.</p>
+      <div class="kd-pills">
+        <span class="kd-pill">🧑‍🌾 {{ total_farmers }} Farmers</span>
+        <span class="kd-pill">🌽 {{ total_crops }} Crops</span>
+        <span class="kd-pill">🔧 {{ total_tools }} Tools</span>
+      </div>
+    </div>
+    <div class="kd-hero-right">🌾</div>
+  </div>
+</div>
+
+<div class="kd-stats">
+  {% if unread_messages %}
+  <div style="grid-column:1/-1;background:linear-gradient(135deg,#e65100,#ff6d00);color:#fff;border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;margin-bottom:4px;">
+    <span style="font-size:1.8rem;">📬</span>
+    <div style="flex:1;">
+      <div style="font-weight:800;font-size:1rem;">{{ unread_messages }} New Message{{ unread_messages|pluralize }}</div>
+      {% for msg in recent_messages %}
+      <div style="font-size:.82rem;opacity:.9;margin-top:2px;">{{ msg.name }} — {{ msg.message|truncatechars:50 }}</div>
+      {% endfor %}
+    </div>
+    <a href="/admin/kisanapp/contactmessage/" style="background:rgba(255,255,255,.2);color:#fff;padding:8px 16px;border-radius:20px;font-size:.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">View All →</a>
+  </div>
+  {% endif %}
+  <div class="kd-stat"><div class="si">🧑‍🌾</div><div class="sn">{{ total_farmers }}</div><div class="sl">Farmers</div></div>
+  <div class="kd-stat"><div class="si">🌽</div><div class="sn">{{ total_crops }}</div><div class="sl">Crop Listings</div></div>
+  <div class="kd-stat"><div class="si">🔧</div><div class="sn">{{ total_tools }}</div><div class="sl">Farming Tools</div></div>
+  <div class="kd-stat"><div class="si">📋</div><div class="sn">{{ total_schemes }}</div><div class="sl">Govt Schemes</div></div>
+  <div class="kd-stat"><div class="si">📝</div><div class="sn">{{ total_applications }}</div><div class="sl">Applications</div></div>
+  <div class="kd-stat"><div class="si">🔔</div><div class="sn">{{ total_notifications }}</div><div class="sl">Notifications</div></div>
+</div>
+
+<div class="kd-quick">
+  <a href="/admin/kisanapp/farmerregistration/" class="kd-ql"><span class="qi">🧑‍🌾</span><div><div>Farmers</div><div style="font-size:.7rem;color:#888;font-weight:400">View &amp; manage</div></div></a>
+  <a href="/admin/kisanapp/croplisting/" class="kd-ql"><span class="qi">🌽</span><div><div>Crop Listings</div><div style="font-size:.7rem;color:#888;font-weight:400">Crop marketplace</div></div></a>
+  <a href="/admin/kisanapp/farmingtool/" class="kd-ql"><span class="qi">🔧</span><div><div>Farming Tools</div><div style="font-size:.7rem;color:#888;font-weight:400">Tool listings</div></div></a>
+  <a href="/admin/kisanapp/farmerland/" class="kd-ql"><span class="qi">🗺️</span><div><div>Farmer Lands</div><div style="font-size:.7rem;color:#888;font-weight:400">Land records</div></div></a>
+  <a href="/admin/kisanapp/cropactivity/" class="kd-ql"><span class="qi">📅</span><div><div>Crop Activities</div><div style="font-size:.7rem;color:#888;font-weight:400">Schedules</div></div></a>
+  <a href="/admin/kisanapp/govtscheme/" class="kd-ql"><span class="qi">🏛️</span><div><div>Govt Schemes</div><div style="font-size:.7rem;color:#888;font-weight:400">Add / edit</div></div></a>
+</div>
+
+<div class="kd-grid">
+  <div class="kd-card">
+    <div class="kd-ch"><h2>🧑‍🌾 Recent Farmers</h2><a href="/admin/kisanapp/farmerregistration/">View All →</a></div>
+    <div class="kd-cb">
+      {% for farmer in recent_farmers %}
+      <div class="kd-li">
+        <div class="kd-av">{{ farmer.full_name|first }}</div>
+        <div class="kd-li-info"><div class="nm">{{ farmer.full_name }}</div><div class="sb">{{ farmer.mobile }} · {{ farmer.district }}, {{ farmer.state }}</div></div>
+        {% if farmer.mobile_verified %}<span class="kb kb-v">Verified</span>{% else %}<span class="kb kb-i">Unverified</span>{% endif %}
+      </div>
+      {% empty %}<p style="text-align:center;color:#aaa;padding:16px 0;font-size:.85rem;">No farmers yet.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="kd-card">
+    <div class="kd-ch"><h2>🌽 Recent Crop Listings</h2><a href="/admin/kisanapp/croplisting/">View All →</a></div>
+    <div class="kd-cb">
+      {% for crop in recent_crops %}
+      <div class="kd-li">
+        <div class="kd-av">{{ crop.name|first }}</div>
+        <div class="kd-li-info"><div class="nm">{{ crop.name }}</div><div class="sb">{{ crop.farmer.full_name }} · ₹{{ crop.price }}</div></div>
+        {% if crop.is_active %}<span class="kb kb-a">Active</span>{% else %}<span class="kb kb-i">Inactive</span>{% endif %}
+      </div>
+      {% empty %}<p style="text-align:center;color:#aaa;padding:16px 0;font-size:.85rem;">No crops yet.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

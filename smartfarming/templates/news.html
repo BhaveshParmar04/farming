@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Agriculture News - Agrikon{% endblock %}
+
+{% block styles %}{{ block.super }}
+<style>
+/* Equal height news cards */
+.blog-grid .row { display:flex; flex-wrap:wrap; }
+.blog-grid .col-md-6.col-lg-4 { display:flex; margin-bottom:30px; }
+.blog-card { display:flex; flex-direction:column; height:100%; width:100%; }
+.blog-card__image { flex-shrink:0; overflow:hidden; height:220px; }
+.blog-card__image img { width:100%; height:220px; object-fit:cover; transition:.3s; }
+.blog-card__image img:hover { transform:scale(1.05); }
+.blog-card__content { flex:1; display:flex; flex-direction:column; padding:24px; }
+.blog-card__content h3 { flex:1; }
+.blog-card__content .thm-btn { margin-top:auto; align-self:flex-start; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% include 'includes/_slider_base.html' with slider_id="news" slider_title="Agriculture News" slider_crumb="News" slide1="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1470" slide2="https://images.unsplash.com/photo-1495020689067-958852a7765e?q=80&w=1470" slide3="https://images.unsplash.com/photo-1585829365295-ab7cd400c167?q=80&w=1470" slide4="https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1470" %}
+
+<section class="blog-grid">
+    <div class="container">
+
+        {% if error_message %}
+        <div class="alert alert-danger" style="margin-bottom: 30px;">
+            <strong>Error:</strong> {{ error_message }}
+        </div>
+        {% endif %}
+
+        <div class="row">
+            {% if articles %}
+                {% for article in articles %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="blog-card">
+                        <div class="blog-card__image">
+                            <img src="{% if article.urlToImage %}{{ article.urlToImage }}{% else %}{% static 'assets/images/blog/blog-grid-1.jpg' %}{% endif %}"
+                                 alt="{{ article.title|default:'Agriculture News' }}">
+                            <a href="{% url 'news_details' forloop.counter0 %}"></a>
+                        </div>
+
+                        <div class="blog-card__content">
+                            <div class="blog-card__date">
+                                {% if article.publishedAt %}
+                                    {{ article.publishedAt|slice:":10" }}
+                                {% else %}
+                                    Latest
+                                {% endif %}
+                            </div>
+
+                            <div class="blog-card__meta">
+                                <a href="{% url 'news_details' forloop.counter0 %}">
+                                    <i class="far fa-user-circle"></i>
+                                    {% if article.source.name %}{{ article.source.name }}{% else %}News Source{% endif %}
+                                </a>
+                            </div>
+
+                            <h3>
+                                <a href="{% url 'news_details' forloop.counter0 %}">
+                                    {{ article.title }}
+                                </a>
+                            </h3>
+
+                            <p>
+                                {% if article.description %}
+                                    {{ article.description|truncatechars:120 }}
+                                {% else %}
+                                    Read the latest agriculture update on Agrikon.
+                                {% endif %}
+                            </p>
+
+                            <a href="{% url 'news_details' forloop.counter0 %}" class="thm-btn">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="text-center">
+                        <h3>No agriculture news available right now.</h3>
+                        <p>Please try again later.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

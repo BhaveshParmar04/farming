@@ -1,0 +1,104 @@
+{% load static %}
+<style>
+  .pg-slider-wrap { position:relative; width:100%; height:320px; overflow:hidden; }
+  @media(min-width:768px){ .pg-slider-wrap { height:420px; } }
+  .pg-slide {
+    position:absolute; inset:0;
+    background-size:cover; background-position:center;
+    opacity:0; transition:opacity 1.2s ease-in-out;
+  }
+  .pg-slide.active { opacity:1; }
+  .pg-overlay {
+    position:absolute; inset:0;
+    background:linear-gradient(to bottom, rgba(0,0,0,0.42) 0%, rgba(0,20,0,0.58) 100%);
+  }
+  .pg-content {
+    position:absolute; inset:0; z-index:2;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; color:white; padding:0 20px;
+  }
+  .pg-breadcrumb {
+    display:flex; align-items:center; gap:8px;
+    font-size:0.9rem; opacity:0.85; margin-bottom:14px;
+  }
+  .pg-breadcrumb a { color:white; text-decoration:none; }
+  .pg-breadcrumb a:hover { text-decoration:underline; }
+  .pg-title {
+    font-size:2.4rem; font-weight:800; line-height:1.2;
+    text-shadow:0 2px 12px rgba(0,0,0,0.5); margin:0;
+  }
+  @media(min-width:768px){ .pg-title { font-size:3.2rem; } }
+  .pg-dots {
+    position:absolute; bottom:16px; left:50%; transform:translateX(-50%);
+    z-index:3; display:flex; gap:8px;
+  }
+  .pg-dot {
+    width:10px; height:10px; border-radius:50%;
+    background:rgba(255,255,255,0.4); border:none; cursor:pointer;
+    transition:background 0.3s, transform 0.2s;
+  }
+  .pg-dot.active { background:white; transform:scale(1.3); }
+  .pg-arrow {
+    position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+    background:rgba(0,0,0,0.28); border:2px solid rgba(255,255,255,0.3);
+    color:white; width:40px; height:40px; border-radius:50%;
+    cursor:pointer; font-size:0.95rem;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s;
+  }
+  .pg-arrow:hover { background:rgba(0,0,0,0.55); }
+  .pg-prev { left:14px; }
+  .pg-next { right:14px; }
+</style>
+
+<div class="pg-slider-wrap" id="pgSlider_{{ slider_id }}">
+  {% if slide1 %}<div class="pg-slide active" style="background-image:url('{{ slide1 }}')"><div class="pg-overlay"></div></div>{% endif %}
+  {% if slide2 %}<div class="pg-slide" style="background-image:url('{{ slide2 }}')"><div class="pg-overlay"></div></div>{% endif %}
+  {% if slide3 %}<div class="pg-slide" style="background-image:url('{{ slide3 }}')"><div class="pg-overlay"></div></div>{% endif %}
+  {% if slide4 %}<div class="pg-slide" style="background-image:url('{{ slide4 }}')"><div class="pg-overlay"></div></div>{% endif %}
+
+  <div class="pg-content">
+    <div class="pg-breadcrumb">
+      <a href="{% url 'home' %}"><i class="fas fa-home"></i> Home</a>
+      <span>/</span>
+      <span>{{ slider_crumb }}</span>
+    </div>
+    <h1 class="pg-title">{{ slider_title }}</h1>
+  </div>
+
+  <button class="pg-arrow pg-prev" id="pgPrev_{{ slider_id }}"><i class="fas fa-chevron-left"></i></button>
+  <button class="pg-arrow pg-next" id="pgNext_{{ slider_id }}"><i class="fas fa-chevron-right"></i></button>
+  <div class="pg-dots" id="pgDots_{{ slider_id }}"></div>
+</div>
+
+<script>
+(function(){
+  const wrap = document.getElementById('pgSlider_{{ slider_id }}');
+  if (!wrap) return;
+  const slides = wrap.querySelectorAll('.pg-slide');
+  const dotsWrap = document.getElementById('pgDots_{{ slider_id }}');
+  let cur = 0, timer;
+
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'pg-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => { stopAuto(); goTo(i); startAuto(); });
+    dotsWrap.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[cur].classList.remove('active');
+    dotsWrap.children[cur].classList.remove('active');
+    cur = (n + slides.length) % slides.length;
+    slides[cur].classList.add('active');
+    dotsWrap.children[cur].classList.add('active');
+  }
+  function startAuto() { timer = setInterval(() => goTo(cur + 1), 4500); }
+  function stopAuto()  { clearInterval(timer); }
+
+  document.getElementById('pgPrev_{{ slider_id }}').addEventListener('click', () => { stopAuto(); goTo(cur - 1); startAuto(); });
+  document.getElementById('pgNext_{{ slider_id }}').addEventListener('click', () => { stopAuto(); goTo(cur + 1); startAuto(); });
+
+  startAuto();
+})();
+</script>

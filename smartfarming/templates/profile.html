@@ -1,0 +1,521 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My Profile - Agrikon{% endblock %}
+
+{% block styles %}
+{{ block.super }}
+<style>
+  .profile-wrapper {
+    max-width: 860px;
+    margin: 50px auto;
+    padding: 0 20px 60px;
+  }
+
+  .profile-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+    overflow: hidden;
+  }
+
+  /* ---- Header banner ---- */
+  .profile-header {
+    background: linear-gradient(135deg, #2e7d32, #66bb6a);
+    padding: 40px 36px 30px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+
+  .avatar-circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    color: #fff;
+    border: 3px solid rgba(255,255,255,0.6);
+    flex-shrink: 0;
+  }
+
+  .profile-header-info h2 {
+    color: #fff;
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+
+  .profile-header-info p {
+    color: rgba(255,255,255,0.85);
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .profile-header-info .badge-verified {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.8rem;
+    margin-top: 6px;
+    border: 1px solid rgba(255,255,255,0.4);
+  }
+
+  /* ---- Tab buttons ---- */
+  .profile-tabs {
+    display: flex;
+    border-bottom: 2px solid #e8f5e9;
+    background: #f9fdf9;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+  }
+
+  .tab-btn.active {
+    color: #2e7d32;
+    border-bottom-color: #2e7d32;
+    background: #fff;
+  }
+
+  .tab-btn i { margin-right: 6px; }
+
+  /* ---- Tab content ---- */
+  .tab-content { display: none; padding: 32px 36px; }
+  .tab-content.active { display: block; }
+
+  /* ---- View mode: info rows ---- */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .info-item {
+    background: #f4fef0;
+    border: 1px solid #c8e6c9;
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+
+  .info-item .info-label {
+    font-size: 0.78rem;
+    color: #558b2f;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .info-item .info-value {
+    font-size: 1.05rem;
+    color: #1b3a1b;
+    font-weight: 500;
+  }
+
+  /* ---- Edit mode: form ---- */
+  .edit-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .edit-form .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .edit-form label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2e7d32;
+    margin-bottom: 6px;
+  }
+
+  .edit-form input,
+  .edit-form select {
+    padding: 11px 14px;
+    border: 1.5px solid #c8e6c9;
+    border-radius: 8px;
+    font-size: 0.97rem;
+    background: #f9fdf9;
+    color: #1b3a1b;
+    transition: border 0.2s;
+    outline: none;
+  }
+
+  .edit-form input:focus,
+  .edit-form select:focus {
+    border-color: #2e7d32;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(46,125,50,0.12);
+  }
+
+  .edit-form input[readonly] {
+    background: #eeeeee;
+    color: #777;
+    cursor: not-allowed;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-save {
+    background: #2e7d32;
+    color: #fff;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-save:hover { background: #1b5e20; }
+
+  .btn-cancel {
+    background: #e0e0e0;
+    color: #333;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .btn-cancel:hover { background: #bdbdbd; }
+
+  .btn-logout {
+    background: #ffebee;
+    color: #c62828;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-left: auto;
+  }
+
+  .btn-logout:hover { background: #ffcdd2; }
+
+  /* messages */
+  .alert-success-custom {
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    color: #1b5e20;
+    border-radius: 8px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  /* ---- Lands tab ---- */
+  .lands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+    margin-top: 8px;
+  }
+  .land-card-p {
+    background: #f4fef0;
+    border: 1px solid #c8e6c9;
+    border-radius: 12px;
+    padding: 18px;
+    transition: box-shadow 0.2s;
+  }
+  .land-card-p:hover { box-shadow: 0 6px 18px rgba(0,60,0,0.10); }
+  .land-card-p h4 {
+    color: #1a551a;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    border-bottom: 1px solid #c8e6c9;
+    padding-bottom: 8px;
+  }
+  .land-card-p .ld { font-size: 0.9rem; color: #2a5a2a; margin-bottom: 5px; }
+  .land-card-p .ld i { width: 18px; color: #4caf50; }
+  .soil-tag {
+    display: inline-block;
+    background: #e8f5e0;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #1b4d23;
+    margin-top: 8px;
+  }
+  .soil-params {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #2a5a2a;
+  }
+  .no-lands {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+  }
+  .no-lands i { font-size: 2.5rem; color: #c8e6c9; display: block; margin-bottom: 10px; }
+  .btn-add-land {
+    display: inline-block;
+    margin-top: 14px;
+    background: #2e7d32;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .btn-add-land:hover { background: #1b5e20; color: white; }
+
+  @media (max-width: 640px) {
+    .info-grid,
+    .edit-form .form-row { grid-template-columns: 1fr; }
+    .profile-header { padding: 28px 20px; }
+    .tab-content { padding: 24px 20px; }
+    .btn-logout { margin-left: 0; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-wrapper">
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert-success-custom"><i class="fas fa-check-circle me-2"></i>{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="profile-card">
+
+    <!-- Header -->
+    <div class="profile-header">
+      <div class="avatar-circle">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="profile-header-info">
+        <h2>{{ farmer.full_name }}</h2>
+        <p><i class="fas fa-mobile-alt me-1"></i>{{ farmer.mobile }}</p>
+        {% if farmer.mobile_verified %}
+          <span class="badge-verified"><i class="fas fa-check-circle me-1"></i>Verified Farmer</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="profile-tabs">
+      <button class="tab-btn active" onclick="switchTab('view', this)">
+        <i class="fas fa-eye"></i> View Profile
+      </button>
+      <button class="tab-btn" onclick="switchTab('edit', this)">
+        <i class="fas fa-edit"></i> Edit Profile
+      </button>
+      <button class="tab-btn" onclick="switchTab('lands', this)">
+        <i class="fas fa-map-marked-alt"></i> My Lands
+        <span style="background:#2e7d32;color:white;border-radius:20px;padding:1px 8px;font-size:0.75rem;margin-left:4px;">{{ lands|length }}</span>
+      </button>
+    </div>
+
+    <!-- VIEW TAB -->
+    <div class="tab-content active" id="tab-view">
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label"><i class="fas fa-user me-1"></i>Full Name</div>
+          <div class="info-value">{{ farmer.full_name }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label"><i class="fas fa-mobile-alt me-1"></i>Mobile Number</div>
+          <div class="info-value">{{ farmer.mobile }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label"><i class="fas fa-file-contract me-1"></i>Land Record No.</div>
+          <div class="info-value">{{ farmer.land_record }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label"><i class="fas fa-map-pin me-1"></i>State</div>
+          <div class="info-value">{{ farmer.state }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label"><i class="fas fa-city me-1"></i>District</div>
+          <div class="info-value">{{ farmer.district }}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label"><i class="fas fa-mountain me-1"></i>Taluka / Tehsil</div>
+          <div class="info-value">{{ farmer.taluka }}</div>
+        </div>
+        <div class="info-item" style="grid-column: 1 / -1;">
+          <div class="info-label"><i class="fas fa-home me-1"></i>Village</div>
+          <div class="info-value">{{ farmer.village }}</div>
+        </div>
+      </div>
+
+      <div class="form-actions" style="margin-top: 28px;">
+        <button class="btn-save" onclick="switchTab('edit', document.querySelectorAll('.tab-btn')[1])">
+          <i class="fas fa-edit me-1"></i> Edit Profile
+        </button>
+        <form method="post" action="{% url 'logout' %}" style="margin-left:auto;">
+          {% csrf_token %}
+          <button type="submit" class="btn-logout">
+            <i class="fas fa-sign-out-alt me-1"></i> Logout
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- EDIT TAB -->
+    <div class="tab-content" id="tab-edit">
+      <form method="POST" action="{% url 'update_profile' %}" class="edit-form">
+        {% csrf_token %}
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-user me-1"></i>Full Name</label>
+            <input type="text" name="full_name" value="{{ farmer.full_name }}" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-mobile-alt me-1"></i>Mobile Number</label>
+            <input type="tel" value="{{ farmer.mobile }}" readonly title="Mobile number cannot be changed">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-file-contract me-1"></i>Land Record No. (7/12/8)</label>
+            <input type="text" name="land_record" value="{{ farmer.land_record }}" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-map-pin me-1"></i>State</label>
+            <select name="state" required>
+              {% for code, label in farmer.STATE_CHOICES %}
+                <option value="{{ code }}" {% if farmer.state == code %}selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-city me-1"></i>District</label>
+            <input type="text" name="district" value="{{ farmer.district }}" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-mountain me-1"></i>Taluka / Tehsil</label>
+            <input type="text" name="taluka" value="{{ farmer.taluka }}" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label><i class="fas fa-home me-1"></i>Village</label>
+            <input type="text" name="village" value="{{ farmer.village }}" required>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save">
+            <i class="fas fa-save me-1"></i> Save Changes
+          </button>
+          <button type="button" class="btn-cancel" onclick="switchTab('view', document.querySelectorAll('.tab-btn')[0])">
+            Cancel
+          </button>
+          <form method="post" action="{% url 'logout' %}" style="margin-left:auto;">
+            {% csrf_token %}
+            <button type="submit" class="btn-logout">
+              <i class="fas fa-sign-out-alt me-1"></i> Logout
+            </button>
+          </form>
+        </div>
+      </form>
+    </div>
+
+    <!-- LANDS TAB -->
+    <div class="tab-content" id="tab-lands">
+      {% if not lands %}
+        <div class="no-lands">
+          <i class="fas fa-map-marked-alt"></i>
+          No lands added yet.
+          <br>
+          <a href="{% url 'add_land' %}" class="btn-add-land"><i class="fas fa-plus-circle me-1"></i>Add Land</a>
+        </div>
+      {% else %}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <span style="color:#558b2f;font-weight:600;">{{ lands|length }} land{{ lands|length|pluralize }} registered</span>
+          <a href="{% url 'add_land' %}" class="btn-add-land" style="font-size:0.85rem;padding:8px 18px;"><i class="fas fa-plus-circle me-1"></i>Add More</a>
+        </div>
+        <div class="lands-grid">
+          {% for land in lands %}
+          <div class="land-card-p">
+            <h4><i class="fas fa-map-marker-alt me-1" style="color:#4caf50;"></i>{{ land.land_name }}</h4>
+            <div class="ld"><i class="fas fa-ruler-combined"></i> {{ land.land_area }}</div>
+            <div class="ld"><i class="fas fa-water"></i> {{ land.water_supply }}</div>
+            <div class="ld"><i class="fas fa-calendar-alt"></i> {{ land.created_at|date:"d M Y" }}</div>
+            {% if land.soil_method == 'upload' %}
+              <span class="soil-tag"><i class="fas fa-file-upload me-1"></i>
+                {% if land.soil_report %}Report Uploaded{% else %}No Report{% endif %}
+              </span>
+            {% else %}
+              <span class="soil-tag"><i class="fas fa-database me-1"></i>Manual Soil Data</span>
+              {% if land.ph %}
+              <div class="soil-params">
+                <span>pH: {{ land.ph }}</span>
+                {% if land.ec %}<span>EC: {{ land.ec }}</span>{% endif %}
+                {% if land.organic_carbon %}<span>OC: {{ land.organic_carbon }}%</span>{% endif %}
+                {% if land.nitrogen %}<span>N: {{ land.nitrogen }}</span>{% endif %}
+                {% if land.phosphorus %}<span>P: {{ land.phosphorus }}</span>{% endif %}
+                {% if land.potassium %}<span>K: {{ land.potassium }}</span>{% endif %}
+                {% if land.sulphur %}<span>S: {{ land.sulphur }}</span>{% endif %}
+                {% if land.zinc %}<span>Zn: {{ land.zinc }}</span>{% endif %}
+                {% if land.iron %}<span>Fe: {{ land.iron }}</span>{% endif %}
+                {% if land.manganese %}<span>Mn: {{ land.manganese }}</span>{% endif %}
+                {% if land.copper %}<span>Cu: {{ land.copper }}</span>{% endif %}
+                {% if land.boron %}<span>B: {{ land.boron }}</span>{% endif %}
+              </div>
+              {% endif %}
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,305 @@
+{% extends "buyer_base.html" %}
+{% load static %}
+{% block title %}Dashboard - KisanBazaar{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<div class="bp-hero">
+  <div class="bp-hero-inner">
+    <div class="bp-hero-badge"><i class="fas fa-circle" style="font-size:0.5rem;color:#a5d6a7;"></i> Live Dashboard</div>
+    <h1><i class="fas fa-seedling" style="margin-right:10px;opacity:0.9;"></i>Welcome, {{ buyer.full_name }} 👋</h1>
+    <p>
+      {% if buyer.company %}{{ buyer.company }} &nbsp;·&nbsp; {% endif %}
+      Tara areas na farmers niche dikhse — direct contact karo
+    </p>
+  </div>
+</div>
+
+<div class="bp-content">
+
+  <!-- IMAGE SLIDER -->
+  <div class="kb-slider-wrap" style="margin-bottom:32px;">
+    <div class="kb-slider" id="kbSlider">
+      <div class="kb-slide active">
+        <div class="kb-slide-img" style="background:linear-gradient(135deg,#1b5e20 0%,#2e7d32 50%,#66bb6a 100%);">
+          <i class="fas fa-tractor kb-slide-icon"></i>
+        </div>
+        <div class="kb-slide-body">
+          <span class="kb-slide-tag">Direct Sourcing</span>
+          <h3>Farmers thi seedha kharido</h3>
+          <p>Middleman hatavo, fresh produce direct farm thi melo. Better price, better quality.</p>
+        </div>
+      </div>
+      <div class="kb-slide">
+        <div class="kb-slide-img" style="background:linear-gradient(135deg,#e65100 0%,#f57c00 50%,#ffb74d 100%);">
+          <i class="fas fa-rupee-sign kb-slide-icon"></i>
+        </div>
+        <div class="kb-slide-body">
+          <span class="kb-slide-tag" style="background:rgba(255,152,0,0.2);color:#ff8f00;">Best Prices</span>
+          <h3>Market thi sasta bhav</h3>
+          <p>Farmers sathe seedha deal karo ane 20-30% bachat karo. No hidden charges.</p>
+        </div>
+      </div>
+      <div class="kb-slide">
+        <div class="kb-slide-img" style="background:linear-gradient(135deg,#1565c0 0%,#1976d2 50%,#64b5f6 100%);">
+          <i class="fas fa-map-marked-alt kb-slide-icon"></i>
+        </div>
+        <div class="kb-slide-body">
+          <span class="kb-slide-tag" style="background:rgba(21,101,192,0.15);color:#1565c0;">Location Based</span>
+          <h3>Tara area na farmers</h3>
+          <p>District ane taluka wise farmers search karo. Local sourcing made easy.</p>
+        </div>
+      </div>
+      <div class="kb-slide">
+        <div class="kb-slide-img" style="background:linear-gradient(135deg,#4a148c 0%,#7b1fa2 50%,#ce93d8 100%);">
+          <i class="fas fa-leaf kb-slide-icon"></i>
+        </div>
+        <div class="kb-slide-body">
+          <span class="kb-slide-tag" style="background:rgba(74,20,140,0.15);color:#7b1fa2;">Fresh Crops</span>
+          <h3>Seasonal crops ni listing</h3>
+          <p>Wheat, Rice, Vegetables, Fruits — badha crops ek jagya thi melo with live pricing.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Controls -->
+    <button class="kb-prev" onclick="kbMove(-1)"><i class="fas fa-chevron-left"></i></button>
+    <button class="kb-next" onclick="kbMove(1)"><i class="fas fa-chevron-right"></i></button>
+    <!-- Dots -->
+    <div class="kb-dots" id="kbDots"></div>
+  </div>
+
+  <!-- Stats -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:32px;">
+    <div class="stat-card">
+      <div class="stat-icon"><i class="fas fa-tractor"></i></div>
+      <div class="stat-num">{{ total_farmers }}</div>
+      <div class="stat-label">Farmers in your areas</div>
+    </div>
+    <div class="stat-card" style="--green:#1565c0;">
+      <div class="stat-icon" style="background:#e3f2fd;color:#1565c0;"><i class="fas fa-map-marker-alt"></i></div>
+      <div class="stat-num" style="color:#1565c0;">{{ buyer.locations|length }}</div>
+      <div class="stat-label">Your locations</div>
+    </div>
+    <div class="stat-card" style="--green:#e65100;">
+      <div class="stat-icon" style="background:#fff3e0;color:#e65100;"><i class="fas fa-leaf"></i></div>
+      <div class="stat-num" style="color:#e65100;font-size:1rem;padding-top:6px;">{{ buyer.interested_crops|truncatechars:28 }}</div>
+      <div class="stat-label">Crops you buy</div>
+    </div>
+  </div>
+
+  <!-- Your Locations -->
+  <div class="bp-card" style="margin-bottom:24px;">
+    <div class="bp-section-title">
+      <div class="title-icon"><i class="fas fa-map-marker-alt"></i></div>
+      Tara Kaam na Areas
+      <a href="{% url 'buyer_profile' %}" style="margin-left:auto;font-size:0.8rem;color:var(--green);font-weight:600;text-decoration:none;background:var(--green-pale);padding:4px 12px;border-radius:20px;">
+        <i class="fas fa-edit me-1"></i>Edit
+      </a>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      {% for loc in buyer.locations %}
+      <span style="background:var(--green-pale);color:var(--text-dark);border:1px solid var(--green-border);border-radius:20px;padding:6px 16px;font-size:0.82rem;font-weight:600;display:flex;align-items:center;gap:6px;">
+        <i class="fas fa-map-pin" style="color:var(--green-light);"></i>
+        {{ loc.district }}{% if loc.taluka %}, {{ loc.taluka }}{% endif %} <span style="color:var(--text-muted);font-weight:400;">({{ loc.state }})</span>
+      </span>
+      {% empty %}
+      <span style="color:#aaa;font-size:0.88rem;">No locations added. <a href="{% url 'buyer_profile' %}" style="color:var(--green);font-weight:600;">Add now →</a></span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Filter -->
+  <form method="GET" class="bp-filter">
+    <input type="text" name="q" value="{{ search_q }}" placeholder="🔍  Search farmer name...">
+    <select name="crop">
+      <option value="">🌾 All Crops</option>
+      {% for crop in buyer.crop_list %}
+      <option value="{{ crop }}" {% if crop == crop_filter %}selected{% endif %}>{{ crop }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn-search"><i class="fas fa-search me-1"></i>Search</button>
+    <a href="{% url 'buyer_dashboard' %}" class="btn-clear"><i class="fas fa-times me-1"></i>Clear</a>
+  </form>
+
+  <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:18px;font-weight:500;">
+    <i class="fas fa-users me-1" style="color:var(--green-light);"></i>
+    <strong style="color:var(--text-dark);">{{ farmers|length }}</strong> farmer{{ farmers|length|pluralize }} maldya
+    {% if crop_filter %} — <strong style="color:var(--green);">{{ crop_filter }}</strong> crops wala{% endif %}
+  </p>
+
+  <!-- Farmer Cards -->
+  <div class="farmer-grid">
+    {% for farmer in farmers %}
+    <div class="farmer-card">
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;">
+        <div class="farmer-avatar">{{ farmer.full_name|first|upper }}</div>
+        <div style="flex:1;">
+          <div class="farmer-name">{{ farmer.full_name }}</div>
+          <div class="farmer-loc">
+            <i class="fas fa-map-marker-alt" style="color:var(--green-light);"></i>
+            {{ farmer.village }}{% if farmer.village %}, {% endif %}{{ farmer.taluka }}, {{ farmer.district }}
+          </div>
+        </div>
+      </div>
+      {% if farmer.active_crops %}
+      <div class="crop-tags">
+        {% for crop in farmer.active_crops %}
+        <span class="crop-tag">🌾 {{ crop.name }} — ₹{{ crop.price }}/{{ crop.unit }}</span>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p style="font-size:0.8rem;color:#bbb;margin-bottom:14px;font-style:italic;">No active crop listings</p>
+      {% endif %}
+      <button class="btn-contact"
+        onclick="showContact('{{ farmer.full_name|escapejs }}','{{ farmer.mobile }}','{{ farmer.district|escapejs }}','{{ farmer.state|escapejs }}','{{ farmer.village|escapejs }}')">
+        <i class="fas fa-phone-alt"></i> Contact Farmer
+      </button>
+    </div>
+    {% empty %}
+    <div class="bp-empty">
+      <div class="bp-empty-icon"><i class="fas fa-tractor"></i></div>
+      <p style="color:#888;font-size:1rem;font-weight:600;margin-bottom:6px;">Koi farmer nathi maldyo</p>
+      <p style="color:#aaa;font-size:0.85rem;">Profile ma locations update karo.</p>
+      <a href="{% url 'buyer_profile' %}" style="display:inline-block;margin-top:16px;background:var(--green);color:#fff;padding:10px 24px;border-radius:30px;font-weight:600;text-decoration:none;font-size:0.88rem;">
+        <i class="fas fa-map-marker-alt me-1"></i> Add Locations
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Contact Modal -->
+<div class="bp-modal-bg" id="contactModal">
+  <div class="bp-modal">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <div style="width:44px;height:44px;background:var(--green-pale);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--green);font-size:1.2rem;">
+        <i class="fas fa-tractor"></i>
+      </div>
+      <h3 style="color:var(--text-dark);font-size:1.15rem;font-weight:700;">Farmer Contact</h3>
+    </div>
+    <div style="background:var(--green-pale);border-radius:12px;padding:18px;margin-bottom:18px;border:1px solid var(--green-border);">
+      <p id="cm_name" style="color:var(--text-dark);font-weight:700;font-size:1rem;margin-bottom:8px;"></p>
+      <p id="cm_mobile" style="color:var(--green);font-weight:700;font-size:1.05rem;margin-bottom:6px;"></p>
+      <p id="cm_loc" style="color:var(--text-muted);font-size:0.88rem;"></p>
+    </div>
+    <a id="cm_call" href="#" style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,var(--green),var(--green-light));color:#fff;padding:13px;border-radius:10px;font-weight:700;text-decoration:none;margin-bottom:10px;box-shadow:0 4px 14px rgba(46,125,50,0.3);">
+      <i class="fas fa-phone"></i> Call Now
+    </a>
+    <button onclick="document.getElementById('contactModal').classList.remove('open')"
+      style="width:100%;background:#f5f5f5;border:1px solid #e0e0e0;padding:11px;border-radius:10px;font-weight:600;cursor:pointer;color:#666;font-family:'Poppins',sans-serif;transition:background 0.2s;">
+      Close
+    </button>
+  </div>
+</div>
+
+<script>
+function showContact(name, mobile, district, state, village) {
+  document.getElementById('cm_name').innerHTML = '<i class="fas fa-user me-2" style="color:var(--green);"></i>' + name;
+  document.getElementById('cm_mobile').innerHTML = '<i class="fas fa-phone me-2"></i>+91 ' + mobile;
+  document.getElementById('cm_loc').innerHTML = '<i class="fas fa-map-marker-alt me-2"></i>' + (village ? village+', ' : '') + district + ', ' + state;
+  document.getElementById('cm_call').href = 'tel:+91' + mobile;
+  document.getElementById('contactModal').classList.add('open');
+}
+document.getElementById('contactModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+
+// ── SLIDER ──
+(function() {
+  const slides = document.querySelectorAll('.kb-slide');
+  const dotsEl = document.getElementById('kbDots');
+  let cur = 0, timer;
+
+  // build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'kb-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[cur].classList.remove('active');
+    dotsEl.children[cur].classList.remove('active');
+    cur = (n + slides.length) % slides.length;
+    slides[cur].classList.add('active');
+    dotsEl.children[cur].classList.add('active');
+    resetTimer();
+  }
+
+  window.kbMove = (dir) => goTo(cur + dir);
+
+  function resetTimer() {
+    clearInterval(timer);
+    timer = setInterval(() => goTo(cur + 1), 4500);
+  }
+  resetTimer();
+})();
+</script>
+
+{% block extra_head %}{% endblock %}
+<style>
+/* ── SLIDER STYLES ── */
+.kb-slider-wrap{
+  position:relative;border-radius:18px;overflow:hidden;
+  box-shadow:0 6px 28px rgba(0,60,0,0.14);
+  background:#fff;border:1px solid var(--green-border);
+}
+.kb-slider{
+  display:flex;height:200px;
+  transition:none;
+}
+.kb-slide{
+  min-width:100%;display:flex;align-items:stretch;
+  opacity:0;position:absolute;top:0;left:0;width:100%;height:200px;
+  transition:opacity 0.55s ease;pointer-events:none;
+}
+.kb-slide.active{opacity:1;position:relative;pointer-events:auto;}
+.kb-slide-img{
+  width:220px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.kb-slide-icon{font-size:4rem;color:rgba(255,255,255,0.85);}
+.kb-slide-body{
+  flex:1;padding:28px 28px 28px 24px;
+  display:flex;flex-direction:column;justify-content:center;
+  background:#fff;
+}
+.kb-slide-tag{
+  display:inline-block;background:rgba(46,125,50,0.12);color:var(--green);
+  border-radius:20px;padding:3px 12px;font-size:0.72rem;font-weight:700;
+  margin-bottom:10px;letter-spacing:0.3px;
+}
+.kb-slide-body h3{
+  font-size:1.2rem;font-weight:800;color:var(--text-dark);
+  margin-bottom:8px;line-height:1.3;
+}
+.kb-slide-body p{font-size:0.85rem;color:var(--text-muted);line-height:1.6;}
+.kb-prev,.kb-next{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(255,255,255,0.92);color:var(--green);
+  box-shadow:0 2px 10px rgba(0,0,0,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;transition:all 0.2s;z-index:10;
+}
+.kb-prev{left:12px;} .kb-next{right:12px;}
+.kb-prev:hover,.kb-next:hover{background:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.2);transform:translateY(-50%) scale(1.08);}
+.kb-dots{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  display:flex;gap:6px;
+}
+.kb-dot{
+  width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(46,125,50,0.25);transition:all 0.25s;padding:0;
+}
+.kb-dot.active{background:var(--green);width:22px;border-radius:4px;}
+@media(max-width:600px){
+  .kb-slide-img{width:100px;}
+  .kb-slide-icon{font-size:2.5rem;}
+  .kb-slide-body{padding:18px 16px;}
+  .kb-slide-body h3{font-size:1rem;}
+  .kb-slider,.kb-slide{height:170px;}
+}
+</style>
+{% endblock %}

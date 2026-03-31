@@ -1,0 +1,88 @@
+{% extends 'base.html' %} {% load static %} {% block title %} {{ scheme.title }}
+{% endblock %} {% block content %}
+{% block styles %}
+{{block.super}}
+<style>
+.blog-card__date {
+    width: auto !important;
+    height: auto !important;
+    min-width: unset !important;
+    padding: 10px 20px !important;
+    border-radius: 50px !important; /* circle se pill banega */
+    display: inline-block !important;
+    white-space: nowrap !important;
+    font-size: 14px;
+}
+</style>
+{% endblock %}
+{% include 'includes/_slider_base.html' with slider_id="govt_scheme_detail" slider_title=scheme.title slider_crumb=scheme.title slide1="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=1470" slide2="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1470" slide3="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1470" %}
+
+<section class="blog-details">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="blog-card__content">
+          <div class="blog-card__date">{{ scheme.get_category_display }}</div>
+          <h3>{{ scheme.title }}</h3>
+        </div>
+
+        <div class="blog-details__content">
+          <p><strong>Overview:</strong> {{ scheme.short_description }}</p>
+
+          {% if scheme.full_description %}
+          <p><strong>Full Details:</strong> {{ scheme.full_description }}</p>
+          {% endif %} {% if scheme.eligibility %}
+          <p><strong>Eligibility:</strong> {{ scheme.eligibility }}</p>
+          {% endif %} {% if scheme.benefits %}
+          <p><strong>Benefits:</strong> {{ scheme.benefits }}</p>
+          {% endif %} {% if scheme.required_documents %}
+          <p>
+            <strong>Required Documents:</strong> {{ scheme.required_documents }}
+          </p>
+          {% endif %}
+        </div>
+
+        <div
+          style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap"
+        >
+          <a
+            href="{{ scheme.official_details_url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="thm-btn"
+          >
+            Official Details
+          </a>
+          <a
+            href="{{ scheme.apply_url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="thm-btn"
+          >
+            Apply Now
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="blog-sidebar">
+          <div class="blog-sidebar__posts">
+            <h3>Other Schemes</h3>
+            <ul>
+              {% for item in recent_schemes %}
+              <li>
+                <h4>
+                  <a href="{% url 'govt_scheme_detail' item.id %}">
+                    {{ item.title|truncatechars:55 }}
+                  </a>
+                </h4>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

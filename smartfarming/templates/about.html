@@ -1,0 +1,523 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}About Us - Agrikon{% endblock %}
+{% block content %}
+
+{% include 'includes/_slider_base.html' with slider_id="about" slider_title="About Agrikon" slider_crumb="About" slide1="https://images.unsplash.com/photo-1560493676-04071c5f467b?q=80&w=1470" slide2="https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?q=80&w=1470" slide3="https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=1470" slide4="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1470" %}
+
+<!-- ═══ MISSION / VISION CARDS ══════════════════════════════════════════ -->
+<section class="ab-mv">
+  <div class="container">
+    <div class="ab-mv__grid">
+      <div class="ab-mv__card ab-mv__card--mission">
+        <div class="ab-mv__icon">🎯</div>
+        <h3>Our Mission</h3>
+        <p>Empower every Indian farmer with smart digital tools — from AI crop suggestions to government scheme access — so they can make better decisions and improve their livelihood.</p>
+      </div>
+      <div class="ab-mv__card ab-mv__card--vision">
+        <div class="ab-mv__icon">🔭</div>
+        <h3>Our Vision</h3>
+        <p>A future where every farmer has equal access to technology, market information and government support — making Indian agriculture smarter, stronger and more sustainable.</p>
+      </div>
+      <div class="ab-mv__card ab-mv__card--values">
+        <div class="ab-mv__icon">💚</div>
+        <h3>Our Values</h3>
+        <p>Farmer-first thinking, transparency, innovation and accessibility. We build for the people who feed the nation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ANIMATED STATS ══════════════════════════════════════════════════ -->
+<section class="ab-stats">
+  <div class="container">
+    <div class="ab-stats__grid">
+      <div class="ab-stat" data-val="{{ ab_farmers }}"><span class="ab-stat__num">0</span><span class="ab-stat__plus">+</span><div class="ab-stat__label">Farmers Registered</div></div>
+      <div class="ab-stat" data-val="24"><span class="ab-stat__num">0</span><span class="ab-stat__plus">+</span><div class="ab-stat__label">Crop Varieties</div></div>
+      <div class="ab-stat" data-val="{{ ab_schemes }}"><span class="ab-stat__num">0</span><span class="ab-stat__plus">+</span><div class="ab-stat__label">Govt Schemes</div></div>
+      <div class="ab-stat" data-val="18"><span class="ab-stat__num">0</span><span class="ab-stat__plus"></span><div class="ab-stat__label">States Covered</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHAT WE OFFER ═══════════════════════════════════════════════════ -->
+<section class="ab-offer">
+  <div class="container">
+    <div class="ab-section-head">
+      <span class="ab-tag">Platform Features</span>
+      <h2>What Agrikon Offers</h2>
+      <p>Everything a modern farmer needs in one place</p>
+    </div>
+    <div class="ab-offer__grid">
+      <div class="ab-offer__item">
+        <div class="ab-offer__icon" style="background:#e8f5e9;color:#2e7d32;">🌱</div>
+        <div>
+          <h4>AI Crop Suggestions</h4>
+          <p>Gemini AI analyzes your soil data and recommends the best crops with complete farming schedule.</p>
+        </div>
+      </div>
+      <div class="ab-offer__item">
+        <div class="ab-offer__icon" style="background:#fff3e0;color:#e65100;">📈</div>
+        <div>
+          <h4>Live Market Prices</h4>
+          <p>Real-time mandi rates and price trends to help farmers sell at the right time.</p>
+        </div>
+      </div>
+      <div class="ab-offer__item">
+        <div class="ab-offer__icon" style="background:#e3f2fd;color:#1565c0;">🏛️</div>
+        <div>
+          <h4>Government Schemes</h4>
+          <p>Discover and apply for subsidies, loans and support programs with one click.</p>
+        </div>
+      </div>
+      <div class="ab-offer__item">
+        <div class="ab-offer__icon" style="background:#f3e5f5;color:#6a1b9a;">🛒</div>
+        <div>
+          <h4>Crop Marketplace</h4>
+          <p>Sell crops directly to verified buyers and get the best market price.</p>
+        </div>
+      </div>
+      <div class="ab-offer__item">
+        <div class="ab-offer__icon" style="background:#e0f7fa;color:#00838f;">🌤️</div>
+        <div>
+          <h4>Weather Updates</h4>
+          <p>Live weather data for your district with farming alerts and rain forecasts.</p>
+        </div>
+      </div>
+      <div class="ab-offer__item">
+        <div class="ab-offer__icon" style="background:#fce4ec;color:#c62828;">📰</div>
+        <div>
+          <h4>Farming News</h4>
+          <p>Latest agriculture news, government announcements and farming tips.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ JOURNEY TIMELINE ════════════════════════════════════════════════ -->
+<section class="ab-timeline">
+  <div class="container">
+    <div class="ab-section-head">
+      <span class="ab-tag">Our Journey</span>
+      <h2>How We Grew</h2>
+    </div>
+    <div class="ab-tl">
+      <div class="ab-tl__item ab-tl__item--left">
+        <div class="ab-tl__dot"></div>
+        <div class="ab-tl__card">
+          <div class="ab-tl__year">2023</div>
+          <h4>Platform Founded</h4>
+          <p>Agrikon was started with a vision to digitize Indian farming and help farmers access modern tools.</p>
+        </div>
+      </div>
+      <div class="ab-tl__item ab-tl__item--right">
+        <div class="ab-tl__dot"></div>
+        <div class="ab-tl__card">
+          <div class="ab-tl__year">2024</div>
+          <h4>AI Integration</h4>
+          <p>Launched AI-powered crop suggestions using soil data analysis and Gemini AI technology.</p>
+        </div>
+      </div>
+      <div class="ab-tl__item ab-tl__item--left">
+        <div class="ab-tl__dot"></div>
+        <div class="ab-tl__card">
+          <div class="ab-tl__year">2025</div>
+          <h4>Marketplace Launch</h4>
+          <p>Introduced crop and tool marketplace connecting farmers directly with buyers across India.</p>
+        </div>
+      </div>
+      <div class="ab-tl__item ab-tl__item--right">
+        <div class="ab-tl__dot"></div>
+        <div class="ab-tl__card">
+          <div class="ab-tl__year">2026</div>
+          <h4>8900+ Farmers</h4>
+          <p>Growing community of farmers using smart tools for better crop planning and income.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ── Mission/Vision ── */
+.ab-mv{padding:70px 0;background:#f8fdf8;}
+.ab-mv__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.ab-mv__card{background:#fff;border-radius:20px;padding:40px 30px;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.07);border:1px solid #e8f5e9;transition:.3s;position:relative;overflow:hidden;}
+.ab-mv__card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;}
+.ab-mv__card--mission::after{background:linear-gradient(90deg,#2e7d32,#4caf50);}
+.ab-mv__card--vision::after{background:linear-gradient(90deg,#1565c0,#42a5f5);}
+.ab-mv__card--values::after{background:linear-gradient(90deg,#6a1b9a,#ab47bc);}
+.ab-mv__card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,.12);}
+.ab-mv__icon{font-size:3rem;margin-bottom:16px;}
+.ab-mv__card h3{font-size:1.3rem;font-weight:800;color:#1b3a1b;margin-bottom:12px;}
+.ab-mv__card p{color:#666;font-size:.92rem;line-height:1.7;margin:0;}
+@media(max-width:768px){.ab-mv__grid{grid-template-columns:1fr;}}
+
+/* ── Stats ── */
+.ab-stats{padding:60px 0;background:linear-gradient(135deg,#1b5e20,#2e7d32);}
+.ab-stats__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.ab-stat{text-align:center;color:#fff;padding:20px;}
+.ab-stat__num{font-size:3.5rem;font-weight:900;line-height:1;}
+.ab-stat__plus{font-size:2rem;font-weight:700;vertical-align:top;margin-top:8px;display:inline-block;}
+.ab-stat__label{font-size:.85rem;opacity:.85;margin-top:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+@media(max-width:768px){.ab-stats__grid{grid-template-columns:repeat(2,1fr);}}
+
+/* ── What We Offer ── */
+.ab-offer{padding:80px 0;background:#fff;}
+.ab-section-head{text-align:center;margin-bottom:50px;}
+.ab-tag{display:inline-block;background:#e8f5e9;color:#2e7d32;padding:5px 16px;border-radius:20px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+.ab-section-head h2{font-size:2.2rem;font-weight:800;color:#1b3a1b;margin:0 0 10px;}
+.ab-section-head p{color:#666;}
+.ab-offer__grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.ab-offer__item{display:flex;gap:18px;align-items:flex-start;background:#fafff9;border:1px solid #e8f5e9;border-radius:14px;padding:24px;transition:.3s;}
+.ab-offer__item:hover{border-color:#a5d6a7;box-shadow:0 8px 24px rgba(46,125,50,.1);transform:translateY(-3px);}
+.ab-offer__icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;}
+.ab-offer__item h4{font-size:1rem;font-weight:700;color:#1b3a1b;margin:0 0 6px;}
+.ab-offer__item p{font-size:.86rem;color:#666;margin:0;line-height:1.6;}
+@media(max-width:768px){.ab-offer__grid{grid-template-columns:1fr;}}
+
+/* ── Timeline ── */
+.ab-timeline{padding:80px 0;background:#f8fdf8;}
+.ab-tl{position:relative;max-width:800px;margin:0 auto;}
+.ab-tl::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#2e7d32,#a5d6a7);transform:translateX(-50%);}
+.ab-tl__item{display:flex;justify-content:flex-end;padding-right:calc(50% + 30px);margin-bottom:40px;position:relative;}
+.ab-tl__item--right{justify-content:flex-start;padding-right:0;padding-left:calc(50% + 30px);}
+.ab-tl__dot{position:absolute;left:50%;top:20px;width:16px;height:16px;background:#2e7d32;border-radius:50%;transform:translateX(-50%);border:3px solid #fff;box-shadow:0 0 0 3px #a5d6a7;}
+.ab-tl__card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08);border:1px solid #e8f5e9;max-width:320px;transition:.3s;}
+.ab-tl__card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(46,125,50,.15);}
+.ab-tl__year{display:inline-block;background:#e8f5e9;color:#2e7d32;padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:700;margin-bottom:10px;}
+.ab-tl__card h4{font-size:1rem;font-weight:700;color:#1b3a1b;margin:0 0 8px;}
+.ab-tl__card p{font-size:.86rem;color:#666;margin:0;line-height:1.6;}
+@media(max-width:768px){
+  .ab-tl::before{left:20px;}
+  .ab-tl__item,.ab-tl__item--right{padding:0 0 0 50px;justify-content:flex-start;}
+  .ab-tl__dot{left:20px;}
+  .ab-tl__card{max-width:100%;}
+}
+</style>
+
+<script>
+// Count-up for about page stats
+(function(){
+  function countUp(el, target){
+    let start=0, dur=2000, step=target/(dur/16);
+    let t=setInterval(function(){
+      start+=step;
+      if(start>=target){start=target;clearInterval(t);}
+      el.textContent=Math.floor(start).toLocaleString();
+    },16);
+  }
+  let section=document.querySelector('.ab-stats');
+  if(section){
+    let obs=new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting){
+        document.querySelectorAll('.ab-stat').forEach(function(s){
+          countUp(s.querySelector('.ab-stat__num'), parseInt(s.dataset.val));
+        });
+        obs.disconnect();
+      }
+    },{threshold:0.3});
+    obs.observe(section);
+  }
+  // Timeline animation
+  let tls=document.querySelectorAll('.ab-tl__item');
+  if(tls.length){
+    let to=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';}
+      });
+    },{threshold:0.2});
+    tls.forEach(function(t){
+      t.style.opacity='0';t.style.transform='translateY(30px)';t.style.transition='all .5s ease';
+      to.observe(t);
+    });
+  }
+})();
+</script>
+
+<section class="service-one service-one__about">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-4">
+                <div class="service-one__box">
+                    <img src="{% static 'assets/images/services/service-1-1.jpg' %}" alt="Smart Crop Suggestions">
+                    <div class="service-one__box-content">
+                        <h3><a href="{% url 'farming_guide' %}">Smart Crop Suggestions</a></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-4">
+                <div class="service-one__box">
+                    <img src="{% static 'assets/images/services/service-1-2.jpg' %}" alt="AI Disease Detection">
+                    <div class="service-one__box-content">
+                        <h3><a href="{% url 'farming_guide' %}">AI Disease Detection</a></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-4">
+                <div class="service-one__box">
+                    <img src="{% static 'assets/images/services/service-1-3.jpg' %}" alt="Online Agri Marketplace">
+                    <div class="service-one__box-content">
+                        <h3><a href="{% url 'farming_guide' %}">Online Agri Marketplace</a></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="team-one">
+    <img src="{% static 'assets/images/icons/team-bg-1-1.png' %}" alt="" class="team-one__bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xl-5">
+                <div class="team-one__content">
+                    <div class="block-title">
+                        <div class="block-title__image"></div>
+                        <p>Why Choose Us</p>
+                        <h3>Empowering Farmers with Technology</h3>
+                    </div>
+                    <div class="team-one__summery">
+                        <p>
+                            Agrikon is a smart farming platform designed to support farmers at every step.
+                            From land management and crop recommendations to disease detection, weather insights,
+                            and online buying and selling, we bring modern agricultural solutions into one place.
+                        </p>
+                    </div>
+
+                    <div class="team-one__nav">
+                        <div class="swiper-button-prev" id="team-one__swiper-button-next">
+                            <i class="agrikon-icon-left-arrow"></i>
+                        </div>
+                        <div class="swiper-button-next" id="team-one__swiper-button-prev">
+                            <i class="agrikon-icon-right-arrow"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="team-one__carousel-wrap">
+        <div class="thm-swiper__slider swiper-container" data-swiper-options='{"spaceBetween": 0, "slidesPerView": 1, "slidesPerGroup": 1, "autoplay": { "delay": 5000 }, "navigation": {
+        "nextEl": "#team-one__swiper-button-next",
+        "prevEl": "#team-one__swiper-button-prev"
+    },"breakpoints": {
+        "0": {
+            "spaceBetween": 0,
+            "slidesPerView": 1,
+            "slidesPerGroup": 1
+        },
+        "640": {
+            "spaceBetween": 30,
+            "slidesPerView": 2,
+            "slidesPerGroup": 2
+        },
+        "992": {
+            "spaceBetween": 30,
+            "slidesPerView": 3,
+            "slidesPerGroup": 3
+        },
+        "1200": {
+            "spaceBetween": 30,
+            "slidesPerView": 3,
+            "slidesPerGroup": 3
+        }
+    }}'>
+
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="team-card">
+                        <div class="team-card__image">
+                            <img src="{% static 'assets/images/team/team-1-1.jpg' %}" alt="Farmer Registration">
+                        </div>
+                        <h3>Easy Registration</h3>
+                        <p>Farmers can quickly create accounts and start using smart services.</p>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="team-card">
+                        <div class="team-card__image">
+                            <img src="{% static 'assets/images/team/team-1-2.jpg' %}" alt="Land Management">
+                        </div>
+                        <h3>Land Management</h3>
+                        <p>Add land details to get personalized crop and farming suggestions.</p>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="team-card">
+                        <div class="team-card__image">
+                            <img src="{% static 'assets/images/team/team-1-3.jpg' %}" alt="Market Access">
+                        </div>
+                        <h3>Market Access</h3>
+                        <p>Buy and sell crops and farming tools online with ease.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="testimonials-one testimonials-one__about">
+    <img src="{% static 'assets/images/icons/testimonials-bg-1-1.png' %}" class="testimonials-one__bg" alt="">
+    <div class="container">
+        <h2 class="testimonials-one__title">What Agrikon Offers</h2>
+        <div id="testimonials-one__carousel" class="testimonials-one__carousel swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="testimonials-one__icons">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>
+                        Agrikon helps farmers choose the right crops based on their land details,
+                        making farming decisions smarter and more productive.
+                    </p>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="testimonials-one__icons">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>
+                        Our AI-powered disease suggestion system supports farmers in identifying crop problems
+                        and finding better solutions in less time.
+                    </p>
+                </div>
+
+                <div class="swiper-slide">
+                    <div class="testimonials-one__icons">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p>
+                        With weather updates and an agriculture marketplace, Agrikon provides everything farmers need
+                        in one easy-to-use platform.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="testimonials-one__thumb" class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="testimonials-one__image">
+                        <img src="{% static 'assets/images/resources/testimonials-1-1.jpg' %}" alt="">
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="testimonials-one__image">
+                        <img src="{% static 'assets/images/resources/testimonials-1-2.jpg' %}" alt="">
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="testimonials-one__image">
+                        <img src="{% static 'assets/images/resources/testimonials-1-3.jpg' %}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="testimonials-one__meta" class="testimonials-one__carousel swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="testimonials-one__meta">
+                        <h4>Crop Intelligence</h4>
+                        <span>Smart Suggestions</span>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="testimonials-one__meta">
+                        <h4>AI Support</h4>
+                        <span>Disease Detection</span>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="testimonials-one__meta">
+                        <h4>Marketplace & Weather</h4>
+                        <span>All-in-One Farming</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-pagination" id="testimonials-one__swiper-pagination"></div>
+    </div>
+</section>
+
+<section class="about-three">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="about-three__image">
+                    <img src="{% static 'assets/images/resources/about-3-2.jpg' %}" alt="About Agrikon">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="about-three__content">
+                    <div class="block-title">
+                        <div class="block-title__image"></div>
+                        <p>Get to know us</p>
+                        <h3>Smart Digital Support for Modern Farming</h3>
+                    </div>
+                    <ul class="about-three__list list-unstyled">
+                        <li>
+                            <i class="fa fa-check-circle"></i>
+                            Farmers can register and manage their profiles easily
+                        </li>
+                        <li>
+                            <i class="fa fa-check-circle"></i>
+                            Add land details for personalized crop recommendations
+                        </li>
+                        <li>
+                            <i class="fa fa-check-circle"></i>
+                            Get AI-based disease suggestions for better crop care
+                        </li>
+                        <li>
+                            <i class="fa fa-check-circle"></i>
+                            Buy and sell crops and farming tools online
+                        </li>
+                    </ul>
+                    <div class="about-three__summery">
+                        <p>
+                            Agrikon is built with the vision of making agriculture smarter, easier, and more connected.
+                            Our platform combines technology with farming needs so that farmers can make better decisions,
+                            improve productivity, and access essential services from a single digital platform.
+                        </p>
+                    </div>
+                    <div class="about-three__signs">
+                        <img src="{% static 'assets/images/resources/about-3-1.png' %}" alt="">
+                        <img src="{% static 'assets/images/resources/sign-1-1.png' %}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="call-to-action jarallax" data-jarallax data-speed="0.3" data-imgPosition="-80% 50%">
+    <img class="call-to-action__bg jarallax-img" src="{% static 'assets/images/backgrounds/cta-1-bg-1.jpg' %}" alt="parallax-image" />
+    <div class="container">
+        <div class="call-to-action__content">
+            <i class="call-to-action__icon agrikon-icon-agriculture-2"></i>
+            <h3>Empowering farmers with smart technology and better farming solutions</h3>
+        </div>
+        <div class="call-to-action__button">
+            <a href="{% url 'home' %}" class="thm-btn">Discover More</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

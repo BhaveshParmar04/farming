@@ -1,0 +1,1069 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Home - Agrikon{% endblock %}</title>
+
+    {% block styles %}
+    <style>
+      .notification-btn {
+        position: relative;
+        margin-right: 30px;
+        font-size: 22px;
+        color: #1B5E20; /* Dark Forest Green Bell */
+        text-decoration: none;
+      }
+
+      .notification-btn:hover, .robot-btn:hover {
+        color: #4caf50;
+      }
+
+      .notify-count {
+        position: absolute;
+        top: -6px;
+        right: -8px;
+        background: red;
+        color: white;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 6px;
+        border-radius: 50px;
+        line-height: 1;
+      }
+      .robot-btn{
+        margin-right:10px;
+        font-size:22px;
+        color:#1B5E20;
+      }
+
+      /* Notification Popup */
+      .notif-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+      .notif-popup {
+        display: none;
+        position: absolute;
+        top: calc(100% + 14px);
+        right: -10px;
+        width: 360px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 16px 40px -8px rgba(0,40,0,0.35), 0 0 0 1px rgba(120,180,120,0.4);
+        border: 1px solid #b8dbb8;
+        z-index: 9999;
+        overflow: hidden;
+        animation: notifSlide 0.22s ease-out;
+      }
+      .notif-popup.open { display: block; }
+      @keyframes notifSlide {
+        from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      .notif-popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        background: linear-gradient(135deg, #e5f5e5, #d0ecd0);
+        border-bottom: 1px solid #b8e0b8;
+      }
+      .notif-popup-header h4 {
+        margin: 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1f562f;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .notif-popup-header a {
+        font-size: 0.8rem;
+        color: #2e7d32;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .notif-popup-header a:hover { text-decoration: underline; }
+      .notif-popup-body {
+        max-height: 380px;
+        overflow-y: auto;
+        padding: 8px;
+        background: #f5fdf5;
+      }
+      .notif-item {
+        display: flex;
+        gap: 12px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 6px;
+        border: 1px solid #d0ead0;
+        transition: all 0.18s;
+        cursor: default;
+      }
+      .notif-item:hover {
+        background: #f0fff0;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px -6px rgba(30,80,30,0.2);
+      }
+      .notif-item-icon {
+        font-size: 1.5rem;
+        color: #2e7d32;
+        min-width: 28px;
+        text-align: center;
+        padding-top: 2px;
+      }
+      .notif-item-body { flex:1; }
+      .notif-item-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #1b4d23;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        align-items: center;
+        margin-bottom: 3px;
+      }
+      .notif-land-tag {
+        background: #d4ecd4;
+        color: #0d451d;
+        font-size: 0.72rem;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .notif-item-msg {
+        font-size: 0.83rem;
+        color: #2a4d2a;
+        margin-bottom: 3px;
+      }
+      .notif-item-time {
+        font-size: 0.72rem;
+        color: #6a8f6a;
+      }
+      @media (max-width: 480px) {
+        .notif-popup { width: 300px; right: -40px; }
+      }
+     .profile-dropdown {
+        position: relative;
+      }
+
+      .profile-dropdown .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        min-width: 180px;
+      }
+
+      /* Default item style */
+      .profile-dropdown .dropdown-item {
+        color: #0F4D1A;
+        padding: 12px 18px;
+        background: #f5f5f5;
+        transition: all 0.3s ease;
+      }
+
+      /* Hover effect same as News menu */
+      .profile-dropdown .dropdown-item:hover {
+        background-color: #e6b65c; /* golden/orange */
+        color: #ffffff;
+      }
+
+      /* Show dropdown on hover */
+      .profile-dropdown:hover .dropdown-menu {
+        display: block;
+      }
+    </style>
+    {% endblock %}
+
+    <!-- Active nav fix -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      // Remove 'current' from all nav items first, then set correct one based on path
+      var path = window.location.pathname;
+      var navLists = document.querySelectorAll('.main-menu__list, .stricky-header .main-menu__list');
+      navLists.forEach(function(ul){
+        ul.querySelectorAll('li.current').forEach(function(li){ li.classList.remove('current'); });
+        var links = ul.querySelectorAll('li > a');
+        links.forEach(function(a){
+          var href = a.getAttribute('href');
+          if(!href || href === '#') return;
+          // exact match for home
+          if(href === '/' && path === '/') { a.parentElement.classList.add('current'); }
+          else if(href !== '/' && path.startsWith(href)) { a.parentElement.classList.add('current'); }
+        });
+      });
+    });
+    </script>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{% static 'assets/images/favicons/apple-touch-icon.png' %}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{% static 'assets/images/favicons/favicon-32x32.png' %}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{% static 'assets/images/favicons/favicon-16x16.png' %}"
+    />
+    <link
+      rel="manifest"
+      href="{% static 'assets/images/favicons/site.webmanifest' %}"
+    />
+    <meta
+      name="description"
+      content="Agrikon HTML Template For Agriculture Farm & Farmers"
+    />
+
+    <!-- fonts (merged single request) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Handlee&family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/fontawesome-all.min.css' %}"
+    />
+
+    <link rel="stylesheet" href="{% static 'assets/css/swiper.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/odometer.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/jarallax.css' %}" />
+
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/magnific-popup.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/bootstrap-select.min.css' %}"
+    />
+    <link rel="stylesheet" href="{% static 'assets/css/agrikon-icons.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/nouislider.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/nouislider.pips.css' %}"
+    />
+
+    <!-- template styles -->
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+    <style>
+      .main-slider .swiper-slide h2 span::before,
+      .main-slider .swiper-slide h2 span::after { display:none !important; }
+      /* Hide Agrikon theme search popup — we use our own */
+      .search-popup { display:none !important; }
+      /* Fix service card image height */
+      .service-two__card-image { height:220px !important; overflow:hidden; }
+      .service-two__card-image img { height:220px !important; width:100% !important; object-fit:cover !important; display:block !important; }
+      /* Fix service card equal height */
+      .service-two .row { display:flex !important; flex-wrap:wrap !important; align-items:stretch !important; }
+      .service-two .col-sm-12 { display:flex !important; }
+      .service-two__card { display:flex !important; flex-direction:column !important; height:100% !important; width:100% !important; }
+      .service-two__card-content { flex:1 !important; display:flex !important; flex-direction:column !important; }
+
+      /* ── GLOBAL RESPONSIVE ── */
+      @media (max-width: 768px) {
+
+        /* Navbar */
+        .main-header__info { gap: 6px !important; }
+        #langBtn { font-size: 0.7rem !important; padding: 2px 6px !important; }
+        .notification-btn { margin-right: 14px !important; font-size: 18px !important; }
+        .robot-btn { margin-right: 6px !important; font-size: 18px !important; }
+
+        /* Weather bar */
+        .wb-inner { flex-direction: column; align-items: flex-start; gap: 4px; padding: 6px 14px; }
+        .wb-right { width: 100%; }
+        .wb-forecast { display: none; }
+        .wb-detail { display: none; }
+
+        /* Home page new sections */
+        .kf-stats__grid { grid-template-columns: repeat(2,1fr) !important; gap: 10px !important; }
+        .kf-stat-num { font-size: 2rem !important; }
+        .kf-steps { flex-direction: column; gap: 16px; }
+        .kf-step-arrow { display: none; }
+        .kf-feat-grid { grid-template-columns: 1fr !important; }
+        .kf-how, .kf-features { padding: 40px 0 !important; }
+
+        /* About page */
+        .ab-mv__grid { grid-template-columns: 1fr !important; }
+        .ab-stats__grid { grid-template-columns: repeat(2,1fr) !important; }
+        .ab-offer__grid { grid-template-columns: 1fr !important; }
+        .ab-tl::before { left: 16px !important; }
+        .ab-tl__item, .ab-tl__item--right { padding: 0 0 0 40px !important; justify-content: flex-start !important; }
+        .ab-tl__dot { left: 16px !important; }
+        .ab-tl__card { max-width: 100% !important; }
+
+        /* Service cards */
+        .service-two .row { flex-wrap: wrap !important; }
+        .service-two .col-sm-12.col-md-6.col-lg-3 { flex: 0 0 50% !important; max-width: 50% !important; }
+        .service-two__card { margin-bottom: 20px; }
+        .service-two__card-image img { height: 160px !important; object-fit: cover; width: 100%; }
+
+        /* Service one boxes */
+        .service-one .col-md-12.col-lg-4 { flex: 0 0 100% !important; max-width: 100% !important; margin-bottom: 16px; }
+
+        /* Projects slider */
+        .projects-one__single img { height: 260px !important; object-fit: cover; }
+        .fg-wrap { padding: 0 12px 60px !important; }
+        .fg-grid { grid-template-columns: 1fr !important; }
+        .guidance-grid { grid-template-columns: 1fr !important; }
+        .crop-cards-grid { grid-template-columns: repeat(2,1fr) !important; }
+
+        /* Crops marketplace */
+        .mp-topbar { flex-direction: column; align-items: flex-start; }
+        .filter-bar { flex-direction: column; }
+
+        /* Govt schemes */
+        .gs-container { padding: 0 12px !important; }
+
+        /* Market price */
+        .mp-wrap { padding: 0 12px !important; }
+
+        /* Admin dashboards */
+        .kd-stats { grid-template-columns: repeat(2,1fr) !important; }
+        .kd-grid { grid-template-columns: 1fr !important; }
+        .kd-quick { grid-template-columns: 1fr 1fr !important; }
+        .kd-hero { padding: 24px 20px !important; }
+        .kd-hero h1 { font-size: 1.4rem !important; }
+        .kd-hero-right { display: none !important; }
+        .kd-body { padding: 16px !important; }
+
+        /* Direct buyers */
+        .buyer-grid { grid-template-columns: 1fr !important; }
+        .db-wrap { padding: 20px 12px 40px !important; }
+
+        /* Search results */
+        .sr-wrap { padding: 0 12px 60px !important; }
+        .sr-cards { grid-template-columns: 1fr !important; }
+
+        /* Notifications */
+        .notif-popup { width: 300px !important; right: -60px !important; }
+
+        /* Footer */
+        .site-footer .row { flex-direction: column; }
+        .bottom-footer .container { flex-direction: column; gap: 8px; text-align: center; }
+        .bottom-footer__links { justify-content: center; }
+
+        /* General */
+        .container { padding-left: 14px !important; padding-right: 14px !important; }
+        table { font-size: 0.82rem; }
+        .thm-btn { padding: 10px 20px !important; font-size: 0.88rem !important; }
+      }
+
+      @media (max-width: 480px) {
+        .kf-stats__grid { grid-template-columns: 1fr 1fr !important; }
+        .kf-stat-num { font-size: 1.6rem !important; }
+        .ab-stats__grid { grid-template-columns: 1fr 1fr !important; }
+        .crop-cards-grid { grid-template-columns: repeat(2,1fr) !important; }
+        .kd-stats { grid-template-columns: 1fr 1fr !important; }
+        .kd-quick { grid-template-columns: 1fr !important; }
+        .rg-row { grid-template-columns: 1fr !important; }
+        /* Service cards single column on very small */
+        .service-two .col-sm-12.col-md-6.col-lg-3 { flex: 0 0 100% !important; max-width: 100% !important; }
+        h1, h2 { word-break: break-word; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="preloader">
+      <img
+        class="preloader__image"
+        width="55"
+        src="{% static 'assets/images/loader.png' %}"
+        alt=""
+      />
+    </div>
+    <!-- /.preloader -->
+    <div class="page-wrapper">
+
+      {% if weather %}
+      <!-- WEATHER BAR -->
+      <div class="weather-bar {% if weather.alert_type == 'rain' %}wb-rain{% elif weather.alert_type == 'storm' %}wb-storm{% elif weather.alert_type == 'heat' %}wb-heat{% elif weather.alert_type == 'cold' %}wb-cold{% else %}wb-normal{% endif %}" id="weatherBar">
+        <div class="wb-inner">
+          <div class="wb-left">
+            <span class="wb-icon">{{ weather.icon }}</span>
+            <span class="wb-temp">{{ weather.temp }}°C</span>
+            <span class="wb-sep">|</span>
+            <span class="wb-desc">{{ weather.desc }}</span>
+            <span class="wb-sep">|</span>
+            <span class="wb-loc"><i class="fas fa-map-marker-alt"></i> {{ weather.city }}</span>
+            <span class="wb-sep">|</span>
+            <span class="wb-detail"><i class="fas fa-tint"></i> {{ weather.humidity }}%</span>
+            <span class="wb-detail"><i class="fas fa-wind"></i> {{ weather.wind }} km/h</span>
+            {% if weather.forecast_line %}
+            <span class="wb-sep">|</span>
+            <span class="wb-forecast">{{ weather.forecast_line }}</span>
+            {% endif %}
+          </div>
+          <div class="wb-right">
+            {% if weather.alert %}
+            <span class="wb-alert">{{ weather.alert }}</span>
+            {% endif %}
+            {% if weather.is_demo %}
+            <span class="wb-demo-tag">Demo</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <style>
+        .weather-bar {
+          width:100%; padding:7px 0; font-size:0.82rem; font-weight:500;
+          position:relative; z-index:10001;
+        }
+        .wb-normal  { background:linear-gradient(90deg,#1b5e20,#33691e); color:#fff; }
+        .wb-rain    { background:linear-gradient(90deg,#2e7d32,#558b2f); color:#fff; }
+        .wb-storm   { background:linear-gradient(90deg,#1b5e20,#2e7d32); color:#e8f5e9; }
+        .wb-heat    { background:linear-gradient(90deg,#33691e,#558b2f); color:#fff; }
+        .wb-cold    { background:linear-gradient(90deg,#1b5e20,#43a047); color:#fff; }
+        .wb-inner {
+          max-width:1400px; margin:0 auto; padding:0 20px;
+          display:flex; align-items:center; justify-content:space-between;
+          flex-wrap:wrap; gap:6px;
+        }
+        .wb-left  { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .wb-right { display:flex; align-items:center; gap:10px; }
+        .wb-icon  { font-size:1.1rem; }
+        .wb-temp  { font-size:1rem; font-weight:700; }
+        .wb-sep   { opacity:0.5; }
+        .wb-loc   { opacity:0.9; }
+        .wb-detail{ opacity:0.85; }
+        .wb-forecast{ opacity:0.95; font-weight:600; background:rgba(255,255,255,0.12); padding:2px 10px; border-radius:12px; }
+        .wb-alert {
+          background:rgba(255,255,255,0.18); border-radius:20px;
+          padding:3px 12px; font-size:0.8rem; font-weight:600;
+          animation: wbPulse 2.5s ease-in-out infinite;
+        }
+        @keyframes wbPulse {
+          0%,100% { opacity:1; } 50% { opacity:0.7; }
+        }
+        .wb-demo-tag {
+          background:rgba(255,255,255,0.25); border-radius:10px;
+          padding:2px 8px; font-size:0.72rem; opacity:0.8;
+        }
+        .wb-close {
+          background:rgba(255,255,255,0.2); border:none; color:white;
+          width:22px; height:22px; border-radius:50%; cursor:pointer;
+          font-size:0.75rem; display:flex; align-items:center; justify-content:center;
+          transition:background 0.2s;
+        }
+        .wb-close:hover { background:rgba(255,255,255,0.4); }
+        @media(max-width:640px){
+          .wb-detail { display:none; }
+          .wb-alert  { font-size:0.75rem; }
+        }
+      </style>
+      {% endif %}
+
+      <header class="main-header">
+        <nav class="main-menu">
+          <div class="container">
+            <div class="logo-box">
+              <a href="{% url 'home' %}" aria-label="logo image"
+                ><img
+                  src="{% static 'assets/images/logo-dark.png' %}"
+                  width="153"
+                  alt=""
+              /></a>
+              <span class="fa fa-bars mobile-nav__toggler"></span>
+            </div>
+            <!-- /.logo-box -->
+            <ul class="main-menu__list">
+              <li class="dropdown {% if request.resolver_match.url_name == 'home' %}current{% endif %}">
+                <a href="{% url 'home' %}">Home</a>
+              </li>
+              <li class="dropdown {% if request.resolver_match.url_name == 'about' %}current{% endif %}">
+                <a href="{% url 'about' %}">About</a>
+              </li>
+              <li class="dropdown {% if request.resolver_match.url_name in 'add_land,farming_guide' %}current{% endif %}">
+                <a href="#">Lands</a>
+                <ul>
+                  <li><a href="{% url 'add_land' %}">Add Land</a></li>
+                  <li>
+                    <a href="{% url 'farming_guide' %}">Farming Guide</a>
+                  </li>
+                </ul>
+              </li>
+              <li class="dropdown {% if request.resolver_match.url_name in 'govt_schemes,market_price,govt_scheme_detail' %}current{% endif %}">
+                <a href="#">Resources</a>
+                <ul>
+                  <li><a href="{% url 'govt_schemes' %}">Govt Schemes</a></li>
+                  <li>
+                    <a href="{% url 'market_price' %}">Market Price</a>
+                  </li>
+                </ul>
+              </li>
+               <li class="dropdown {% if request.resolver_match.url_name in 'crops_marketplace,farming_tools,direct_buyers' %}current{% endif %}">
+                <a href="#">MarketPlace</a>
+                <ul>
+                  <li><a href="{% url 'crops_marketplace' %}">Buy/sell Crops</a></li>
+                  <li><a href="{% url 'farming_tools' %}">Farming Tools</a></li>
+                  <li><a href="{% url 'direct_buyers' %}">Direct Buyers</a></li>
+                </ul>
+               </li>
+              <li class="dropdown {% if request.resolver_match.url_name in 'agriculture_news,news_details' %}current{% endif %}">
+                <a href="{% url 'agriculture_news' %}">News</a>
+              </li>
+              {% if not request.session.farmer_id %}
+                <li class="dropdown {% if request.resolver_match.url_name == 'login' %}current{% endif %}">
+                  <a href="{% url 'login' %}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+            <!-- /.main-menu__list -->
+
+           
+
+              <a href="#" class="search-toggler main-header__search-btn" id="navSearchBtn"
+                ><i class="agrikon-icon-magnifying-glass"></i></a>
+             {% if request.session.farmer_id %}
+                <div class="dropdown profile-dropdown">
+                  <a class="main-header__cart-btn" href="#">
+                    <i class="fas fa-user-circle" style="font-size:24px;"></i>
+                  </a>
+
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item" href="{% url 'profile' %}">
+                        <i class="fas fa-user"></i> View Profile
+                      </a>
+                    </li>
+
+                    <li>
+                      <a class="dropdown-item" href="{% url 'profile' %}">
+                        <i class="fas fa-edit"></i> Edit Profile
+                      </a>
+                    </li>
+
+                    <li><hr class="dropdown-divider"></li>
+
+                    <li>
+                      <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+             {% endif %}
+              {% comment %} Notification {% endcomment %}
+              {% if request.session.farmer_id %}
+                <div class="notif-wrapper" id="notifWrapper">
+                  <a href="#" class="notification-btn" id="notifBell">
+                    <i class="fa fa-bell"></i>
+                    <span class="notify-count" id="notifBadge" style="display:none;">0</span>
+                  </a>
+                  <div class="notif-popup" id="notifPopup">
+                    <div class="notif-popup-header">
+                      <h4><i class="fas fa-leaf"></i> Notifications</h4>
+                      <a href="{% url 'notifications' %}">View All</a>
+                    </div>
+                    <div class="notif-popup-body" id="notifList"></div>
+                  </div>
+                </div>
+              {% else %}
+                <a href="{% url 'notifications' %}" class="notification-btn" style="margin-left: 30px;">
+                  <i class="fa fa-bell"></i>
+                </a>
+              {% endif %}
+              {% comment %} AI Assistant {% endcomment %}
+              <a href="{% url 'ai_assistant' %}" class="robot-btn">
+                <i class="fas fa-seedling"></i>
+              </a>
+              
+               <div class="main-header__info">
+              <!-- Language Selector -->
+              <div style="position:relative;margin-right:8px;z-index:99999;padding-left: 20px;">
+                <button id="langBtn" style="display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid #ccc;color:#333;padding:3px 8px;border-radius:6px;font-size:0.78rem;font-weight:700;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.1);white-space:nowrap;line-height:1.4;" onclick="var d=this.parentElement.querySelector('[id=langDrop]');d.style.display=d.style.display==='block'?'none':'block';event.stopPropagation();"><span id="lName">EN</span>▾</button>
+                <div id="langDrop" style="display:none;position:absolute;top:110%;right:0;background:#fff;border-radius:10px;min-width:180px;box-shadow:0 8px 30px rgba(0,0,0,0.25);border:1px solid #ddd;overflow:hidden;z-index:99999;">
+                  <div id="lopt_en" onclick="doLang('en','EN','🌐')" style="display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;background:#1a73e8;color:#fff;font-size:0.9rem;" onmouseover="if(this.id!==window._activeLang)this.style.background='#f0f0f0'" onmouseout="if(this.id!==window._activeLang)this.style.background='#fff'">
+                    <span style="font-size:1.1rem;">🌐</span><span style="flex:1;">English</span><span id="chk_en">✓</span>
+                  </div>
+                  <div id="lopt_gu" onclick="doLang('gu','GJ','🌿')" style="display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;background:#fff;color:#333;font-size:0.9rem;" onmouseover="if(this.id!==window._activeLang)this.style.background='#f0f0f0'" onmouseout="if(this.id!==window._activeLang)this.style.background='#fff'">
+                    <span style="font-size:1.1rem;">🌿</span><span style="flex:1;">ગુજરાતી</span><span id="chk_gu" style="opacity:0;">✓</span>
+                  </div>
+                  <div id="lopt_hi" onclick="doLang('hi','HI','🍀')" style="display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;background:#fff;color:#333;font-size:0.9rem;" onmouseover="if(this.id!==window._activeLang)this.style.background='#f0f0f0'" onmouseout="if(this.id!==window._activeLang)this.style.background='#fff'">
+                    <span style="font-size:1.1rem;">🍀</span><span style="flex:1;">हिंदी</span><span id="chk_hi" style="opacity:0;">✓</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      <!-- STICKY HEADER -->
+      <div class="stricky-header stricked-menu main-menu">
+        <div class="sticky-header__content"></div>
+      </div>
+
+      <!-- PAGE CONTENT -->
+      {% block content %} {% endblock %}
+
+      <!-- FOOTER -->
+      <footer class="site-footer">
+        <img src="{% static 'assets/images/icons/footer-bg-icon-1.png' %}" class="site-footer__shape-1" alt=""/>
+        <img src="{% static 'assets/images/icons/footer-bg-icon-2.png' %}" class="site-footer__shape-2" alt=""/>
+        <div class="container">
+          <div class="row">
+
+            <!-- Col 1: Logo + About -->
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-4">
+              <div class="footer-widget">
+                <a href="{% url 'home' %}" class="footer-widget__Logo">
+                  <img src="{% static 'assets/images/logo-light.png' %}" width="153" alt="Agrikon"/>
+                </a>
+                <p>Agrikon helps Indian farmers manage land, get AI crop suggestions, explore government schemes and sell crops online — all in one smart platform.</p>
+                <div class="footer__social">
+                  <a href="#" aria-label="Facebook" class="fab fa-facebook-square"></a>
+                  <a href="#" aria-label="Twitter" class="fab fa-twitter"></a>
+                  <a href="#" aria-label="Instagram" class="fab fa-instagram"></a>
+                  <a href="#" aria-label="YouTube" class="fab fa-youtube"></a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Col 2: Quick Links -->
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-2">
+              <div class="footer-widget footer-widget__links-widget">
+                <h3 class="footer-widget__title">Quick Links</h3>
+                <ul class="list-unstyled footer-widget__links">
+                  <li><a href="{% url 'home' %}">Home</a></li>
+                  <li><a href="{% url 'about' %}">About Us</a></li>
+                  <li><a href="{% url 'farming_guide' %}">Farming Guide</a></li>
+                  <li><a href="{% url 'govt_schemes' %}">Govt Schemes</a></li>
+                  <li><a href="{% url 'market_price' %}">Market Prices</a></li>
+                  <li><a href="{% url 'agriculture_news' %}">Farming News</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Col 3: Services -->
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+              <div class="footer-widget footer-widget__links-widget">
+                <h3 class="footer-widget__title">Our Services</h3>
+                <ul class="list-unstyled footer-widget__links">
+                  <li><a href="{% url 'add_land' %}"> Land Management</a></li>
+                  <li><a href="{% url 'farming_guide' %}"> AI Crop Suggestions</a></li>
+                  <li><a href="{% url 'crops_marketplace' %}"> Crop Marketplace</a></li>
+                  <li><a href="{% url 'farming_tools' %}"> Farming Tools</a></li>
+                  <li><a href="{% url 'direct_buyers' %}"> Direct Buyers</a></li>
+                  <li><a href="{% url 'notifications' %}"> Crop Notifications</a></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Col 4: Contact -->
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-3">
+              <div class="footer-widget">
+                <h3 class="footer-widget__title">Contact Us</h3>
+                <ul class="list-unstyled footer-widget__contact">
+                  <li>
+                    <i class="agrikon-icon-telephone"></i>
+                    <a href="tel:+919876543210">+91 96249 57608</a>
+                  </li>
+                  <li>
+                    <i class="agrikon-icon-email"></i>
+                    <a href="mailto:savajakhil12@gmail.com">savajakhil12@gmail.com</a>
+                  </li>
+                  <li>
+                    <i class="agrikon-icon-pin"></i>
+                    <a href="#">Gujarat, India</a>
+                  </li>
+                </ul>
+                <div style="margin-top:16px;">
+                  <a href="{% url 'register' %}" class="thm-btn" style="padding:10px 24px;font-size:.88rem;">Join as Farmer</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </footer>
+      <!-- /.site-footer -->
+
+      <div class="bottom-footer">
+        <div class="container">
+          <p>© Copyright 2026 by <a href="{% url 'home' %}" style="color:inherit;font-weight:700;">Agrikon</a> — Smart Farming Platform</p>
+          <div class="bottom-footer__links">
+            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'contact' %}">Contact</a>
+            <a href="#">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.page-wrapper -->
+
+    <div class="mobile-nav__wrapper">
+      <div class="mobile-nav__overlay mobile-nav__toggler"></div>
+      <!-- /.mobile-nav__overlay -->
+      <div class="mobile-nav__content">
+        <span class="mobile-nav__close mobile-nav__toggler"
+          ><i class="far fa-times"></i
+        ></span>
+
+        <div class="logo-box">
+          <a href="{% url 'home' %}" aria-label="logo image"
+            ><img
+              src="{% static 'assets/images/logo-light.png' %}"
+              width="155"
+              alt=""
+          /></a>
+        </div>
+        <!-- /.logo-box -->
+        <div class="mobile-nav__container"></div>
+        <!-- /.mobile-nav__container -->
+
+        <ul class="mobile-nav__contact list-unstyled">
+          <li>
+            <i class="agrikon-icon-email"></i>
+            <a href="mailto:needhelp@agrikon.com">needhelp@agrikon.com</a>
+          </li>
+          <li>
+            <i class="agrikon-icon-telephone"></i>
+            <a href="tel:666-888-0000">123 456 7890</a>
+          </li>
+        </ul>
+        <!-- /.mobile-nav__contact -->
+        <div class="mobile-nav__top">
+          <div class="mobile-nav__language">
+            <img
+              src="{% static 'assets/images/resources/flag-1-1.jpg' %}"
+              alt=""
+            />
+            <label class="sr-only" for="language-select">select language</label>
+            <!-- /#language-select.sr-only -->
+            <select class="selectpicker" id="language-select">
+              <option value="english">English</option>
+              <option value="arabic">Arabic</option>
+            </select>
+          </div>
+          <!-- /.mobile-nav__language -->
+          <div class="mobile-nav__social">
+            <a href="#" aria-label="twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="facebook"
+              ><i class="fab fa-facebook-square"></i
+            ></a>
+            <a href="#" aria-label="pinterest"
+              ><i class="fab fa-pinterest-p"></i
+            ></a>
+            <a href="#" aria-label="instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+          </div>
+          <!-- /.mobile-nav__social -->
+        </div>
+        <!-- /.mobile-nav__top -->
+      </div>
+      <!-- /.mobile-nav__content -->
+    </div>
+    <!-- /.mobile-nav__wrapper -->
+
+    <div class="search-popup">
+      <div class="search-popup__overlay search-toggler"></div>
+      <!-- /.search-popup__overlay -->
+      <div class="search-popup__content">
+        <form action="#">
+          <label for="search" class="sr-only">search here</label
+          ><!-- /.sr-only -->
+          <input type="text" id="search" placeholder="Search Here..." />
+          <button type="submit" aria-label="search submit" class="thm-btn">
+            <i class="fa fa-search"></i>
+          </button>
+        </form>
+      </div>
+      <!-- /.search-popup__content -->
+    </div>
+    <!-- /.search-popup -->
+
+    <a href="#" data-target="html" class="scroll-to-target scroll-to-top"
+      ><i class="fa fa-angle-up"></i
+    ></a>
+
+    <script src="{% static 'assets/js/jquery-3.5.1.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/swiper.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.ajaxchimp.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.validate.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap-select.min.js' %}"></script>
+    <script src="{% static 'assets/js/wow.js' %}"></script>
+    <script src="{% static 'assets/js/odometer.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.appear.min.js' %}"></script>
+    <script src="{% static 'assets/js/jarallax.min.js' %}"></script>
+    <script src="{% static 'assets/js/circle-progress.min.js' %}"></script>
+    <script src="{% static 'assets/js/wNumb.min.js' %}"></script>
+    <script src="{% static 'assets/js/nouislider.min.js' %}"></script>
+    <!-- template js -->
+    <script src="{% static 'assets/js/theme.js' %}"></script>
+
+    <script>
+      // ---- Notification Popup ----
+      function renderNotifList(items) {
+        const list = document.getElementById('notifList');
+        if (!list) return;
+        if (!items || items.length === 0) {
+          list.innerHTML = '<div style="text-align:center;padding:20px;color:#888;font-size:0.9rem;"><i class="fas fa-check-circle" style="color:#4caf50;font-size:1.5rem;display:block;margin-bottom:8px;"></i>Koi pending activity nathi</div>';
+          return;
+        }
+        list.innerHTML = items.map(n => `
+          <div class="notif-item">
+            <div class="notif-item-icon" style="color:${n.overdue ? '#e53935' : '#2e7d32'}"><i class="fas ${n.icon}"></i></div>
+            <div class="notif-item-body">
+              <div class="notif-item-title">
+                <span class="notif-land-tag"><i class="fas fa-map-marker-alt"></i> ${n.land}</span>
+                <i class="fas fa-seedling" style="color:#2e7d32;font-size:.8rem;"></i> ${n.crop}
+              </div>
+              <div class="notif-item-msg" style="${n.overdue ? 'color:#c62828;font-weight:600;' : ''}">
+                <i class="fas ${n.overdue ? 'fa-exclamation-circle' : 'fa-info-circle'}" style="color:${n.overdue ? '#e53935' : '#3f9e4f'};margin-right:4px;"></i>${n.message}
+              </div>
+              <div class="notif-item-time"><i class="far fa-clock" style="margin-right:3px;"></i>${n.time}${n.overdue ? ' <span style="color:#e53935;font-weight:700;">⚠ Overdue</span>' : ''}${n.unread ? ' <span style="background:#4caf50;color:#fff;border-radius:10px;padding:1px 7px;font-size:0.7rem;">New</span>' : ''}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Load from DB
+      var _farmerId = "{{ request.session.farmer_id|default:'' }}";
+      if (_farmerId) {
+        fetch('/notifications-api/')
+          .then(r => r.json())
+          .then(data => {
+            renderNotifList(data.items);
+            var badge = document.getElementById('notifBadge');
+            if (badge) {
+              if (data.count > 0) {
+                badge.textContent = data.count;
+                badge.style.display = 'inline';
+              } else {
+                badge.style.display = 'none';
+              }
+            }
+          });
+      } else {
+        renderNotifList([]);
+      }
+
+      // click = toggle, outside click = close
+      const notifWrapper = document.getElementById('notifWrapper');
+      const notifPopup   = document.getElementById('notifPopup');
+      const notifBell    = document.getElementById('notifBell');
+
+      if (notifBell && notifPopup) {
+        notifBell.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          notifPopup.classList.toggle('open');
+          // mark as read when bell is clicked — fetch fresh data
+          if (notifPopup.classList.contains('open') && _farmerId) {
+            fetch('/notifications-api/?mark_read=1')
+              .then(r => r.json())
+              .then(data => {
+                renderNotifList(data.items);
+                var badge = document.getElementById('notifBadge');
+                if (badge) badge.style.display = 'none';
+              });
+          }
+        });
+
+        // click inside popup — stay open
+        notifPopup.addEventListener('click', function(e) {
+          e.stopPropagation();
+        });
+
+        // click outside — close
+        document.addEventListener('click', function() {
+          notifPopup.classList.remove('open');
+        });
+      }
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && notifPopup) {
+          notifPopup.classList.remove('open');
+        }
+      });
+    </script>
+
+  <!-- ===== GOOGLE TRANSLATE + LANGUAGE SELECTOR ===== -->
+  <!-- Hidden Google Translate element -->
+  <div id="google_translate_element" style="display:none;"></div>
+
+  <style>
+    .goog-te-banner-frame, .skiptranslate { display:none !important; }
+    body { top:0 !important; }
+    .goog-te-gadget { display:none !important; }
+  </style>
+
+  <div id="google_translate_element" style="display:none;"></div>
+
+  <script>
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({ pageLanguage:'en', includedLanguages:'en,gu,hi', autoDisplay:false }, 'google_translate_element');
+  }
+
+  function doLang(code, name, flag) {
+    document.getElementById('lName').textContent = name;
+    document.getElementById('langDrop').style.display = 'none';
+
+    // selected language hide karo, baki show karo, tick lagavo
+    ['en','gu','hi'].forEach(function(c) {
+      var el = document.getElementById('lopt_' + c);
+      if (el) {
+        el.style.display = c === code ? 'none' : 'flex';
+        el.style.background = '#fff';
+        el.style.color = '#333';
+      }
+      var chk = document.getElementById('chk_' + c);
+      if (chk) chk.style.opacity = c === code ? '1' : '0';
+    });
+
+    localStorage.setItem('siteLang', code);
+    localStorage.setItem('siteLangFlag', flag);
+    localStorage.setItem('siteLangName', name);
+
+    if (code === 'en') {
+      document.cookie = 'googtrans=;expires=Thu,01 Jan 1970 00:00:00 UTC;path=/;';
+      document.cookie = 'googtrans=;expires=Thu,01 Jan 1970 00:00:00 UTC;path=/;domain=' + location.hostname;
+      location.reload(); return;
+    }
+    var val = '/en/' + code;
+    document.cookie = 'googtrans=' + val + ';path=/';
+    document.cookie = 'googtrans=' + val + ';path=/;domain=' + location.hostname;
+    var sel = document.querySelector('.goog-te-combo');
+    if (sel) { sel.value = code; sel.dispatchEvent(new Event('change')); }
+    else { location.reload(); }
+  }
+
+  // close on outside click
+  document.addEventListener('click', function(e) {
+    document.querySelectorAll('[id=langDrop]').forEach(function(d){
+      if (!d.contains(e.target) && !e.target.closest('[id=langBtn]')) {
+        d.style.display = 'none';
+      }
+    });
+  });
+
+  // restore on load
+  (function() {
+    var code = localStorage.getItem('siteLang') || 'en';
+    var name = localStorage.getItem('siteLangName') || 'EN';
+    // Update all lName elements (main + sticky header clone)
+    document.querySelectorAll('#lName').forEach(function(el){ el.textContent = name; });
+    ['en','gu','hi'].forEach(function(c) {
+      var el = document.getElementById('lopt_' + c);
+      if (el) {
+        el.style.display = c === code ? 'none' : 'flex';
+        el.style.background = '#fff';
+        el.style.color = '#333';
+      }
+      var chk = document.getElementById('chk_' + c);
+      if (chk) chk.style.opacity = c === code ? '1' : '0';
+    });
+  })();
+
+  // Also update sticky header lName after it clones
+  document.addEventListener('DOMContentLoaded', function(){
+    var name = localStorage.getItem('siteLangName') || 'EN';
+    setTimeout(function(){
+      document.querySelectorAll('#lName').forEach(function(el){ el.textContent = name; });
+    }, 500);
+  });
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
+
+  <!-- Search overlay -->
+  <div id="navSearchOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;align-items:flex-start;justify-content:center;padding-top:80px;">
+    <div style="background:#fff;border-radius:14px;padding:20px 24px;width:90%;max-width:640px;box-shadow:0 20px 50px rgba(0,0,0,.3);max-height:80vh;overflow-y:auto;">
+      <div style="display:flex;gap:10px;margin-bottom:12px;">
+        <input type="text" id="navSearchInput" placeholder="Search crops, schemes, lands, tools..."
+               style="flex:1;border:1.5px solid #c8e6c9;border-radius:8px;padding:12px 16px;font-size:1rem;outline:none;">
+        <button id="navSearchGo" style="background:linear-gradient(135deg,#2e7d32,#4caf50);color:#fff;border:none;padding:12px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-size:1rem;">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+      <p style="font-size:.78rem;color:#aaa;margin:0 0 14px;">Press Enter to search · Esc to close</p>
+      <div id="navSearchResults"></div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var overlay = document.getElementById('navSearchOverlay');
+    var input   = document.getElementById('navSearchInput');
+    var resultsDiv = document.getElementById('navSearchResults');
+
+    function doSearch(){
+      var q = input.value.trim();
+      if(!q) return;
+      resultsDiv.innerHTML = '<p style="color:#888;text-align:center;padding:16px;"><i class="fas fa-spinner fa-spin"></i> Searching...</p>';
+      fetch('/search/?q=' + encodeURIComponent(q), {headers:{'X-Requested-With':'XMLHttpRequest'}})
+        .then(r => r.json())
+        .then(data => {
+          if(data.not_found){
+            resultsDiv.innerHTML = '<div style="background:#ffebee;border-radius:10px;padding:24px;text-align:center;color:#c62828;"><i class="fas fa-search-minus" style="font-size:1.8rem;display:block;margin-bottom:8px;"></i><b>No results for "' + q + '"</b><p style="margin:6px 0 0;font-size:.85rem;">Try: land name, crop name, scheme name</p></div>';
+            return;
+          }
+          var html = '';
+          var sections = [
+            {key:'lands', icon:'🗺️', label:'My Lands', url:'/add-land/'},
+            {key:'my_crops', icon:'🌽', label:'My Crop Listings', url:'/crops_marketplace/'},
+            {key:'my_tools', icon:'🔧', label:'My Tool Listings', url:'/farming_tools/'},
+            {key:'schemes', icon:'🏛️', label:'Govt Schemes', url:null},
+            {key:'market_crops', icon:'🛒', label:'Crops in Marketplace', url:'/crops_marketplace/'},
+            {key:'market_tools', icon:'🔩', label:'Tools in Marketplace', url:'/farming_tools/'},
+          ];
+          sections.forEach(function(s){
+            var items = data[s.key];
+            if(!items || !items.length) return;
+            html += '<div style="margin-bottom:16px;"><div style="font-size:.85rem;font-weight:700;color:#1b5e20;margin-bottom:8px;padding-bottom:6px;border-bottom:1.5px solid #e8f5e9;">' + s.icon + ' ' + s.label + ' <span style="background:#e8f5e9;color:#2e7d32;padding:1px 7px;border-radius:10px;font-size:.72rem;">' + items.length + '</span></div>';
+            items.forEach(function(item){
+              var link = s.url ? 'href="' + s.url + '"' : '';
+              html += '<a ' + link + ' style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;text-decoration:none;color:inherit;transition:.15s;" onmouseover="this.style.background=\'#f4fef4\'" onmouseout="this.style.background=\'\'"><div style="width:36px;height:36px;background:#e8f5e9;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">' + s.icon + '</div><div><div style="font-size:.88rem;font-weight:600;color:#1b3a1b;">' + item.title + '</div><div style="font-size:.75rem;color:#888;">' + (item.sub || '') + '</div></div></a>';
+            });
+            html += '</div>';
+          });
+          resultsDiv.innerHTML = html || '<p style="color:#aaa;text-align:center;">No results.</p>';
+        })
+        .catch(function(){ resultsDiv.innerHTML = '<p style="color:#c62828;text-align:center;">Error. Try again.</p>'; });
+    }
+
+    // Open
+    document.addEventListener('click', function(e){
+      if(e.target.closest('#navSearchBtn') || e.target.closest('.main-header__search-btn')){
+        e.preventDefault(); e.stopPropagation();
+        var themeSearch = document.querySelector('.search-popup');
+        if(themeSearch) themeSearch.classList.remove('active');
+        overlay.style.display = 'flex';
+        setTimeout(function(){ if(input) input.focus(); }, 100);
+      }
+    });
+    // Search on Enter / button
+    if(input) input.addEventListener('keydown', function(e){ if(e.key==='Enter') doSearch(); });
+    var goBtn = document.getElementById('navSearchGo');
+    if(goBtn) goBtn.addEventListener('click', doSearch);
+    // Close
+    if(overlay) overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.style.display='none'; });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') overlay.style.display='none'; });
+  })();
+  </script>
+
+  </body>
+</html>

@@ -1,0 +1,277 @@
+from django.contrib import admin
+from django.contrib.admin import AdminSite
+from django.urls import path
+from django.shortcuts import get_object_or_404, render
+from django.utils.html import format_html, mark_safe
+from django.template.response import TemplateResponse
+from .models import *
+
+
+# ── Custom Farming AdminSite with stats dashboard ─────────────────────────────
+class FarmingAdminSite(AdminSite):
+    site_header = "Krishi Farming Admin"
+    site_title  = "Krishi Admin"
+    index_title = "Farming Management Panel"
+    index_template     = "admin/farming_dashboard.html"
+    base_site_template = "admin/base_site.html"
+
+    def each_context(self, request):
+        ctx = super().each_context(request)
+        try:
+            ctx["unread_messages_count"] = ContactMessage.objects.filter(is_read=False).count()
+        except Exception:
+            ctx["unread_messages_count"] = 0
+        return ctx
+
+    def index(self, request, extra_context=None):
+        ctx = self.each_context(request)
+        ctx.update({
+            "title": self.index_title,
+            "total_farmers":       FarmerRegistration.objects.count(),
+            "total_crops":         CropListing.objects.count(),
+            "total_tools":         FarmingTool.objects.count(),
+            "total_schemes":       GovtScheme.objects.count(),
+            "total_applications":  FarmerSchemeApplication.objects.count(),
+            "total_notifications": Notification.objects.count(),
+            "recent_farmers":      FarmerRegistration.objects.order_by("-created_at")[:6],
+            "recent_crops":        CropListing.objects.select_related("farmer").order_by("-created_at")[:6],
+            "unread_messages":     ContactMessage.objects.filter(is_read=False).count(),
+            "recent_messages":     ContactMessage.objects.filter(is_read=False).order_by("-created_at")[:5],
+        })
+        if extra_context:
+            ctx.update(extra_context)
+        return TemplateResponse(request, self.index_template, ctx)
+
+
+farming_admin_site = FarmingAdminSite(name="farming_admin")
+
+
+class CropImageInline(admin.TabularInline):
+    model = CropImage
+    extra = 0
+
+
+@admin.register(CropListing, site=farming_admin_site)
+class CropListingAdmin(admin.ModelAdmin):
+    list_display = ("name", "type", "farmer", "quantity", "unit", "price", "is_active", "created_at")
+    list_filter = ("type", "unit", "is_active")
+    search_fields = ("name", "farmer__full_name", "farmer__mobile")
+    list_editable = ("is_active",)
+    list_per_page = 20
+    inlines = [CropImageInline]
+
+
+class ToolImageInline(admin.TabularInline):
+    model = FarmingToolImage
+    extra = 0
+
+
+@admin.register(FarmingTool, site=farming_admin_site)
+class FarmingToolAdmin(admin.ModelAdmin):
+    list_display = ("name", "category", "condition", "farmer", "price", "is_active", "created_at")
+    list_filter = ("category", "condition", "is_active")
+    search_fields = ("name", "farmer__full_name", "farmer__mobile")
+    list_editable = ("is_active",)
+    list_per_page = 20
+    inlines = [ToolImageInline]
+
+
+class FarmerSchemeApplicationInline(admin.TabularInline):
+    model = FarmerSchemeApplication
+    extra = 0
+    readonly_fields = ("applied_at",)
+    fields = ("scheme", "status", "notes", "applied_at")
+
+
+class FarmerLandInline(admin.TabularInline):
+    model = FarmerLand
+    extra = 0
+    readonly_fields = ("created_at",)
+    fields = (
+        "land_name", "land_area", "water_supply", "soil_method",
+        "soil_report",
+        "ph", "ec", "organic_carbon", "nitrogen", "phosphorus",
+        "potassium", "sulphur", "zinc", "iron", "manganese", "copper", "boron",
+        "created_at",
+    )
+    show_change_link = True
+
+
+@admin.register(FarmerRegistration, site=farming_admin_site)
+class FarmerRegistrationAdmin(admin.ModelAdmin):
+    list_display = ("full_name", "mobile", "mobile_verified", "state", "district", "village", "land_count", "created_at")
+    search_fields = ("full_name", "mobile", "district", "village")
+    list_filter = ("state", "mobile_verified")
+    readonly_fields = ("created_at",)
+    list_per_page = 20
+    inlines = [FarmerLandInline, FarmerSchemeApplicationInline]
+
+    fieldsets = (
+        ("Personal Info", {
+            "fields": ("full_name", "mobile", "mobile_verified")
+        }),
+        ("Location", {
+            "fields": ("state", "district", "taluka", "village")
+        }),
+        ("Land Record", {
+            "fields": ("land_record",)
+        }),
+        ("Metadata", {
+            "fields": ("created_at",)
+        }),
+    )
+
+    def land_count(self, obj):
+        return obj.lands.count()
+    land_count.short_description = "Lands"
+
+    def view_full_profile(self, obj):
+        url = f"farmer-detail/{obj.pk}/"
+        return mark_safe(f'<a class="button" href="{url}" style="white-space:nowrap;padding:4px 10px;font-size:.78rem;">📋 Full Profile</a>')
+    view_full_profile.short_description = "Profile"
+
+    def get_list_display(self, request):
+        return ("full_name", "mobile", "mobile_verified", "state", "district", "village", "land_count", "view_full_profile", "created_at")
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom = [
+            path("farmer-detail/<int:farmer_id>/", self.admin_site.admin_view(self.farmer_detail_view), name="farmer_detail"),
+        ]
+        return custom + urls
+
+    def farmer_detail_view(self, request, farmer_id):
+        farmer = get_object_or_404(FarmerRegistration, pk=farmer_id)
+        lands = farmer.lands.all()
+        crops = farmer.crop_listings.all()
+        activities = farmer.activities.all().order_by("due_date")
+        scheme_apps = farmer.scheme_applications.select_related("scheme").all()
+        notifications = farmer.notifications.all()[:20]
+        context = {
+            **self.admin_site.each_context(request),
+            "farmer": farmer,
+            "lands": lands,
+            "crops": crops,
+            "activities": activities,
+            "scheme_apps": scheme_apps,
+            "notifications": notifications,
+            "title": f"Full Profile — {farmer.full_name}",
+        }
+        return render(request, "admin/kisanapp/farmerregistration/farmer_detail.html", context)
+
+
+@admin.register(FarmerLand, site=farming_admin_site)
+class FarmerLandAdmin(admin.ModelAdmin):
+    list_display = ("land_name", "farmer", "land_area", "water_supply", "soil_method", "created_at")
+    search_fields = ("land_name", "farmer__full_name", "farmer__mobile")
+    list_filter = ("water_supply", "soil_method")
+    list_per_page = 15
+    readonly_fields = ("created_at",)
+
+
+@admin.register(MobileOTP, site=farming_admin_site)
+class MobileOTPAdmin(admin.ModelAdmin):
+    list_display = ("mobile", "otp", "is_verified", "created_at", "expires_at")
+    search_fields = ("mobile",)
+
+
+@admin.register(GovtScheme, site=farming_admin_site)
+class GovtSchemeAdmin(admin.ModelAdmin):
+    list_display = ("title", "category", "is_active", "created_at")
+    list_filter = ("category", "is_active")
+    search_fields = ("title", "short_description", "keywords")
+    ordering = ("-created_at",)
+    list_editable = ("is_active",)
+    list_display_links = ("title",)
+    readonly_fields = ("created_at",)
+    list_per_page = 10
+
+    fieldsets = (
+        ("Basic Information", {
+            "fields": ("title", "category", "icon_class", "is_active")
+        }),
+        ("Descriptions", {
+            "fields": ("short_description", "full_description")
+        }),
+        ("Eligibility & Benefits", {
+            "fields": ("eligibility", "benefits", "required_documents")
+        }),
+        ("Official Links", {
+            "fields": ("official_details_url", "apply_url")
+        }),
+        ("Metadata", {
+            "fields": ("created_at",)
+        }),
+        ("Extra Info", {
+            "fields": ("keywords",)
+        }),
+    )
+
+@admin.register(CropActivity, site=farming_admin_site)
+class CropActivityAdmin(admin.ModelAdmin):
+    list_display = ("crop_name", "land", "farmer", "activity_type", "title", "due_date", "status", "is_read")
+    list_filter = ("activity_type", "status", "is_read")
+    search_fields = ("crop_name", "farmer__full_name", "land__land_name")
+    list_editable = ("status",)
+    list_per_page = 20
+    ordering = ("due_date",)
+    readonly_fields = ("created_at",)
+
+
+@admin.register(Notification, site=farming_admin_site)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display  = ("title", "farmer", "land", "crop_name", "notif_type", "is_read", "created_at")
+    list_filter   = ("notif_type", "is_read")
+    search_fields = ("title", "message", "farmer__full_name", "crop_name")
+    list_editable = ("is_read",)
+    list_per_page = 25
+    ordering      = ("-created_at",)
+    readonly_fields = ("created_at",)
+
+
+@admin.register(FarmerSchemeApplication, site=farming_admin_site)
+class FarmerSchemeApplicationAdmin(admin.ModelAdmin):
+    list_display = ("farmer", "scheme", "status", "applied_at")
+    list_filter = ("status",)
+    search_fields = ("farmer__full_name", "scheme__title")
+    list_editable = ("status",)
+    list_per_page = 20
+    readonly_fields = ("applied_at",)
+
+
+@admin.register(FarmerProfile, site=farming_admin_site)
+class FarmerProfileAdmin(admin.ModelAdmin):
+    list_display = ("farmer", "score_display", "has_aadhar", "has_bank_account", "has_land_record", "updated_at")
+    search_fields = ("farmer__full_name", "farmer__mobile")
+    readonly_fields = ("updated_at",)
+
+    def score_display(self, obj):
+        s = obj.score()
+        color = "#27ae60" if s >= 80 else "#f39c12" if s >= 50 else "#e74c3c"
+        return format_html('<b style="color:{}">{}%</b>', color, s)
+    score_display.short_description = "Score"
+
+
+@admin.register(SchemeNotification, site=farming_admin_site)
+class SchemeNotificationAdmin(admin.ModelAdmin):
+    list_display = ("title", "farmer", "scheme", "notif_type", "is_read", "created_at")
+    list_filter = ("notif_type", "is_read")
+    search_fields = ("title", "farmer__full_name", "scheme__title")
+    list_editable = ("is_read",)
+    list_per_page = 25
+    readonly_fields = ("created_at",)
+
+
+@admin.register(ContactMessage, site=farming_admin_site)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display   = ("name", "phone", "email", "short_message", "farmer", "is_read", "created_at")
+    list_filter    = ("is_read",)
+    search_fields  = ("name", "phone", "email", "message")
+    list_editable  = ("is_read",)
+    list_per_page  = 25
+    ordering       = ("-created_at",)
+    readonly_fields = ("created_at",)
+
+    def short_message(self, obj):
+        return obj.message[:60] + "..." if len(obj.message) > 60 else obj.message
+    short_message.short_description = "Message"

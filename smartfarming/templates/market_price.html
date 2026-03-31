@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Market Prices - Agrikon{% endblock %}
+
+{% block styles %}
+{{ block.super }}
+<style>
+  .mp-wrap { max-width: 1280px; margin: 0 auto; padding: 0 20px 60px; }
+
+  /* ── Hero ── */
+  .mp-hero {
+    background: linear-gradient(135deg, #1b5e20, #2e7d32, #4caf50);
+    border-radius: 20px; padding: 36px 36px 30px;
+    margin: 30px 0 28px; color: white;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 20px;
+    box-shadow: 0 10px 30px rgba(46,125,50,0.3);
+  }
+  .mp-hero h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 6px; }
+  .mp-hero p { font-size: 1rem; opacity: 0.9; }
+  .farmer-location-badge {
+    background: rgba(255,255,255,0.2); border-radius: 14px;
+    padding: 14px 20px; backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.3); min-width: 220px;
+  }
+  .farmer-location-badge .loc-label { font-size: 0.78rem; opacity: 0.8; margin-bottom: 4px; }
+  .farmer-location-badge .loc-val { font-size: 1rem; font-weight: 700; }
+
+  /* ── Filter panel ── */
+  .filter-panel {
+    background: #f4fef0; border: 1px solid #c8e6c9;
+    border-radius: 16px; padding: 22px 24px; margin-bottom: 24px;
+  }
+  .filter-panel form { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+  .filter-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 160px; }
+  .filter-group label { font-size: 0.82rem; font-weight: 600; color: #2e7d32; }
+  .filter-group input, .filter-group select {
+    padding: 10px 14px; border: 1.5px solid #b2dba0; border-radius: 30px;
+    font-size: 0.95rem; outline: none; background: white;
+  }
+  .filter-group input:focus, .filter-group select:focus {
+    border-color: #2e7d32; box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
+  }
+  .btn-search {
+    background: linear-gradient(145deg,#2e7d32,#4caf50); color: white;
+    border: none; padding: 11px 28px; border-radius: 30px;
+    font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.2s;
+    display: flex; align-items: center; gap: 8px; white-space: nowrap;
+  }
+  .btn-search:hover { background: linear-gradient(145deg,#1f6823,#3e9e41); }
+
+  /* ── Stats row ── */
+  .stats-row {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px;
+  }
+  .stat-card {
+    background: white; border: 1px solid #c8e6c9; border-radius: 14px;
+    padding: 16px 22px; flex: 1; min-width: 160px;
+    box-shadow: 0 2px 10px rgba(0,40,0,0.06);
+  }
+  .stat-card .stat-label { font-size: 0.78rem; color: #666; font-weight: 600; text-transform: uppercase; }
+  .stat-card .stat-val { font-size: 1.6rem; font-weight: 800; color: #2e7d32; margin-top: 4px; }
+  .stat-card .stat-sub { font-size: 0.8rem; color: #888; margin-top: 2px; }
+
+  /* ── Top cards ── */
+  .section-title {
+    font-size: 1.2rem; font-weight: 700; color: #1a4f1a;
+    margin: 28px 0 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .top-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 16px; margin-bottom: 28px; }
+  .top-card {
+    background: white; border-radius: 14px; padding: 18px;
+    border: 1px solid #c8e6c9; box-shadow: 0 3px 12px rgba(0,40,0,0.07);
+    transition: transform 0.2s;
+  }
+  .top-card:hover { transform: translateY(-3px); }
+  .top-card .tc-crop { font-size: 1rem; font-weight: 700; color: #1a4f1a; margin-bottom: 4px; }
+  .top-card .tc-market { font-size: 0.82rem; color: #666; margin-bottom: 10px; }
+  .top-card .tc-price { font-size: 1.4rem; font-weight: 800; color: #2e7d32; }
+  .top-card .tc-range { font-size: 0.8rem; color: #888; margin-top: 4px; }
+  .hot-badge {
+    display: inline-block; background: #e8f5e9; color: #2e7d32;
+    border-radius: 20px; padding: 2px 10px; font-size: 0.72rem; font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  /* ── Table ── */
+  .table-wrap {
+    background: white; border-radius: 16px; overflow: hidden;
+    border: 1px solid #c8e6c9; box-shadow: 0 4px 16px rgba(0,40,0,0.07);
+  }
+  .table-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px; background: #f4fef0; border-bottom: 1px solid #c8e6c9;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .table-toolbar span { font-size: 0.9rem; color: #2e7d32; font-weight: 600; }
+  .sort-btns { display: flex; gap: 8px; }
+  .sort-btn {
+    background: white; border: 1.5px solid #c8e6c9; border-radius: 20px;
+    padding: 5px 14px; font-size: 0.82rem; font-weight: 600; color: #2e7d32;
+    cursor: pointer; transition: 0.15s;
+  }
+  .sort-btn.active, .sort-btn:hover { background: #2e7d32; color: white; border-color: #2e7d32; }
+
+  table { width: 100%; border-collapse: collapse; min-width: 650px; }
+  thead th {
+    background: #e8f5e9; color: #1a4f1a; font-weight: 700;
+    padding: 14px 16px; text-align: left; font-size: 0.88rem;
+    border-bottom: 2px solid #c8e6c9;
+  }
+  tbody td { padding: 13px 16px; border-bottom: 1px solid #f0f8f0; font-size: 0.92rem; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f9fff9; }
+  tbody tr.best-row td { background: #e8f5e9; font-weight: 600; }
+  tbody tr.best-row td:first-child { border-left: 4px solid #2e7d32; }
+  .price-up { color: #2e7d32; font-weight: 700; }
+  .commodity-icon { color: #4caf50; margin-right: 6px; }
+
+  /* ── Error / Empty ── */
+  .info-box {
+    text-align: center; padding: 50px 20px;
+    background: #f9fff9; border-radius: 14px; border: 2px dashed #c8e6c9;
+    margin: 20px 0;
+  }
+  .info-box i { font-size: 3rem; color: #c8e6c9; display: block; margin-bottom: 12px; }
+  .info-box p { color: #888; font-size: 1rem; }
+
+  .error-box {
+    background: #fff3e0; border: 1px solid #ffcc80; border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 20px; color: #e65100;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  /* ── Loading ── */
+  .loading-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(255,255,255,0.8); z-index: 9999;
+    align-items: center; justify-content: center; flex-direction: column; gap: 14px;
+  }
+  .loading-overlay.show { display: flex; }
+  .spinner {
+    width: 48px; height: 48px; border: 5px solid #c8e6c9;
+    border-top-color: #2e7d32; border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 640px) {
+    .mp-hero { padding: 24px 20px; }
+    .mp-hero h1 { font-size: 1.4rem; }
+    .filter-group { min-width: 100%; }
+    table { font-size: 0.82rem; }
+    thead th, tbody td { padding: 10px 10px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/_slider_base.html' with slider_id="market_price" slider_title="Mandi Market Prices" slider_crumb="Market Prices" slide1="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1470" slide2="https://images.unsplash.com/photo-1488459716781-31db52582fe9?q=80&w=1470" slide3="https://images.unsplash.com/photo-1506484381205-f7945653044d?q=80&w=1470" slide4="https://images.unsplash.com/photo-1519996529931-28324d5a630e?q=80&w=1470" %}
+
+<div class="mp-wrap">
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="color:#2e7d32;font-weight:600;">Fetching latest prices...</p>
+  </div>
+
+  <!-- Hero -->
+  <div class="mp-hero">
+    <div>
+      <h1><i class="fas fa-store me-2"></i>Live Mandi Prices</h1>
+      <p>Real-time crop prices from nearest markets · Powered by data.gov.in</p>
+    </div>
+    {% if farmer %}
+    <div class="farmer-location-badge">
+      <div class="loc-label"><i class="fas fa-user me-1"></i>Your Location</div>
+      <div class="loc-val"><i class="fas fa-map-marker-alt me-1"></i>{{ farmer.district }}, {{ farmer.state }}</div>
+      <div style="font-size:0.82rem;opacity:0.85;margin-top:4px;"><i class="fas fa-home me-1"></i>{{ farmer.village }}, {{ farmer.taluka }}</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Error -->
+  {% if error_msg %}
+  <div class="error-box">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>{{ error_msg }} — Showing available data.</span>
+  </div>
+  {% endif %}
+
+  <!-- Filter -->
+  <div class="filter-panel">
+    <form method="GET" action="{% url 'market_price' %}" id="filterForm">
+      <div class="filter-group">
+        <label><i class="fas fa-map-pin me-1"></i>State</label>
+        <input type="text" name="state" value="{{ selected_state }}" placeholder="e.g. Gujarat">
+      </div>
+      <div class="filter-group">
+        <label><i class="fas fa-city me-1"></i>District</label>
+        <input type="text" name="district" value="{{ selected_district }}" placeholder="e.g. Ahmedabad">
+      </div>
+      <div class="filter-group">
+        <label><i class="fas fa-seedling me-1"></i>Commodity</label>
+        <input type="text" name="commodity" value="{{ selected_commodity }}" placeholder="e.g. Wheat, Tomato">
+      </div>
+      <button type="submit" class="btn-search" onclick="document.getElementById('loadingOverlay').classList.add('show')">
+        <i class="fas fa-search"></i> Search Prices
+      </button>
+    </form>
+  </div>
+
+  {% if price_data %}
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">Total Records</div>
+      <div class="stat-val">{{ total }}</div>
+      <div class="stat-sub">price entries found</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Location</div>
+      <div class="stat-val" style="font-size:1.1rem;">{{ selected_district|default:"All" }}</div>
+      <div class="stat-sub">{{ selected_state|default:"All States" }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Highest Modal Price</div>
+      <div class="stat-val" id="highestPrice">—</div>
+      <div class="stat-sub" id="highestCrop">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Lowest Modal Price</div>
+      <div class="stat-val" id="lowestPrice">—</div>
+      <div class="stat-sub" id="lowestCrop">—</div>
+    </div>
+  </div>
+
+  <!-- Top paying markets -->
+  <div class="section-title"><i class="fas fa-trophy" style="color:#ffb74d;"></i> Top Paying Markets</div>
+  <div class="top-grid" id="topGrid"></div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <div class="table-toolbar">
+      <span><i class="fas fa-table me-1"></i> <span id="recordCount">{{ total }}</span> records</span>
+      <div class="sort-btns">
+        <button class="sort-btn" data-sort="avg">Sort: Modal ↑</button>
+        <button class="sort-btn" data-sort="max">Sort: Max ↑</button>
+        <button class="sort-btn" data-sort="min">Sort: Min ↑</button>
+        <button class="sort-btn active" data-sort="none">Default</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Commodity</th>
+            <th>Variety</th>
+            <th>Market (Mandi)</th>
+            <th>District</th>
+            <th>Min ₹</th>
+            <th>Max ₹</th>
+            <th>Modal ₹</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="priceTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="info-box">
+    <i class="fas fa-store"></i>
+    <p>
+      {% if error_msg %}
+        API error occurred. Please try again.
+      {% elif selected_state %}
+        No price data found for <strong>{{ selected_district }}, {{ selected_state }}</strong>. Try different filters.
+      {% else %}
+        Enter your state and district above to see nearest mandi prices.
+      {% endif %}
+    </p>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+  const priceData = {{ price_data_json|safe }};
+
+  function renderTopCards(data) {
+    const top = [...data].sort((a,b) => b.avg - a.avg).slice(0, 4);
+    const grid = document.getElementById('topGrid');
+    if (!grid) return;
+    grid.innerHTML = top.map(p => `
+      <div class="top-card">
+        <span class="hot-badge"><i class="fas fa-fire me-1"></i>Top Price</span>
+        <div class="tc-crop"><i class="fas fa-seedling me-1" style="color:#4caf50;"></i>${p.commodity}</div>
+        <div class="tc-market"><i class="fas fa-store me-1"></i>${p.market}</div>
+        <div class="tc-price">₹${p.avg.toLocaleString('en-IN')}</div>
+        <div class="tc-range">Min ₹${p.min} · Max ₹${p.max}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderTable(data) {
+    const tbody = document.getElementById('priceTableBody');
+    if (!tbody) return;
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#888;">No records found.</td></tr>';
+      return;
+    }
+    const maxAvg = Math.max(...data.map(d => d.avg));
+    tbody.innerHTML = data.map(d => `
+      <tr class="${d.avg === maxAvg ? 'best-row' : ''}">
+        <td><i class="fas fa-seedling commodity-icon"></i>${d.commodity}</td>
+        <td>${d.variety || '—'}</td>
+        <td><strong>${d.market}</strong></td>
+        <td>${d.district}</td>
+        <td>₹${d.min.toLocaleString('en-IN')}</td>
+        <td>₹${d.max.toLocaleString('en-IN')}</td>
+        <td class="price-up">₹${d.avg.toLocaleString('en-IN')}</td>
+        <td style="color:#888;font-size:0.82rem;">${d.date}</td>
+      </tr>
+    `).join('');
+    document.getElementById('recordCount').textContent = data.length;
+  }
+
+  function updateStats(data) {
+    if (!data.length) return;
+    const sorted = [...data].sort((a,b) => b.avg - a.avg);
+    const high = sorted[0], low = sorted[sorted.length-1];
+    const hEl = document.getElementById('highestPrice');
+    const hCrop = document.getElementById('highestCrop');
+    const lEl = document.getElementById('lowestPrice');
+    const lCrop = document.getElementById('lowestCrop');
+    if (hEl) { hEl.textContent = '₹' + high.avg.toLocaleString('en-IN'); hCrop.textContent = high.commodity + ' · ' + high.market; }
+    if (lEl) { lEl.textContent = '₹' + low.avg.toLocaleString('en-IN'); lCrop.textContent = low.commodity + ' · ' + low.market; }
+  }
+
+  // Sort buttons
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const sort = this.dataset.sort;
+      let sorted = [...priceData];
+      if (sort === 'avg') sorted.sort((a,b) => b.avg - a.avg);
+      else if (sort === 'max') sorted.sort((a,b) => b.max - a.max);
+      else if (sort === 'min') sorted.sort((a,b) => a.min - b.min);
+      renderTable(sorted);
+    });
+  });
+
+  // Initial render
+  if (priceData.length) {
+    renderTable(priceData);
+    renderTopCards(priceData);
+    updateStats(priceData);
+  }
+
+  // Hide loading on page load
+  document.getElementById('loadingOverlay').classList.remove('show');
+</script>
+{% endblock %}

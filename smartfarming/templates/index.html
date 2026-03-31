@@ -1,0 +1,1265 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home - Agrikon{% endblock %}
+{% block content %}
+
+
+<section class="main-slider">
+  <div
+    class="swiper-container thm-swiper__slider"
+    data-swiper-options='{
+        "slidesPerView": 1,
+        "loop": true,
+        "effect": "fade",
+        "autoplay": {
+            "delay": 5000
+        },
+        "navigation": {
+            "nextEl": "#main-slider__swiper-button-next",
+            "prevEl": "#main-slider__swiper-button-prev"
+        }
+    }'
+  >
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div
+          class="image-layer"
+          style="
+            background-image: url('{% static 'assets/images/main-slider/main-slider-1-1.jpg' %}');
+          "
+        ></div>
+        <!-- /.image-layer -->
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-7 col-lg-7">
+              <span class="tagline">Smart Farming Platform</span>
+              <h2>
+                <span>Register Land</span> <br />
+                & Start Smart Farming
+              </h2>
+              <p>
+                Add your land details and get personalized farming guidance based on soil, 
+                <br />
+                season and location.
+              </p>
+              <a href="#" class="thm-btn">Register Land</a>
+              <!-- /.thm-btn dynamic-radius -->
+            </div>
+            <!-- /.col-lg-7 text-right -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.container -->
+      </div>
+      <!-- /.swiper-slide -->
+      <div class="swiper-slide">
+       <div class="image-layer" style="background-image: url('{% static "assets/images/main-slider/main-slider-1-2.jpg" %}');"></div>
+        <!-- /.image-layer -->
+        <div class="container">
+          <div class="row">
+            <div class="col-xl-7 col-lg-7">
+              <span class="tagline">Crop Advisory</span>
+              <h2>
+                <span>Get Crop Suggestions for Your Land</span><br />
+              </h2>
+              <p>
+                Find the most suitable crops for your land based on soil type,
+                <br />
+                season and water availability.
+              </p>
+              <a href="#" class="thm-btn">Crop Suggestions</a>
+              <!-- /.thm-btn dynamic-radius -->
+            </div>
+            <!-- /.col-lg-7 text-right -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.container -->
+      </div>
+      <!-- /.swiper-slide -->
+    </div>
+    <!-- /.swiper-wrapper -->
+
+    <!-- If we need navigation buttons -->
+    <div class="main-slider__nav">
+      <div class="swiper-button-prev" id="main-slider__swiper-button-next">
+        <i class="agrikon-icon-left-arrow"></i>
+      </div>
+      <div class="swiper-button-next" id="main-slider__swiper-button-prev">
+        <i class="agrikon-icon-right-arrow"></i>
+      </div>
+    </div>
+    <!-- /.main-slider__nav -->
+  </div>
+  <!-- /.swiper-container thm-swiper__slider -->
+</section>
+<!-- /.main-slider -->
+
+<section class="service-one">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 col-lg-4 wow fadeInUp" data-wow-duration="1500ms">
+        <div class="service-one__box">
+          <img src="{% static 'assets/images/services/service-1-2.jpg' %}" alt="" />
+          <div class="service-one__box-content">
+            <h3>
+              <a href="{% url 'farming_guide' %}">Land Registration</a>
+            </h3>
+          </div>
+          <!-- /.service-one__box-content -->
+        </div>
+        <!-- /.service-one__box -->
+      </div>
+      <!-- /.col-md-12 col-lg-4 -->
+      <div class="col-md-12 col-lg-4 wow fadeInUp" data-wow-duration="1500ms">
+        <div class="service-one__box">
+          <img src="{% static 'assets/images/services/service-1-1.jpg' %}" alt="" />
+          <div class="service-one__box-content">
+            <h3><a href="{% url 'farming_guide' %}">Crop Suggestion</a></h3>
+          </div>
+          <!-- /.service-one__box-content -->
+        </div>
+        <!-- /.service-one__box -->
+      </div>
+      <!-- /.col-md-12 col-lg-4 -->
+      <div class="col-md-12 col-lg-4 wow fadeInUp" data-wow-duration="1500ms">
+        <div class="service-one__box">
+          <img
+            src="{% static 'assets/images/services/service-1-3.jpg' %}"
+            alt=""
+          />
+          <div class="service-one__box-content">
+            <h3><a href="{% url 'farming_guide' %}">Explore Government Schemes</a></h3>
+          </div>
+          <!-- /.service-one__box-content -->
+        </div>
+        <!-- /.service-one__box -->
+      </div>
+      <!-- /.col-md-12 col-lg-4 -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container -->
+</section>
+<!-- /.service-one -->
+
+<section class="about-one">
+  <img
+    src="{% static 'assets/images/icons/about-bg-icon-1-1.png' %}"
+    class="about-one__bg-shape-1"
+    alt=""
+  />
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-5">
+        <div class="about-one__images">
+          <img
+            src="{% static 'assets/images/resources/about-1-1.jpg' %}"
+            style="margin-left:60px;"
+            alt=""
+          />
+          <img
+            src="{% static 'assets/images/resources/about-1-2.jpg' %}"
+            style="margin-left:130px;"
+            alt=""
+          />
+          <div
+            class="about-one__count wow fadeInLeft"
+            data-wow-duration="1500ms"
+            style="margin-left:90px;"
+          >
+            <span>Trusted by</span>
+
+            <h4>8900</h4>
+          </div>
+          <!-- /.about-one__count -->
+        </div>
+        <!-- /.about-one__images -->
+      </div>
+      <!-- /.col-lg-6 -->
+      <div class="col-lg-7">
+        <div class="about-one__content">
+          <div class="block-title text-left">
+            <div class="block-title__image"></div>
+            <!-- /.block-title__image -->
+            <p>Welcome to agricon</p>
+            <h3>Smart Farming Solutions for Modern Farmers</h3>
+          </div>
+          <!-- /.block-title -->
+          <div class="about-one__tagline">
+            <p>
+              Helping farmers make better decisions with digital tools
+            </p>
+          </div>
+          <!-- /.about-one__tagline -->
+          <div class="about-one__summery">
+            <p>
+              Our platform helps farmers manage their land, discover suitable crops and explore government schemes. By combining technology with agriculture, we aim to support farmers in making better farming decisions and improving productivity.
+            </p>
+          </div>
+          <!-- /.about-one__summery -->
+          <div class="about-one__icon-row">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="about-one__box">
+                  <i class="agrikon-icon-farmer"></i>
+                  <h4><a href="{% url 'about' %}">Farmer Friendly Platform</a></h4>
+                </div>
+                <!-- /.about-one__box -->
+              </div>
+              <!-- /.col-lg-6 -->
+              <div class="col-lg-6">
+                <div class="about-one__box">
+                  <i class="agrikon-icon-agriculture"></i>
+                  <h4><a href="{% url 'about' %}">Smart Crop Guidance</a></h4>
+                </div>
+                <!-- /.about-one__box -->
+              </div>
+              <!-- /.col-lg-6 -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.about-one__icon-row -->
+          <a href="{% url 'about' %}" class="thm-btn">Learn More</a
+          ><!-- /.thm-btn -->
+        </div>
+        <!-- /.about-one__content -->
+      </div>
+      <!-- /.col-lg-6 -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container -->
+</section>
+<!-- /.about-one -->
+
+<section class="service-two">
+  <div class="service-two__bottom-curv"></div>
+  <div class="container">
+    <div class="block-title text-center">
+      <div class="block-title__image"></div>
+      <p>Our Services</p>
+      <h3>Features Designed for Farmers</h3>
+    </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <div class="service-two__card">
+          <div class="service-two__card-image">
+            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=80" alt="Land Registration" style="height:220px;object-fit:cover;width:100%;display:block;"/>
+          </div>
+          <div class="service-two__card-content">
+            <div class="service-two__card-icon"><i class="agrikon-icon-tractor"></i></div>
+            <h3><a href="{% url 'add_land' %}">Land Registration</a></h3>
+            <p>Register your land with soil data, water source and location for personalized farming advice.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <div class="service-two__card">
+          <div class="service-two__card-image">
+            <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80" alt="Market Prices" style="height:220px;object-fit:cover;width:100%;display:block;"/>
+          </div>
+          <div class="service-two__card-content">
+            <div class="service-two__card-icon"><i class="agrikon-icon-organic-food"></i></div>
+            <h3><a href="{% url 'market_price' %}">Market Prices</a></h3>
+            <p>Check live mandi rates and crop price trends for your district and nearby markets.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <div class="service-two__card">
+          <div class="service-two__card-image">
+            <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=400&q=80" alt="Government Schemes" style="height:220px;object-fit:cover;width:100%;display:block;"/>
+          </div>
+          <div class="service-two__card-content">
+            <div class="service-two__card-icon"><i class="agrikon-icon-vegetable"></i></div>
+            <h3><a href="{% url 'govt_schemes' %}">Government Schemes</a></h3>
+            <p>Discover and apply for government subsidies, loans and farming support programs.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <div class="service-two__card">
+          <div class="service-two__card-image">
+            <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=400&q=80" alt="Crop Suggestions" style="height:220px;object-fit:cover;width:100%;display:block;"/>
+          </div>
+          <div class="service-two__card-content">
+            <div class="service-two__card-icon"><i class="agrikon-icon-dairy"></i></div>
+            <h3><a href="{% url 'farming_guide' %}">AI Crop Guide</a></h3>
+            <p>Get AI-powered crop recommendations based on your soil, season and water availability.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /.service-two -->
+
+<div class="projects-one project-one__home-one">
+  <div class="container">
+    <div class="block-title text-center">
+      <div class="block-title__image"></div>
+      <!-- /.block-title__image -->
+      <p>Useful Tools</p>
+      <h3>Smart Farming Features</h3>
+    </div>
+    <!-- /.block-title -->
+    <div
+      class="thm-swiper__slider swiper-container"
+      data-swiper-options='{"spaceBetween": 0, "slidesPerView": 1, "loop": true, "slidesPerGroup": 1, "pagination": {
+            "el": "#projects-one__swiper-pagination",
+            "type": "bullets",
+            "clickable": true
+        },
+        "breakpoints": {
+            "0": {
+                "spaceBetween": 0,
+                "slidesPerView": 1,
+                "slidesPerGroup": 1
+            },
+            "640": {
+                "spaceBetween": 30,
+                "slidesPerView": 2,
+                "slidesPerGroup": 2
+            },
+            "992": {
+                "spaceBetween": 30,
+                "slidesPerView": 2,
+                "slidesPerGroup": 2
+            }
+        }}'
+    >
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="projects-one__single">
+            <img
+              src="{% static 'assets/images/projects/project-2-1.jpg' %}"
+              style="max-height: 433px;"
+              alt=""
+            />
+            <div class="projects-one__content">
+              <h3>Land Management</h3>
+              <a href="{% url 'market_price' %}" class="projects-one__button"
+                ><i class="agrikon-icon-right-arrow"></i></a
+              ><!-- /.projects-one__button -->
+            </div>
+            <!-- /.projects-one__content -->
+          </div>
+          <!-- /.projects-one__single -->
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="projects-one__single">
+            <img
+              src="{% static 'assets/images/projects/project-2-2.jpg' %}"
+              style="height: 433px;"
+              alt=""
+            />
+            <div class="projects-one__content">
+              <h3>Crop Advisory</h3>
+              <a href="{% url 'market_price' %}" class="projects-one__button"
+                ><i class="agrikon-icon-right-arrow"></i></a
+              ><!-- /.projects-one__button -->
+            </div>
+            <!-- /.projects-one__content -->
+          </div>
+          <!-- /.projects-one__single -->
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="projects-one__single">
+            <img
+              src="{% static 'assets/images/projects/project-2-3.jpg' %}"
+              style="height: 432px;"
+              alt=""
+            />
+            <div class="projects-one__content">
+              <h3>Government Scheme Finder</h3>
+              <a href="{% url 'market_price' %}" class="projects-one__button"
+                ><i class="agrikon-icon-right-arrow"></i></a
+              ><!-- /.projects-one__button -->
+            </div>
+            <!-- /.projects-one__content -->
+          </div>
+          <!-- /.projects-one__single -->
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="projects-one__single">
+            <img
+              src="{% static 'assets/images/projects/project-2-4.jpg' %}"
+              alt=""
+            />
+            <div class="projects-one__content">
+              <h3>Market Price Information</h3>
+              <a href="{% url 'market_price' %}" class="projects-one__button"
+                ><i class="agrikon-icon-right-arrow"></i></a
+              ><!-- /.projects-one__button -->
+            </div>
+            <!-- /.projects-one__content -->
+          </div>
+          <!-- /.projects-one__single -->
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="projects-one__single">
+            <img
+              src="{% static 'assets/images/projects/project-2-2.jpg' %}"
+              style="height: 433px;"
+              alt=""
+            />
+            <div class="projects-one__content">
+              <h3>Latest Farming News</h3>
+              <a href="{% url 'market_price' %}" class="projects-one__button"
+                ><i class="agrikon-icon-right-arrow"></i></a
+              ><!-- /.projects-one__button -->
+            </div>
+            <!-- /.projects-one__content -->
+          </div>
+          <!-- /.projects-one__single -->
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="projects-one__single">
+            <img
+              src="{% static 'assets/images/projects/project-2-4.jpg' %}"
+              alt=""
+            />
+            <div class="projects-one__content">
+              <h3>Seasonal Farming Tips</h3>
+              <a href="{% url 'market_price' %}" class="projects-one__button"
+                ><i class="agrikon-icon-right-arrow"></i></a
+              ><!-- /.projects-one__button -->
+            </div>
+            <!-- /.projects-one__content -->
+          </div>
+          <!-- /.projects-one__single -->
+        </div>
+        <!-- /.swiper-slide -->
+      </div>
+      <!-- /.swiper-wrapper -->
+      <div class="swiper-pagination" id="projects-one__swiper-pagination"></div>
+    </div>
+    <!-- /.swiper-container -->
+  </div>
+  <!-- /.container -->
+</div>
+<!-- /.projects-one -->
+
+<section
+  class="call-to-action__three jarallax"
+  data-jarallax
+  data-speed="0.3"
+  data-imgPosition="50% 50%"
+>
+  <img
+    class="call-to-action__three__bg jarallax-img"
+    src="{% static 'assets/images/backgrounds/cta-1-bg-1.jpg' %}"
+    alt="parallax-image"
+  />
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-5 wow fadeInLeft" data-wow-duration="1500ms">
+        <div class="call-to-action__three-image">
+          <img
+            src="{% static 'assets/images/resources/cta-3-1.jpg' %}"
+            alt=""
+          />
+          <img
+            src="{% static 'assets/images/resources/cta-3-2.jpg' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.call-to-action__three-image -->
+      </div>
+      <!-- /.col-lg-5 -->
+      <div class="col-lg-7">
+        <div class="call-to-action__three-content">
+          <h3>Start Your Smart Farming Journey Today</h3>
+          <a href="{% url 'about' %}" class="thm-btn">Get Started</a
+          ><!-- /.thm-btn -->
+        </div>
+        <!-- /.call-to-action__three-content -->
+      </div>
+      <!-- /.col-lg-7 -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container -->
+</section>
+<!-- /.call-to-action__three -->
+
+<section class="testimonials-one">
+  <img
+    src="{% static 'assets/images/icons/testimonials-bg-1-1.png' %}"
+    class="testimonials-one__bg"
+    alt=""
+  />
+  <div class="container">
+    <h2 class="testimonials-one__title">What Farmers Say</h2>
+    <div
+      id="testimonials-one__carousel"
+      class="testimonials-one__carousel swiper-container"
+    >
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonials-one__icons">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+          <!-- /.testimonials-one__icons -->
+          <p>
+            This platform helped me understand which crops are best for my land. It is simple and very useful.
+          </p>
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="testimonials-one__icons">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+          <!-- /.testimonials-one__icons -->
+          <p>
+            Finding government schemes and farming information has become much easier with this platform.
+          </p>
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="testimonials-one__icons">
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+            <i class="fas fa-star"></i>
+          </div>
+          <!-- /.testimonials-one__icons -->
+          <p>
+            The crop suggestion feature is very helpful for planning the farming season.
+          </p>
+        </div>
+        <!-- /.swiper-slide -->
+      </div>
+      <!-- /.swiper-wrapper -->
+    </div>
+    <!-- /#testimonials-one__carousel -->
+
+    <div id="testimonials-one__thumb" class="swiper-container">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonials-one__image">
+            <img
+              src="{% static 'assets/images/resources/testimonials-1-1.jpg' %}"
+              alt=""
+            />
+          </div>
+          <!-- /.testimonials-one__image -->
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="testimonials-one__image">
+            <img
+              src="{% static 'assets/images/resources/testimonials-1-2.jpg' %}"
+              alt=""
+            />
+          </div>
+          <!-- /.testimonials-one__image -->
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="testimonials-one__image">
+            <img
+              src="{% static 'assets/images/resources/testimonials-1-3.jpg' %}"
+              alt=""
+            />
+          </div>
+          <!-- /.testimonials-one__image -->
+        </div>
+        <!-- /.swiper-slide -->
+      </div>
+      <!-- /.swiper-wrapper -->
+    </div>
+    <!-- /#testimonials-one__thumb.swiper-container -->
+
+    <div
+      id="testimonials-one__meta"
+      class="testimonials-one__carousel swiper-container"
+    >
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="testimonials-one__meta">
+            <h4>Bhavesh Parmar</h4>
+            <span>registered Farmer</span>
+          </div>
+          <!-- /.testimonials-one__meta -->
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="testimonials-one__meta">
+            <h4>Akhil Savaj</h4>
+            <span>Registered Farmer</span>
+          </div>
+          <!-- /.testimonials-one__meta -->
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <div class="testimonials-one__meta">
+            <h4>Alina Ivanova</h4>
+            <span>Platform User</span>
+          </div>
+          <!-- /.testimonials-one__meta -->
+        </div>
+        <!-- /.swiper-slide -->
+      </div>
+      <!-- /.swiper-wrapper -->
+    </div>
+    <!-- /#testimonials-one__meta.swiper-container -->
+    <div
+      class="swiper-pagination"
+      id="testimonials-one__swiper-pagination"
+    ></div>
+  </div>
+  <!-- /.container -->
+</section>
+<!-- /.testimonials-one -->
+
+<section class="gray-boxed-wrapper home-one__boxed">
+  <img
+    src="{% static 'assets/images/icons/home-1-blog-bg.png' %}"
+    alt=""
+    class="home-one__boxed-bg"
+  />
+  <section class="blog-home-two blog-home-one">
+    <div class="container">
+      <div class="row top-row">
+        <div class="col-lg-6">
+          <div class="block-title">
+            <div class="block-title__image"></div>
+            <!-- /.block-title__image -->
+            <p>Farming Knowledge</p>
+            <h3>Latest Farming Tips and News</h3>
+          </div>
+          <!-- /.block-title -->
+        </div>
+        <!-- /.col-lg-6 -->
+        <div class="col-lg-6">
+          <p class="block-text">
+            Stay updated with the latest farming techniques, government announcements and agricultural tips.
+          </p>
+        </div>
+        <!-- /.col-lg-6 -->
+      </div>
+      <!-- /.row -->
+      <div class="row">
+        <div class="col-md-12 col-lg-4">
+          <div class="blog-card">
+            <div class="blog-card__image">
+              <img
+                src="{% static 'assets/images/blog/blog-grid-1.jpg' %}"
+                alt="Best Way to Do Eco and Agriculture"
+              />
+              <a href="#"></a>
+            </div>
+            <!-- /.blog-card__image -->
+            <div class="blog-card__content">
+              {% comment %} <div class="blog-card__date">18 Nov</div> {% endcomment %}
+              <!-- /.blog-card__date -->
+              <div class="blog-card__meta">
+                {% comment %} <a href="#"
+                  ><i class="far fa-user-circle"></i> by Admin</a
+                > {% endcomment %}
+                {% comment %} <a href="#"
+                  ><i class="far fa-comments"></i> 2 Comments</a
+                > {% endcomment %}
+              </div>
+              <!-- /.blog-card__meta -->
+              <h3>
+                <a href="#"
+                  >How to Choose the Right Seasonal Crop for Your Soil</a
+                >
+              </h3>
+              <a href="#" class="thm-btn">Read More</a
+              ><!-- /.thm-btn -->
+            </div>
+            <!-- /.blog-card__content -->
+          </div>
+          <!-- /.blog-card -->
+        </div>
+        <!-- /.col-md-12 col-lg-4 -->
+        <div class="col-md-12 col-lg-4">
+          <div class="blog-card">
+            <div class="blog-card__image">
+              <img
+                src="{% static 'assets/images/blog/blog-grid-2.jpg' %}"
+                alt="Leverage agile frameworks to provide"
+              />
+              <a href="#"></a>
+            </div>
+            <!-- /.blog-card__image -->
+            <div class="blog-card__content">
+              {% comment %} <div class="blog-card__date">18 Nov</div> {% endcomment %}
+              <!-- /.blog-card__date -->
+              <div class="blog-card__meta">
+                {% comment %} <a href="#"
+                  ><i class="far fa-user-circle"></i> by Admin</a
+                >
+                <a href="#"
+                  ><i class="far fa-comments"></i> 2 Comments</a
+                > {% endcomment %}
+              </div>
+              <!-- /.blog-card__meta -->
+              <h3>
+                <a href="#"
+                  >Stay Updated With Latest Agriculture And   Farming News</a
+                >
+              </h3>
+              <a href="#" class="thm-btn">Read More</a
+              ><!-- /.thm-btn -->
+            </div>
+            <!-- /.blog-card__content -->
+          </div>
+          <!-- /.blog-card -->
+        </div>
+        <!-- /.col-md-12 col-lg-4 -->
+        <div class="col-md-12 col-lg-4">
+          <div class="blog-card">
+            <div class="blog-card__image">
+              <img
+                src="{% static 'assets/images/blog/blog-grid-3.jpg' %}"
+                alt="Organically grow the holistic world view"
+              />
+              <a href="#"></a>
+            </div>
+            <!-- /.blog-card__image -->
+            <div class="blog-card__content">
+              {% comment %} <div class="blog-card__date">18 Nov</div>
+              <!-- /.blog-card__date -->
+              <div class="blog-card__meta">
+                <a href="#"
+                  ><i class="far fa-user-circle"></i> by Admin</a
+                >
+                <a href="#"
+                  ><i class="far fa-comments"></i> 2 Comments</a
+                >
+              </div> {% endcomment %}
+              <!-- /.blog-card__meta -->
+              <h3>
+                <a href="#"
+                  >Government Announcements related to agriculture.</a
+                >
+              </h3>
+              <a href="#" class="thm-btn">Read More</a
+              ><!-- /.thm-btn -->
+            </div>
+            <!-- /.blog-card__content -->
+          </div>
+          <!-- /.blog-card -->
+        </div>
+        <!-- /.col-md-12 col-lg-4 -->
+      </div>
+      <!-- /.row -->
+      <hr />
+    </div>
+    <!-- /.container -->
+  </section>
+  <!-- /.blog-home-two -->
+  <div class="blog-home__slogan">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-9">
+          <div class="blog-home__slogan-main">
+            <i class="agrikon-icon-farm"></i>
+            <div class="blog-home__slogan-content">
+              <h3>Helping Farmers Make Better Farming Decisions</h3>
+              <p>
+                Access crop suggestions, government schemes, market prices and farming
+                knowledge in one place to improve your agricultural productivity.
+              </p>
+            </div>
+            <!-- /.blog-home__slogan-content -->
+          </div>
+          <!-- /.blog-home__slogan-main -->
+        </div>
+        <!-- /.col-lg-9 -->
+        <div class="col-lg-3">
+          <div class="blog-home__slogan-image">
+            <img
+              src="{% static 'assets/images/resources/blog-cta-1.png' %}"
+              alt=""
+            />
+          </div>
+          <!-- /.blog-home__slogan-image -->
+        </div>
+        <!-- /.col-lg-3 -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container -->
+  </div>
+  <!-- /.blog-home__slogan -->
+</section>
+<!-- /.gray-boxed-wrapper -->
+
+<!-- ═══ ANIMATED STATS SECTION ═══════════════════════════════════════════ -->
+<section class="kf-stats">
+  <div class="kf-stats__bg"></div>
+  <div class="container">
+    <div class="kf-stats__grid">
+      <div class="kf-stat-card" data-target="{{ stat_farmers }}">
+        <div class="kf-stat-icon">🧑‍🌾</div>
+        <div class="kf-stat-num" id="stat-farmers">0</div>
+        <div class="kf-stat-label">Registered Farmers</div>
+      </div>
+      <div class="kf-stat-card" data-target="{{ stat_crops }}">
+        <div class="kf-stat-icon">🌾</div>
+        <div class="kf-stat-num" id="stat-crops">0</div>
+        <div class="kf-stat-label">Crop Listings</div>
+      </div>
+      <div class="kf-stat-card" data-target="{{ stat_schemes }}">
+        <div class="kf-stat-icon">🏛️</div>
+        <div class="kf-stat-num" id="stat-schemes">0</div>
+        <div class="kf-stat-label">Govt Schemes</div>
+      </div>
+      <div class="kf-stat-card" data-target="98">
+        <div class="kf-stat-icon">⭐</div>
+        <div class="kf-stat-num" id="stat-satisfaction">0</div>
+        <div class="kf-stat-label">% Satisfaction</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ════════════════════════════════════════════════════ -->
+<section class="kf-how">
+  <div class="container">
+    <div class="kf-section-head">
+      <span class="kf-tag">Simple Process</span>
+      <h2>How Agrikon Works</h2>
+      <p>3 simple steps to start smart farming</p>
+    </div>
+    <div class="kf-steps">
+      <div class="kf-step">
+        <div class="kf-step-num">01</div>
+        <div class="kf-step-icon">📝</div>
+        <h3>Register</h3>
+        <p>Create your farmer account with mobile OTP verification in minutes.</p>
+        <a href="{% url 'register' %}" class="kf-step-link">Get Started →</a>
+      </div>
+      <div class="kf-step-arrow">→</div>
+      <div class="kf-step">
+        <div class="kf-step-num">02</div>
+        <div class="kf-step-icon">🗺️</div>
+        <h3>Add Your Land</h3>
+        <p>Enter soil data, water source and location for personalized advice.</p>
+        <a href="{% url 'add_land' %}" class="kf-step-link">Add Land →</a>
+      </div>
+      <div class="kf-step-arrow">→</div>
+      <div class="kf-step">
+        <div class="kf-step-num">03</div>
+        <div class="kf-step-icon">🤖</div>
+        <h3>Get AI Suggestions</h3>
+        <p>Receive crop recommendations, farming schedule and govt scheme alerts.</p>
+        <a href="{% url 'farming_guide' %}" class="kf-step-link">Explore →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURE CARDS ═══════════════════════════════════════════════════ -->
+<section class="kf-features">
+  <div class="container">
+    <div class="kf-section-head">
+      <span class="kf-tag">Everything You Need</span>
+      <h2>Smart Farming Features</h2>
+    </div>
+    <div class="kf-feat-grid">
+      <a href="{% url 'farming_guide' %}" class="kf-feat-card" style="--accent:#2e7d32">
+        <div class="kf-feat-icon">🌱</div>
+        <h3>AI Crop Guide</h3>
+        <p>Gemini AI analyzes your soil and suggests best crops with full schedule.</p>
+        <span class="kf-feat-arrow">→</span>
+      </a>
+      <a href="{% url 'market_price' %}" class="kf-feat-card" style="--accent:#f57f17">
+        <div class="kf-feat-icon">📈</div>
+        <h3>Market Prices</h3>
+        <p>Live mandi rates and price trends for all major crops across India.</p>
+        <span class="kf-feat-arrow">→</span>
+      </a>
+      <a href="{% url 'govt_schemes' %}" class="kf-feat-card" style="--accent:#1565c0">
+        <div class="kf-feat-icon">🏛️</div>
+        <h3>Govt Schemes</h3>
+        <p>Discover and apply for government subsidies and farming support programs.</p>
+        <span class="kf-feat-arrow">→</span>
+      </a>
+      <a href="{% url 'crops_marketplace' %}" class="kf-feat-card" style="--accent:#6a1b9a">
+        <div class="kf-feat-icon">🛒</div>
+        <h3>Crop Marketplace</h3>
+        <p>Sell your crops directly to buyers and get the best price.</p>
+        <span class="kf-feat-arrow">→</span>
+      </a>
+      <a href="{% url 'agriculture_news' %}" class="kf-feat-card" style="--accent:#00838f">
+        <div class="kf-feat-icon">📰</div>
+        <h3>Farming News</h3>
+        <p>Stay updated with latest agriculture news and government announcements.</p>
+        <span class="kf-feat-arrow">→</span>
+      </a>
+      <a href="{% url 'farming_tools' %}" class="kf-feat-card" style="--accent:#c62828">
+        <div class="kf-feat-icon">🔧</div>
+        <h3>Farming Tools</h3>
+        <p>Buy and sell farming equipment and tools with other farmers.</p>
+        <span class="kf-feat-arrow">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ── Stats ── */
+.kf-stats{position:relative;padding:70px 0;overflow:hidden;background:linear-gradient(135deg,#1b5e20,#2e7d32,#388e3c);}
+.kf-stats__bg{position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");}
+.kf-stats__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative;z-index:1;}
+.kf-stat-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:32px 20px;text-align:center;backdrop-filter:blur(10px);transition:.3s;cursor:default;}
+.kf-stat-card:hover{background:rgba(255,255,255,.18);transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.2);}
+.kf-stat-icon{font-size:2.5rem;margin-bottom:12px;}
+.kf-stat-num{font-size:3rem;font-weight:900;color:#fff;line-height:1;margin-bottom:8px;font-family:'Segoe UI',sans-serif;}
+.kf-stat-label{color:rgba(255,255,255,.8);font-size:.9rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+@media(max-width:768px){.kf-stats__grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.kf-stats__grid{grid-template-columns:1fr 1fr;gap:12px;}.kf-stat-num{font-size:2rem;}}
+
+/* ── How It Works ── */
+.kf-how{padding:80px 0;background:#f8fdf8;}
+.kf-section-head{text-align:center;margin-bottom:50px;}
+.kf-tag{display:inline-block;background:#e8f5e9;color:#2e7d32;padding:5px 16px;border-radius:20px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+.kf-section-head h2{font-size:2.2rem;font-weight:800;color:#1b3a1b;margin:0 0 10px;}
+.kf-section-head p{color:#666;font-size:1rem;}
+.kf-steps{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;}
+.kf-step{background:#fff;border-radius:16px;padding:36px 28px;text-align:center;flex:1;min-width:220px;max-width:280px;box-shadow:0 4px 20px rgba(0,0,0,.08);border:1px solid #e8f5e9;transition:.3s;position:relative;}
+.kf-step:hover{transform:translateY(-8px);box-shadow:0 16px 40px rgba(46,125,50,.15);border-color:#a5d6a7;}
+.kf-step-num{position:absolute;top:-16px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#2e7d32,#4caf50);color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+.kf-step-icon{font-size:2.8rem;margin-bottom:14px;}
+.kf-step h3{font-size:1.1rem;font-weight:700;color:#1b3a1b;margin-bottom:10px;}
+.kf-step p{font-size:.88rem;color:#666;line-height:1.6;margin-bottom:14px;}
+.kf-step-link{color:#2e7d32;font-weight:700;font-size:.85rem;text-decoration:none;}
+.kf-step-link:hover{color:#1b5e20;}
+.kf-step-arrow{font-size:2rem;color:#c8e6c9;padding:0 16px;flex-shrink:0;}
+@media(max-width:768px){.kf-step-arrow{display:none;}.kf-steps{gap:20px;}}
+
+/* ── Feature Cards ── */
+.kf-features{padding:80px 0;background:#fff;}
+.kf-feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.kf-feat-card{background:#fff;border:1.5px solid #e8e8e8;border-radius:16px;padding:32px 24px;text-decoration:none;color:inherit;transition:.3s;position:relative;overflow:hidden;display:block;}
+.kf-feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent);transform:scaleX(0);transition:.3s;transform-origin:left;}
+.kf-feat-card:hover{border-color:var(--accent);transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.1);color:inherit;text-decoration:none;}
+.kf-feat-card:hover::before{transform:scaleX(1);}
+.kf-feat-icon{font-size:2.5rem;margin-bottom:16px;display:block;}
+.kf-feat-card h3{font-size:1.1rem;font-weight:700;color:#1b3a1b;margin-bottom:10px;}
+.kf-feat-card p{font-size:.88rem;color:#666;line-height:1.6;margin:0;}
+.kf-feat-arrow{position:absolute;bottom:20px;right:24px;font-size:1.2rem;color:var(--accent);opacity:0;transition:.3s;}
+.kf-feat-card:hover .kf-feat-arrow{opacity:1;transform:translateX(4px);}
+@media(max-width:992px){.kf-feat-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:576px){.kf-feat-grid{grid-template-columns:1fr;}}
+</style>
+
+<script>
+// Count-up animation for stats
+(function(){
+  function countUp(el, target, duration){
+    let start = 0, step = target / (duration / 16);
+    let timer = setInterval(function(){
+      start += step;
+      if(start >= target){ start = target; clearInterval(timer); }
+      el.textContent = Math.floor(start).toLocaleString();
+    }, 16);
+  }
+  function initStats(){
+    let cards = document.querySelectorAll('.kf-stat-card');
+    let ids = ['stat-farmers','stat-crops','stat-schemes','stat-satisfaction'];
+    cards.forEach(function(card, i){
+      let target = parseInt(card.dataset.target);
+      countUp(document.getElementById(ids[i]), target, 2000);
+    });
+  }
+  // Trigger when section is visible
+  let statsSection = document.querySelector('.kf-stats');
+  if(statsSection){
+    let observer = new IntersectionObserver(function(entries){
+      if(entries[0].isIntersecting){ initStats(); observer.disconnect(); }
+    }, {threshold: 0.3});
+    observer.observe(statsSection);
+  }
+})();
+</script>
+
+<section class="contact-two">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-5">
+        <div class="contact-two__image">
+          <div class="contact-two__image-bubble-1"></div>
+          <!-- /.contact-two__image-bubble-1 -->
+          <div class="contact-two__image-bubble-2"></div>
+          <!-- /.contact-two__image-bubble-2 -->
+          <div class="contact-two__image-bubble-3"></div>
+          <!-- /.contact-two__image-bubble-3 -->
+          <img
+            src="{% static 'assets/images/resources/contact-1-1.jpg' %}"
+            class="img-fluid"
+            alt=""
+          />
+        </div>
+        <!-- /.contact-two__image -->
+      </div>
+      <!-- /.col-sm-12 col-md-12 col-lg-12 col-xl-5 -->
+      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-3">
+        <div class="contact-two__content">
+          <div class="block-title">
+            <div class="block-title__image"></div>
+            <!-- /.block-title__image -->
+            <p>Contact Us</p>
+            <h3>Leave Us A Message</h3>
+          </div>
+          <!-- /.block-title -->
+          <div class="contact-two__summery">
+            <p>
+              If you have any questions about the platform or farming services, feel free to contact us.
+            </p>
+          </div>
+          <!-- /.contact-two__summery -->
+        </div>
+        <!-- /.contact-two__content -->
+      </div>
+      <!-- /.col-sm-12 col-md-12 col-lg-12 col-xl-4 -->
+      <div class="col-sm-12 col-md-12 col-lg-12 col-xl-4">
+        {% if messages %}
+          {% for msg in messages %}
+            {% if 'message' in msg.tags or msg.tags == 'success' %}
+            <div style="background:#e8f5e9;color:#2e7d32;padding:12px 16px;border-radius:8px;margin-bottom:14px;font-weight:600;border:1px solid #c8e6c9;">
+              <i class="fas fa-check-circle me-2"></i>{{ msg }}
+            </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        <form method="POST" action="{% url 'contact' %}" class="contact-one__form">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-lg-12">
+              <input type="text" name="name" placeholder="Full Name" required
+                     value="{% if farmer %}{{ farmer.full_name }}{% endif %}" />
+            </div>
+            <div class="col-lg-12">
+              <input type="email" name="email" placeholder="Email Address" />
+            </div>
+            <div class="col-lg-12">
+              <input type="text" name="phone" placeholder="Phone Number"
+                     value="{% if farmer %}{{ farmer.mobile }}{% endif %}" />
+            </div>
+            <div class="col-lg-12">
+              <textarea name="message" placeholder="Write Message" required></textarea>
+            </div>
+            <div class="col-lg-12">
+              <button type="submit" class="thm-btn">Send Message</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <!-- /.col-sm-12 col-md-12 col-lg-12 col-xl-4 -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container -->
+</section>
+<!-- /.contact-two -->
+
+{% comment %} <div class="client-carousel client-carousel__has-border-top">
+  <div class="container">
+    <div
+      class="thm-swiper__slider swiper-container"
+      data-swiper-options='{"spaceBetween": 140, "slidesPerView": 5, "autoplay": { "delay": 5000 }, "breakpoints": {
+                "0": {
+                    "spaceBetween": 30,
+                    "slidesPerView": 2
+                },
+                "375": {
+                    "spaceBetween": 30,
+                    "slidesPerView": 2
+                },
+                "575": {
+                    "spaceBetween": 30,
+                    "slidesPerView": 3
+                },
+                "767": {
+                    "spaceBetween": 50,
+                    "slidesPerView": 4
+                },
+                "991": {
+                    "spaceBetween": 50,
+                    "slidesPerView": 5
+                },
+                "1199": {
+                    "spaceBetween": 100,
+                    "slidesPerView": 5
+                }
+            }}'
+    >
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+        <div class="swiper-slide">
+          <img
+            src="{% static 'assets/images/resources/brand-1-1.png' %}"
+            alt=""
+          />
+        </div>
+        <!-- /.swiper-slide -->
+      </div>
+      <!-- /.swiper-wrapper -->
+    </div>
+    <!-- /.thm-swiper__slider -->
+  </div>
+  <!-- /.container -->
+</div> {% endcomment %}
+<!-- /.client-carousel -->
+{% endblock %}

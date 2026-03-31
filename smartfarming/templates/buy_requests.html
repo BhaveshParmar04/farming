@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My Buy Requests - Agrikon{% endblock %}
+
+{% block styles %}
+{{ block.super }}
+<style>
+  .br-wrap { max-width: 1100px; margin: 0 auto; padding: 36px 20px 60px; }
+  .br-tabs { display:flex; gap:0; border-bottom:2px solid #c8e6c9; margin-bottom:28px; }
+  .br-tab { padding:12px 28px; border:none; background:transparent; font-size:1rem; font-weight:600; color:#666; cursor:pointer; border-bottom:3px solid transparent; margin-bottom:-2px; transition:0.15s; }
+  .br-tab.active { color:#2e7d32; border-bottom-color:#2e7d32; }
+  .br-section { display:none; }
+  .br-section.active { display:block; }
+  .br-card { background:#fff; border-radius:14px; border:1px solid #e0f0e0; padding:18px 22px; margin-bottom:14px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; box-shadow:0 2px 10px rgba(0,40,0,0.06); }
+  .br-crop-name { font-size:1.1rem; font-weight:700; color:#1a4f1a; flex:1; min-width:160px; }
+  .br-meta { font-size:0.88rem; color:#555; display:flex; flex-direction:column; gap:3px; flex:2; min-width:200px; }
+  .br-status { padding:5px 16px; border-radius:20px; font-size:0.82rem; font-weight:700; }
+  .status-pending  { background:#fff8e1; color:#f57f17; }
+  .status-accepted { background:#e8f5e9; color:#2e7d32; }
+  .status-rejected { background:#ffebee; color:#c62828; }
+  .br-actions { display:flex; gap:8px; }
+  .btn-accept { background:#2e7d32; color:#fff; border:none; padding:7px 18px; border-radius:8px; font-weight:600; cursor:pointer; }
+  .btn-reject { background:#c62828; color:#fff; border:none; padding:7px 18px; border-radius:8px; font-weight:600; cursor:pointer; }
+  .empty-br { text-align:center; padding:50px 20px; color:#aaa; font-size:1.05rem; }
+  .empty-br i { font-size:3rem; display:block; margin-bottom:12px; color:#c8e6c9; }
+  h2 { font-size:1.8rem; font-weight:700; color:#1a4f1a; margin-bottom:24px; }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'includes/_slider_base.html' with slider_id="buy_requests" slider_title="My Buy Requests" slider_crumb="Buy Requests" slide1="https://images.unsplash.com/photo-1471193945509-9ad0617afabf?q=80&w=1470" %}
+
+<div class="br-wrap">
+  <h2><i class="fas fa-exchange-alt me-2" style="color:#4caf50;"></i>Buy Requests</h2>
+
+  <div class="br-tabs">
+    <button class="br-tab active" onclick="switchTab('sent',this)"><i class="fas fa-paper-plane me-1"></i> Sent by Me</button>
+    <button class="br-tab" onclick="switchTab('received',this)"><i class="fas fa-inbox me-1"></i> Received on My Crops</button>
+  </div>
+
+  <!-- SENT -->
+  <div class="br-section active" id="tab-sent">
+    {% if sent %}
+      {% for req in sent %}
+      <div class="br-card">
+        <div class="br-crop-name"><i class="fas fa-seedling me-2" style="color:#4caf50;"></i>{{ req.crop.name }}</div>
+        <div class="br-meta">
+          <span><i class="fas fa-weight-hanging me-1"></i>Qty: {{ req.quantity }} {{ req.crop.get_unit_display }}</span>
+          <span><i class="fas fa-user me-1"></i>Seller: {{ req.crop.farmer.full_name }}</span>
+          <span><i class="fas fa-phone me-1"></i>{{ req.crop.farmer.mobile }}</span>
+          {% if req.message %}<span><i class="fas fa-comment me-1"></i>{{ req.message }}</span>{% endif %}
+          <span><i class="far fa-clock me-1"></i>{{ req.created_at|date:"d M Y, H:i" }}</span>
+        </div>
+        <span class="br-status status-{{ req.status }}">
+          {% if req.status == 'pending' %}⏳ Pending{% elif req.status == 'accepted' %}✅ Accepted{% else %}❌ Rejected{% endif %}
+        </span>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-br"><i class="fas fa-shopping-cart"></i>No buy requests sent yet.</div>
+    {% endif %}
+  </div>
+
+  <!-- RECEIVED -->
+  <div class="br-section" id="tab-received">
+    {% if received %}
+      {% for req in received %}
+      <div class="br-card">
+        <div class="br-crop-name"><i class="fas fa-seedling me-2" style="color:#4caf50;"></i>{{ req.crop.name }}</div>
+        <div class="br-meta">
+          <span><i class="fas fa-weight-hanging me-1"></i>Qty: {{ req.quantity }} {{ req.crop.get_unit_display }}</span>
+          <span><i class="fas fa-user me-1"></i>Buyer: {{ req.buyer.full_name }}</span>
+          <span><i class="fas fa-phone me-1"></i>{{ req.buyer.mobile }}</span>
+          <span><i class="fas fa-map-marker-alt me-1"></i>{{ req.buyer.village }}, {{ req.buyer.state }}</span>
+          {% if req.message %}<span><i class="fas fa-comment me-1"></i>{{ req.message }}</span>{% endif %}
+          <span><i class="far fa-clock me-1"></i>{{ req.created_at|date:"d M Y, H:i" }}</span>
+        </div>
+        {% if req.status == 'pending' %}
+        <div class="br-actions">
+          <form method="POST" action="{% url 'update_buy_request' req.id %}">
+            {% csrf_token %}<input type="hidden" name="status" value="accepted">
+            <button class="btn-accept" type="submit">✅ Accept</button>
+          </form>
+          <form method="POST" action="{% url 'update_buy_request' req.id %}">
+            {% csrf_token %}<input type="hidden" name="status" value="rejected">
+            <button class="btn-reject" type="submit">❌ Reject</button>
+          </form>
+        </div>
+        {% else %}
+        <span class="br-status status-{{ req.status }}">
+          {% if req.status == 'accepted' %}✅ Accepted{% else %}❌ Rejected{% endif %}
+        </span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-br"><i class="fas fa-inbox"></i>No requests received yet.</div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+function switchTab(tab, el) {
+  document.querySelectorAll('.br-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.br-section').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+</script>
+{% endblock %}
