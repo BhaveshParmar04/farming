@@ -1,6 +1,6 @@
 {% extends "buyer_base.html" %}
 {% load static %}
-{% block title %}Register as Buyer - KisanBazaar{% endblock %}
+{% block title %}Register as Buyer - Agricon{% endblock %}
 
 {% block content %}
 <div class="bp-hero" style="padding:32px 28px 28px;">
@@ -62,7 +62,7 @@
         <!-- STEP 3 -->
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--green-pale);">
           <span class="step-badge">3</span>
-          <span style="font-weight:700;color:var(--text-dark);font-size:1rem;">Kaam na Areas</span>
+          <span style="font-weight:700;color:var(--text-dark);font-size:1rem;">Work Areas</span>
         </div>
         <div id="locationsList" style="margin-bottom:12px;"></div>
         <div style="background:#f9fff9;border:1.5px dashed var(--green-border);border-radius:12px;padding:18px;margin-bottom:24px;">
@@ -96,7 +96,7 @@
         <!-- STEP 4 -->
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--green-pale);">
           <span class="step-badge">4</span>
-          <span style="font-weight:700;color:var(--text-dark);font-size:1rem;">Su Su Kharido Karo?</span>
+          <span style="font-weight:700;color:var(--text-dark);font-size:1rem;">What do you buy?</span>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:8px;">
           {% for val, label in crop_choices %}
@@ -107,7 +107,7 @@
           {% endfor %}
         </div>
         <div id="cropError" style="color:#ef5350;font-size:0.82rem;margin-bottom:16px;display:none;">
-          <i class="fas fa-exclamation-circle me-1"></i>Ek crop to select karo.
+          <i class="fas fa-exclamation-circle me-1"></i>select atleast one crop
         </div>
 
         <div style="margin-bottom:24px;">
