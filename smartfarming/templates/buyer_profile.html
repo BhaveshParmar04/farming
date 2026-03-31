@@ -1,13 +1,13 @@
 {% extends "buyer_base.html" %}
 {% load static %}
-{% block title %}My Profile - KisanBazaar{% endblock %}
+{% block title %}My Profile - Agrikon{% endblock %}
 
 {% block content %}
 <div class="bp-hero" style="padding:32px 28px 28px;">
   <div class="bp-hero-inner" style="text-align:center;">
     <div class="bp-hero-badge"><i class="fas fa-user-circle" style="font-size:0.7rem;"></i> Account Settings</div>
     <h1><i class="fas fa-user-circle" style="margin-right:10px;opacity:0.9;"></i>My Profile</h1>
-    <p>Tari profile ane locations update karo</p>
+    <p>Update your profile and locations</p>
   </div>
 </div>
 
@@ -43,7 +43,7 @@
       <!-- Locations -->
       <div class="bp-section-title">
         <div class="title-icon"><i class="fas fa-map-marker-alt"></i></div>
-        Kaam na Areas
+        Areas of Operation
       </div>
       <div id="locationsList" style="margin-bottom:12px;"></div>
       <div style="background:#f9fff9;border:1.5px dashed var(--green-border);border-radius:12px;padding:18px;margin-bottom:28px;">
@@ -77,7 +77,7 @@
       <!-- Crops -->
       <div class="bp-section-title">
         <div class="title-icon"><i class="fas fa-leaf"></i></div>
-        Su Su Kharido Karo?
+        Which crops do you buy?
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:28px;">
         {% for val, label in crop_choices %}
@@ -113,7 +113,7 @@ document.getElementById('addLocBtn').addEventListener('click', function() {
   const district = document.getElementById('loc_district').value.trim();
   const taluka = document.getElementById('loc_taluka').value.trim();
   const err = document.getElementById('locError');
-  if (!state || !district) { err.textContent = 'State ane District jaruri che.'; return; }
+  if (!state || !district) { err.textContent = 'State and District are required.'; return; }
   if (locations.length >= 6) { err.textContent = 'Maximum 6 locations.'; return; }
   err.textContent = '';
   locations.push({state, district, taluka});

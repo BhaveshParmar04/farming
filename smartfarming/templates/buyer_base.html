@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <title>{% block title %}Buyer Portal - KisanBazaar{% endblock %}</title>
+  <title>{% block title %}Buyer Portal - Agrokin{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}"/>
   <link rel="stylesheet" href="{% static 'assets/css/fontawesome-all.min.css' %}"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -351,7 +351,6 @@
     {% if request.session.buyer_id %}
       <a href="{% url 'buyer_dashboard' %}"><i class="fas fa-home"></i><span>Dashboard</span></a>
       <a href="{% url 'buyer_profile' %}"><i class="fas fa-user"></i><span>Profile</span></a>
-      <a href="/buyer-admin/" target="_blank" class="btn-admin"><i class="fas fa-cog"></i><span>Admin</span></a>
       <a href="{% url 'buyer_logout' %}" class="btn-logout"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
     {% else %}
       <a href="{% url 'buyer_login' %}"><i class="fas fa-sign-in-alt"></i><span>Login</span></a>
@@ -364,7 +363,7 @@
 {% block content %}{% endblock %}
 
 <div class="bp-footer">
-  © 2026 KisanBazaar Buyer Portal &nbsp;·&nbsp;
+  © 2026 Agrikon Buyer Portal &nbsp;·&nbsp;
   <a href="{% url 'home' %}">Go to Farmer Site</a>
 </div>
 
