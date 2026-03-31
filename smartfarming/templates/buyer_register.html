@@ -205,7 +205,7 @@ function removeLoc(i) { locations.splice(i, 1); renderLocations(); }
 
 function submitReg() {
   if (locations.length === 0) {
-    document.getElementById('locError').textContent = 'Ek location to add karo.';
+    document.getElementById('locError').textContent = 'Add your location.';
     document.getElementById('loc_state').scrollIntoView({behavior: 'smooth'});
     return;
   }
