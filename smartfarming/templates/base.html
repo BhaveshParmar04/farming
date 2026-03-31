@@ -179,94 +179,6 @@
       .profile-dropdown:hover .dropdown-menu {
         display: block;
       }
-    </style>
-    {% endblock %}
-
-    <!-- Active nav fix -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function(){
-      // Remove 'current' from all nav items first, then set correct one based on path
-      var path = window.location.pathname;
-      var navLists = document.querySelectorAll('.main-menu__list, .stricky-header .main-menu__list');
-      navLists.forEach(function(ul){
-        ul.querySelectorAll('li.current').forEach(function(li){ li.classList.remove('current'); });
-        var links = ul.querySelectorAll('li > a');
-        links.forEach(function(a){
-          var href = a.getAttribute('href');
-          if(!href || href === '#') return;
-          // exact match for home
-          if(href === '/' && path === '/') { a.parentElement.classList.add('current'); }
-          else if(href !== '/' && path.startsWith(href)) { a.parentElement.classList.add('current'); }
-        });
-      });
-    });
-    </script>
-    <link
-      rel="apple-touch-icon"
-      sizes="180x180"
-      href="{% static 'assets/images/favicons/apple-touch-icon.png' %}"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="32x32"
-      href="{% static 'assets/images/favicons/favicon-32x32.png' %}"
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="{% static 'assets/images/favicons/favicon-16x16.png' %}"
-    />
-    <link
-      rel="manifest"
-      href="{% static 'assets/images/favicons/site.webmanifest' %}"
-    />
-    <meta
-      name="description"
-      content="Agrikon HTML Template For Agriculture Farm & Farmers"
-    />
-
-    <!-- fonts (merged single request) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Handlee&family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-
-    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/css/fontawesome-all.min.css' %}"
-    />
-
-    <link rel="stylesheet" href="{% static 'assets/css/swiper.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/css/odometer.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'assets/css/jarallax.css' %}" />
-
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/css/magnific-popup.css' %}"
-    />
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/css/bootstrap-select.min.css' %}"
-    />
-    <link rel="stylesheet" href="{% static 'assets/css/agrikon-icons.css' %}" />
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/css/nouislider.min.css' %}"
-    />
-    <link
-      rel="stylesheet"
-      href="{% static 'assets/css/nouislider.pips.css' %}"
-    />
-
-    <!-- template styles -->
-    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
-    <style>
       .main-slider .swiper-slide h2 span::before,
       .main-slider .swiper-slide h2 span::after { display:none !important; }
       /* Hide Agrikon theme search popup — we use our own */
@@ -382,6 +294,92 @@
         h1, h2 { word-break: break-word; }
       }
     </style>
+    {% endblock %}
+
+    <!-- Active nav fix -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      // Remove 'current' from all nav items first, then set correct one based on path
+      var path = window.location.pathname;
+      var navLists = document.querySelectorAll('.main-menu__list, .stricky-header .main-menu__list');
+      navLists.forEach(function(ul){
+        ul.querySelectorAll('li.current').forEach(function(li){ li.classList.remove('current'); });
+        var links = ul.querySelectorAll('li > a');
+        links.forEach(function(a){
+          var href = a.getAttribute('href');
+          if(!href || href === '#') return;
+          // exact match for home
+          if(href === '/' && path === '/') { a.parentElement.classList.add('current'); }
+          else if(href !== '/' && path.startsWith(href)) { a.parentElement.classList.add('current'); }
+        });
+      });
+    });
+    </script>
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="{% static 'assets/images/favicons/apple-touch-icon.png' %}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="{% static 'assets/images/favicons/favicon-32x32.png' %}"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="{% static 'assets/images/favicons/favicon-16x16.png' %}"
+    />
+    <link
+      rel="manifest"
+      href="{% static 'assets/images/favicons/site.webmanifest' %}"
+    />
+    <meta
+      name="description"
+      content="Agrikon HTML Template For Agriculture Farm & Farmers"
+    />
+
+    <!-- fonts (merged single request) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Handlee&family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/fontawesome-all.min.css' %}"
+    />
+
+    <link rel="stylesheet" href="{% static 'assets/css/swiper.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/odometer.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/jarallax.css' %}" />
+
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/magnific-popup.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/bootstrap-select.min.css' %}"
+    />
+    <link rel="stylesheet" href="{% static 'assets/css/agrikon-icons.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/nouislider.min.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/css/nouislider.pips.css' %}"
+    />
+
+    <!-- template styles -->
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
   </head>
 
   <body>
@@ -692,7 +690,7 @@
                 {% if not request.session.farmer_id %}
                 <div style="margin-top:16px;">
                   <a href="{% url 'register' %}" class="thm-btn" style="padding:10px 24px;font-size:.88rem;">Join as Farmer</a>
-                {% endif %}
+                {% endif%}
                 </div>
               </div>
             </div>
