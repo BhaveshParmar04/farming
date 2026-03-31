@@ -689,8 +689,10 @@
                     <a href="#">Gujarat, India</a>
                   </li>
                 </ul>
+                {% if not request.session.farmer_id %}
                 <div style="margin-top:16px;">
                   <a href="{% url 'register' %}" class="thm-btn" style="padding:10px 24px;font-size:.88rem;">Join as Farmer</a>
+                {% endif %}
                 </div>
               </div>
             </div>
@@ -822,7 +824,7 @@
         const list = document.getElementById('notifList');
         if (!list) return;
         if (!items || items.length === 0) {
-          list.innerHTML = '<div style="text-align:center;padding:20px;color:#888;font-size:0.9rem;"><i class="fas fa-check-circle" style="color:#4caf50;font-size:1.5rem;display:block;margin-bottom:8px;"></i>Koi pending activity nathi</div>';
+          list.innerHTML = '<div style="text-align:center;padding:20px;color:#888;font-size:0.9rem;"><i class="fas fa-check-circle" style="color:#4caf50;font-size:1.5rem;display:block;margin-bottom:8px;"></i>No Pending Activities</div>';
           return;
         }
         list.innerHTML = items.map(n => `

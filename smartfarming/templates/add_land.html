@@ -151,7 +151,7 @@
     <button class="add-land-btn" id="addLandBtn" {% if lands|length >= 10 %}disabled{% endif %}>
       <i class="fas fa-plus-circle me-2"></i>Add Land
     </button>
-    <span class="land-count-badge"><i class="fas fa-map-marked-alt me-1"></i>{{ lands|length }} / 10 Lands</span>
+    <span class="land-count-badge"><i class="fas fa-map-marked-alt me-3"></i>{{ lands|length }} / 10 Lands</span>
   </div>
 
   <!-- Add Land Form -->
@@ -201,21 +201,21 @@
         </div>
       </div>
       <div id="manualSection" class="manual-grid" style="display:none;">
-        <div class="param-item"><i class="fas fa-flask"></i><input type="text" name="ph" placeholder="pH"></div>
-        <div class="param-item"><i class="fas fa-bolt"></i><input type="text" name="ec" placeholder="EC (dS/m)"></div>
-        <div class="param-item"><i class="fas fa-leaf"></i><input type="text" name="oc" placeholder="Organic Carbon %"></div>
-        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="n" placeholder="Nitrogen (N)"></div>
-        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="p" placeholder="Phosphorus (P)"></div>
-        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="k" placeholder="Potassium (K)"></div>
-        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="s" placeholder="Sulphur (S)"></div>
-        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="zn" placeholder="Zinc (Zn)"></div>
-        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="fe" placeholder="Iron (Fe)"></div>
-        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="mn" placeholder="Manganese (Mn)"></div>
-        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="cu" placeholder="Copper (Cu)"></div>
-        <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="b" placeholder="Boron (B)"></div>
+        <div class="param-item"><i class="fas fa-flask"></i><input type="number" step="any" inputmode="decimal" name="ph" placeholder="pH" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-bolt"></i><input type="number" step="any" inputmode="decimal" name="ec" placeholder="EC (dS/m)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-leaf"></i><input type="number" step="any" inputmode="decimal" name="oc" placeholder="Organic Carbon %" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="n" placeholder="Nitrogen (N)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="p" placeholder="Phosphorus (P)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="k" placeholder="Potassium (K)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="s" placeholder="Sulphur (S)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="zn" placeholder="Zinc (Zn)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="fe" placeholder="Iron (Fe)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="mn" placeholder="Manganese (Mn)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="cu" placeholder="Copper (Cu)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+        <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="b" placeholder="Boron (B)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
       </div>
       <div class="form-actions">
-        <button type="submit" class="btn-save"><i class="fas fa-save me-1"></i>Save Land</button>
+        <button type="submit" class="btn-save"><i class="fas fa-save me-2"></i>Save Land</button>
         <button type="button" class="btn-cancel" id="cancelBtn"><i class="fas fa-times me-1"></i>Cancel</button>
       </div>
     </form>
@@ -327,23 +327,23 @@
           <label for="e_soilFile" class="upload-btn"><i class="fas fa-file-upload me-1"></i>Choose File</label>
         </div>
         <div id="e_manualSection" class="manual-grid" style="display:none;">
-          <div class="param-item"><i class="fas fa-flask"></i><input type="text" name="ph" id="e_ph" placeholder="pH"></div>
-          <div class="param-item"><i class="fas fa-bolt"></i><input type="text" name="ec" id="e_ec" placeholder="EC (dS/m)"></div>
-          <div class="param-item"><i class="fas fa-leaf"></i><input type="text" name="oc" id="e_oc" placeholder="Organic Carbon %"></div>
-          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="n" id="e_n" placeholder="Nitrogen (N)"></div>
-          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="p" id="e_p" placeholder="Phosphorus (P)"></div>
-          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="k" id="e_k" placeholder="Potassium (K)"></div>
-          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="s" id="e_s" placeholder="Sulphur (S)"></div>
-          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="zn" id="e_zn" placeholder="Zinc (Zn)"></div>
-          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="fe" id="e_fe" placeholder="Iron (Fe)"></div>
-          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="mn" id="e_mn" placeholder="Manganese (Mn)"></div>
-          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="cu" id="e_cu" placeholder="Copper (Cu)"></div>
-          <div class="param-item"><i class="fas fa-seedling"></i><input type="text" name="b" id="e_b" placeholder="Boron (B)"></div>
+          <div class="param-item"><i class="fas fa-flask"></i><input type="number" step="any" inputmode="decimal" name="ph" id="e_ph" placeholder="pH" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-bolt"></i><input type="number" step="any" inputmode="decimal" name="ec" id="e_ec" placeholder="EC (dS/m)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-leaf"></i><input type="number" step="any" inputmode="decimal" name="oc" id="e_oc" placeholder="Organic Carbon %" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="n" id="e_n" placeholder="Nitrogen (N)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="p" id="e_p" placeholder="Phosphorus (P)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="k" id="e_k" placeholder="Potassium (K)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="s" id="e_s" placeholder="Sulphur (S)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="zn" id="e_zn" placeholder="Zinc (Zn)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="fe" id="e_fe" placeholder="Iron (Fe)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="mn" id="e_mn" placeholder="Manganese (Mn)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="cu" id="e_cu" placeholder="Copper (Cu)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
+          <div class="param-item"><i class="fas fa-seedling"></i><input type="number" step="any" inputmode="decimal" name="b" id="e_b" placeholder="Boron (B)" oninput="this.value = this.value.replace(/\s+/g,'').replace(/[^0-9.\-]/g,'').replace(/(\..*)\./g,'$1')"></div>
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn-save"><i class="fas fa-save me-1"></i>Update Land</button>
-          <button type="button" class="btn-cancel" onclick="closeEdit()">Cancel</button>
-        </div>
+          <button type="submit" class="btn-save"><i class="fas fa-save me-2"></i>Update Land</button>
+           <button type="button" class="btn-cancel" onclick="closeEdit()">Cancel</button>
+         </div>
       </form>
     </div>
   </div>
