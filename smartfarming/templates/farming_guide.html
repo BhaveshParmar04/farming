@@ -1,6 +1,6 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
-{% block title %}Farming Guide - Agrikon{% endblock %}
+{% block title %}Farming Guide - Kisan Acharya{% endblock %}
 
 {% block styles %}{{ block.super }}
 <style>
@@ -72,7 +72,7 @@
 
   <!-- Hero -->
   <div class="fg-hero">
-    <div class="fg-hero-icon">🌾</div>
+    <div class="fg-hero-icon">??</div>
     <div>
       <h1>Smart Crop Recommendation System</h1>
       <p>Select your land and season to get data-driven crop suggestions based on your soil data, water source, and location.</p>
@@ -100,8 +100,8 @@
   <!-- Step 1: Form -->
   <div class="fg-section slide-up">
     <div class="fg-section-head">
-      <span>⚙️</span>
-      <h2>Step 1 — Select Land &amp; Season</h2>
+      <span>??</span>
+      <h2>Step 1 � Select Land &amp; Season</h2>
     </div>
     <div class="fg-section-body">
       <form id="recommendationForm">
@@ -109,7 +109,7 @@
           <div class="fg-field">
             <label><i class="fas fa-map-marked-alt" style="margin-right:4px;color:#2e7d32;"></i> Select Land</label>
             <select id="landSelect" required>
-              <option value="" disabled selected>— Choose your land —</option>
+              <option value="" disabled selected>� Choose your land �</option>
               {% for land in lands %}
               <option value="{{ land.id }}"
                 data-name="{{ land.land_name|escapejs }}"
@@ -123,7 +123,7 @@
                 data-k="{{ land.potassium|default:''|escapejs }}"
                 data-oc="{{ land.organic_carbon|default:''|escapejs }}"
                 data-state="{{ farmer.state|escapejs }}"
-              >🌾 {{ land.land_name }} ({{ land.land_area }})</option>
+              >?? {{ land.land_name }} ({{ land.land_area }})</option>
               {% endfor %}
             </select>
           </div>
@@ -140,9 +140,9 @@
         <div class="fg-field" style="margin-bottom:20px;">
           <label><i class="fas fa-calendar-alt" style="margin-right:4px;color:#2e7d32;"></i> Growing Season</label>
           <div class="season-pills" style="margin-top:6px;">
-            <div><input type="radio" name="season" id="sKharif" value="Kharif" class="season-radio"><label for="sKharif" class="season-label">🌧️ Kharif (Jun–Oct)</label></div>
-            <div><input type="radio" name="season" id="sRabi"   value="Rabi"   class="season-radio"><label for="sRabi"   class="season-label">❄️ Rabi (Nov–Mar)</label></div>
-            <div><input type="radio" name="season" id="sZaid"   value="Zaid"   class="season-radio"><label for="sZaid"   class="season-label">☀️ Zaid (Mar–Jun)</label></div>
+            <div><input type="radio" name="season" id="sKharif" value="Kharif" class="season-radio"><label for="sKharif" class="season-label">??? Kharif (Jun�Oct)</label></div>
+            <div><input type="radio" name="season" id="sRabi"   value="Rabi"   class="season-radio"><label for="sRabi"   class="season-label">?? Rabi (Nov�Mar)</label></div>
+            <div><input type="radio" name="season" id="sZaid"   value="Zaid"   class="season-radio"><label for="sZaid"   class="season-label">?? Zaid (Mar�Jun)</label></div>
           </div>
           <small id="seasonHint" style="color:#888;margin-top:6px;font-size:.78rem;display:block;"></small>
         </div>
@@ -165,7 +165,7 @@
       <!-- AI Result Box -->
       <div id="aiResultBox" style="display:none;margin-top:24px;background:#f3e5f5;border:1.5px solid #ce93d8;border-radius:14px;padding:22px 24px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-          <span style="font-size:1.8rem;">🤖</span>
+          <span style="font-size:1.8rem;">??</span>
           <div>
             <div style="font-weight:800;color:#6a1b9a;font-size:1rem;">Gemini AI Analysis</div>
             <div id="aiLandName" style="font-size:.82rem;color:#888;"></div>
@@ -187,19 +187,19 @@
 
     <div class="fg-section">
       <div class="fg-section-head">
-        <span>🌱</span>
+        <span>??</span>
         <h2>Recommended Crops</h2>
         <span id="selectionCounter" class="selection-counter">Select 2 more</span>
       </div>
       <div class="fg-section-body">
-        <div class="tip-box">💡 Click on a crop card to see detailed farming guidance. Select up to the number of crops you chose.</div>
+        <div class="tip-box">?? Click on a crop card to see detailed farming guidance. Select up to the number of crops you chose.</div>
         <div class="crop-cards-grid" id="cropCardsContainer"></div>
       </div>
     </div>
 
     <div class="fg-section">
       <div class="fg-section-head">
-        <span>📋</span>
+        <span>??</span>
         <h2>Farming Guidance</h2>
       </div>
       <div class="fg-section-body">
@@ -231,16 +231,16 @@
 <script>
 (function(){
   const CROPS = [
-    { name:'Wheat', icon:'🌾', color:'#f59e0b', seasons:['Rabi'], ph:[6.0,7.5], water:['Borewell','Canal','River','Drip Irrigation'], n:'med', p:'med', k:'low', fertilizer:'NPK 10:26:26 (100 kg/ha) + Urea 50 kg/ha', waterReq:'4–5 irrigations (critical at crown root, jointing, flowering)', sowing:'Nov–Dec', yield:'26–30 qt/ha', pest:'Aphid – imidacloprid spray; Yellow rust – propiconazole', states:['Punjab','Haryana','Uttar Pradesh','Madhya Pradesh','Rajasthan','Gujarat','Bihar'] },
-    { name:'Cotton', icon:'🌿', color:'#10b981', seasons:['Kharif'], ph:[6.0,8.0], water:['Borewell','Canal','Drip Irrigation'], n:'high', p:'med', k:'med', fertilizer:'DAP 100 kg + Urea 50 kg/ha + Potash 50 kg/ha', waterReq:'6–8 irrigations (critical at flowering & boll formation)', sowing:'May–Jun', yield:'10–15 qt/ha', pest:'Pink bollworm – pheromone traps; Whitefly – neem oil spray', states:['Gujarat','Maharashtra','Telangana','Andhra Pradesh','Karnataka','Rajasthan','Madhya Pradesh'] },
-    { name:'Groundnut', icon:'🥜', color:'#d97706', seasons:['Kharif','Zaid'], ph:[6.0,7.0], water:['Borewell','Canal','Rain Water','Drip Irrigation'], n:'low', p:'high', k:'med', fertilizer:'Gypsum 200 kg/ha + DAP 100 kg/ha', waterReq:'4–5 irrigations (critical at pegging & pod filling)', sowing:'Jun–Jul (Kharif), Feb–Mar (Zaid)', yield:'20–25 qt/ha', pest:'Leaf miner – neem spray; Tikka disease – mancozeb', states:['Gujarat','Andhra Pradesh','Tamil Nadu','Karnataka','Rajasthan','Maharashtra'] },
-    { name:'Rice', icon:'🍚', color:'#84cc16', seasons:['Kharif'], ph:[5.5,7.0], water:['Canal','River','Rain Water'], n:'high', p:'med', k:'med', fertilizer:'Urea 120 kg + DAP 60 kg + MOP 40 kg/ha', waterReq:'Continuous flooding or alternate wetting & drying', sowing:'Jun–Jul (transplanting)', yield:'40–50 qt/ha', pest:'Brown planthopper – imidacloprid; Blast – tricyclazole', states:['West Bengal','Uttar Pradesh','Punjab','Andhra Pradesh','Telangana','Odisha','Bihar','Assam'] },
-    { name:'Maize', icon:'🌽', color:'#f97316', seasons:['Kharif','Rabi','Zaid'], ph:[5.8,7.5], water:['Borewell','Canal','River','Drip Irrigation'], n:'high', p:'med', k:'med', fertilizer:'DAP 120 kg + Urea 100 kg + Zinc 25 kg/ha', waterReq:'5–6 irrigations (critical at tasseling & grain filling)', sowing:'Jun (Kharif), Oct–Nov (Rabi)', yield:'35–45 qt/ha', pest:'Fall armyworm – chlorantraniliprole; Stem borer – carbofuran', states:['Karnataka','Andhra Pradesh','Telangana','Rajasthan','Madhya Pradesh','Bihar','Uttar Pradesh','Gujarat'] },
-    { name:'Bajra (Millet)', icon:'🌱', color:'#6366f1', seasons:['Kharif'], ph:[6.0,8.0], water:['Borewell','Rain Water','Canal'], n:'med', p:'low', k:'low', fertilizer:'Farm yard manure 10t/ha + Urea 60 kg/ha', waterReq:'Low – 2–3 irrigations only', sowing:'Jul–Aug', yield:'15–20 qt/ha', pest:'Shoot fly – seed treatment with imidacloprid; Downy mildew – metalaxyl', states:['Rajasthan','Gujarat','Haryana','Uttar Pradesh','Maharashtra'] },
-    { name:'Soybean', icon:'🫘', color:'#22c55e', seasons:['Kharif'], ph:[6.0,7.5], water:['Borewell','Canal','Rain Water'], n:'low', p:'high', k:'med', fertilizer:'DAP 100 kg/ha + Rhizobium seed treatment', waterReq:'3–4 irrigations (critical at flowering & pod filling)', sowing:'Jun–Jul', yield:'20–25 qt/ha', pest:'Girdle beetle – chlorpyrifos; Yellow mosaic – whitefly control', states:['Madhya Pradesh','Maharashtra','Rajasthan','Karnataka','Chhattisgarh'] },
-    { name:'Mustard', icon:'🌼', color:'#eab308', seasons:['Rabi'], ph:[6.0,7.5], water:['Borewell','Canal','Rain Water'], n:'med', p:'med', k:'low', fertilizer:'DAP 100 kg + Urea 60 kg + Sulphur 20 kg/ha', waterReq:'2–3 irrigations (critical at branching & pod formation)', sowing:'Oct–Nov', yield:'12–18 qt/ha', pest:'Aphid – dimethoate spray; Alternaria blight – mancozeb', states:['Rajasthan','Haryana','Uttar Pradesh','Madhya Pradesh','Gujarat','West Bengal'] },
-    { name:'Sugarcane', icon:'🎋', color:'#14b8a6', seasons:['Zaid','Kharif'], ph:[6.0,7.5], water:['Canal','River','Drip Irrigation','Borewell'], n:'high', p:'med', k:'high', fertilizer:'Urea 200 kg + DAP 100 kg + MOP 100 kg/ha', waterReq:'Frequent – 8–10 irrigations (drip preferred)', sowing:'Feb–Mar (spring), Oct–Nov (autumn)', yield:'600–800 qt/ha', pest:'Top borer – carbofuran; Pyrilla – neem spray', states:['Uttar Pradesh','Maharashtra','Karnataka','Tamil Nadu','Gujarat','Andhra Pradesh'] },
-    { name:'Tomato', icon:'🍅', color:'#ef4444', seasons:['Rabi','Zaid'], ph:[6.0,7.0], water:['Borewell','Drip Irrigation','Canal'], n:'high', p:'high', k:'high', fertilizer:'NPK 19:19:19 (200 kg/ha) + Calcium nitrate', waterReq:'Drip irrigation preferred – 5–6 times/week', sowing:'Oct–Nov (Rabi), Jan–Feb (Zaid)', yield:'200–300 qt/ha', pest:'Fruit borer – spinosad; Early blight – mancozeb', states:['All states'] },
+    { name:'Wheat', icon:'??', color:'#f59e0b', seasons:['Rabi'], ph:[6.0,7.5], water:['Borewell','Canal','River','Drip Irrigation'], n:'med', p:'med', k:'low', fertilizer:'NPK 10:26:26 (100 kg/ha) + Urea 50 kg/ha', waterReq:'4�5 irrigations (critical at crown root, jointing, flowering)', sowing:'Nov�Dec', yield:'26�30 qt/ha', pest:'Aphid � imidacloprid spray; Yellow rust � propiconazole', states:['Punjab','Haryana','Uttar Pradesh','Madhya Pradesh','Rajasthan','Gujarat','Bihar'] },
+    { name:'Cotton', icon:'??', color:'#10b981', seasons:['Kharif'], ph:[6.0,8.0], water:['Borewell','Canal','Drip Irrigation'], n:'high', p:'med', k:'med', fertilizer:'DAP 100 kg + Urea 50 kg/ha + Potash 50 kg/ha', waterReq:'6�8 irrigations (critical at flowering & boll formation)', sowing:'May�Jun', yield:'10�15 qt/ha', pest:'Pink bollworm � pheromone traps; Whitefly � neem oil spray', states:['Gujarat','Maharashtra','Telangana','Andhra Pradesh','Karnataka','Rajasthan','Madhya Pradesh'] },
+    { name:'Groundnut', icon:'??', color:'#d97706', seasons:['Kharif','Zaid'], ph:[6.0,7.0], water:['Borewell','Canal','Rain Water','Drip Irrigation'], n:'low', p:'high', k:'med', fertilizer:'Gypsum 200 kg/ha + DAP 100 kg/ha', waterReq:'4�5 irrigations (critical at pegging & pod filling)', sowing:'Jun�Jul (Kharif), Feb�Mar (Zaid)', yield:'20�25 qt/ha', pest:'Leaf miner � neem spray; Tikka disease � mancozeb', states:['Gujarat','Andhra Pradesh','Tamil Nadu','Karnataka','Rajasthan','Maharashtra'] },
+    { name:'Rice', icon:'??', color:'#84cc16', seasons:['Kharif'], ph:[5.5,7.0], water:['Canal','River','Rain Water'], n:'high', p:'med', k:'med', fertilizer:'Urea 120 kg + DAP 60 kg + MOP 40 kg/ha', waterReq:'Continuous flooding or alternate wetting & drying', sowing:'Jun�Jul (transplanting)', yield:'40�50 qt/ha', pest:'Brown planthopper � imidacloprid; Blast � tricyclazole', states:['West Bengal','Uttar Pradesh','Punjab','Andhra Pradesh','Telangana','Odisha','Bihar','Assam'] },
+    { name:'Maize', icon:'??', color:'#f97316', seasons:['Kharif','Rabi','Zaid'], ph:[5.8,7.5], water:['Borewell','Canal','River','Drip Irrigation'], n:'high', p:'med', k:'med', fertilizer:'DAP 120 kg + Urea 100 kg + Zinc 25 kg/ha', waterReq:'5�6 irrigations (critical at tasseling & grain filling)', sowing:'Jun (Kharif), Oct�Nov (Rabi)', yield:'35�45 qt/ha', pest:'Fall armyworm � chlorantraniliprole; Stem borer � carbofuran', states:['Karnataka','Andhra Pradesh','Telangana','Rajasthan','Madhya Pradesh','Bihar','Uttar Pradesh','Gujarat'] },
+    { name:'Bajra (Millet)', icon:'??', color:'#6366f1', seasons:['Kharif'], ph:[6.0,8.0], water:['Borewell','Rain Water','Canal'], n:'med', p:'low', k:'low', fertilizer:'Farm yard manure 10t/ha + Urea 60 kg/ha', waterReq:'Low � 2�3 irrigations only', sowing:'Jul�Aug', yield:'15�20 qt/ha', pest:'Shoot fly � seed treatment with imidacloprid; Downy mildew � metalaxyl', states:['Rajasthan','Gujarat','Haryana','Uttar Pradesh','Maharashtra'] },
+    { name:'Soybean', icon:'??', color:'#22c55e', seasons:['Kharif'], ph:[6.0,7.5], water:['Borewell','Canal','Rain Water'], n:'low', p:'high', k:'med', fertilizer:'DAP 100 kg/ha + Rhizobium seed treatment', waterReq:'3�4 irrigations (critical at flowering & pod filling)', sowing:'Jun�Jul', yield:'20�25 qt/ha', pest:'Girdle beetle � chlorpyrifos; Yellow mosaic � whitefly control', states:['Madhya Pradesh','Maharashtra','Rajasthan','Karnataka','Chhattisgarh'] },
+    { name:'Mustard', icon:'??', color:'#eab308', seasons:['Rabi'], ph:[6.0,7.5], water:['Borewell','Canal','Rain Water'], n:'med', p:'med', k:'low', fertilizer:'DAP 100 kg + Urea 60 kg + Sulphur 20 kg/ha', waterReq:'2�3 irrigations (critical at branching & pod formation)', sowing:'Oct�Nov', yield:'12�18 qt/ha', pest:'Aphid � dimethoate spray; Alternaria blight � mancozeb', states:['Rajasthan','Haryana','Uttar Pradesh','Madhya Pradesh','Gujarat','West Bengal'] },
+    { name:'Sugarcane', icon:'??', color:'#14b8a6', seasons:['Zaid','Kharif'], ph:[6.0,7.5], water:['Canal','River','Drip Irrigation','Borewell'], n:'high', p:'med', k:'high', fertilizer:'Urea 200 kg + DAP 100 kg + MOP 100 kg/ha', waterReq:'Frequent � 8�10 irrigations (drip preferred)', sowing:'Feb�Mar (spring), Oct�Nov (autumn)', yield:'600�800 qt/ha', pest:'Top borer � carbofuran; Pyrilla � neem spray', states:['Uttar Pradesh','Maharashtra','Karnataka','Tamil Nadu','Gujarat','Andhra Pradesh'] },
+    { name:'Tomato', icon:'??', color:'#ef4444', seasons:['Rabi','Zaid'], ph:[6.0,7.0], water:['Borewell','Drip Irrigation','Canal'], n:'high', p:'high', k:'high', fertilizer:'NPK 19:19:19 (200 kg/ha) + Calcium nitrate', waterReq:'Drip irrigation preferred � 5�6 times/week', sowing:'Oct�Nov (Rabi), Jan�Feb (Zaid)', yield:'200�300 qt/ha', pest:'Fruit borer � spinosad; Early blight � mancozeb', states:['All states'] },
   ];
 
   const month = new Date().getMonth() + 1;
@@ -256,9 +256,9 @@
     landSelect.addEventListener('change', function(){
       const opt = this.options[this.selectedIndex];
       const method = opt.dataset.method;
-      let html = `<span>📍 Area:</span><span><b>${opt.dataset.area}</b></span>
-        <span>💧 Water:</span><span><b>${opt.dataset.water}</b></span>
-        <span>🧪 Soil:</span><span><b>${method === 'manual' ? 'Manual Entry' : 'Report Uploaded'}</b></span>`;
+      let html = `<span>?? Area:</span><span><b>${opt.dataset.area}</b></span>
+        <span>?? Water:</span><span><b>${opt.dataset.water}</b></span>
+        <span>?? Soil:</span><span><b>${method === 'manual' ? 'Manual Entry' : 'Report Uploaded'}</b></span>`;
       if (method === 'manual') {
         if (opt.dataset.ph) html += `<span>pH:</span><span><b>${opt.dataset.ph}</b></span>`;
         if (opt.dataset.n)  html += `<span>Nitrogen:</span><span><b>${opt.dataset.n} kg/ha</b></span>`;
@@ -297,9 +297,9 @@
   }
 
   function getMatchLabel(score) {
-    if (score >= 70) return '<span class="soil-badge match-high">✅ High Match</span>';
-    if (score >= 45) return '<span class="soil-badge match-med">⚠️ Medium Match</span>';
-    return '<span class="soil-badge match-low">❌ Low Match</span>';
+    if (score >= 70) return '<span class="soil-badge match-high">? High Match</span>';
+    if (score >= 45) return '<span class="soil-badge match-med">?? Medium Match</span>';
+    return '<span class="soil-badge match-low">? Low Match</span>';
   }
 
   let selectedCrops = [], currentMax = 2, currentLandId = null;
@@ -325,7 +325,7 @@
       selectedCrops.push(cropName); card.classList.add('selected');
     }
     const rem = currentMax - selectedCrops.length;
-    document.getElementById('selectionCounter').textContent = rem > 0 ? `Select ${rem} more` : `✅ ${currentMax} selected`;
+    document.getElementById('selectionCounter').textContent = rem > 0 ? `Select ${rem} more` : `? ${currentMax} selected`;
     const wrap = document.getElementById('savePlanWrap');
     if (wrap) wrap.style.display = selectedCrops.length > 0 ? 'block' : 'none';
     if (selectedCrops.length > 0) showGuidance(scoredCrops);
@@ -388,7 +388,7 @@
       const season = getSelectedSeason();
       currentLandId = opt.value;
       const scored = CROPS.map(crop => ({ crop, score: scoreCrop(crop, opt, season) })).sort((a,b) => b.score - a.score);
-      document.getElementById('resultTitle').textContent = `${opt.dataset.name} — ${season} Season`;
+      document.getElementById('resultTitle').textContent = `${opt.dataset.name} � ${season} Season`;
       document.getElementById('resultSubtitle').textContent = `Water: ${opt.dataset.water} | Area: ${opt.dataset.area} | Soil: ${opt.dataset.method === 'manual' ? 'Manual data used' : 'No soil data (general recommendations)'}`;
       selectedCrops = [];
       document.getElementById('selectionCounter').textContent = `Select ${currentMax} more`;
@@ -413,7 +413,7 @@
     });
   }
 
-  // ── AI Smart Suggest ──────────────────────────────────────────────────────
+  // -- AI Smart Suggest ------------------------------------------------------
   const aiBtn = document.getElementById('aiSuggestBtn');
   if (aiBtn) {
     aiBtn.addEventListener('click', function() {
@@ -427,7 +427,7 @@
 
       box.style.display = 'block';
       spinner.style.display = 'inline';
-      landNameEl.textContent = opt.dataset.name + ' — AI analyzing...';
+      landNameEl.textContent = opt.dataset.name + ' � AI analyzing...';
       content.innerHTML = '<p style="color:#888;font-size:.9rem;text-align:center;padding:20px 0;"><i class="fas fa-spinner fa-spin"></i> AI is analyzing your soil data...</p>';
       box.scrollIntoView({behavior:'smooth', block:'start'});
 
@@ -444,11 +444,11 @@
             return;
           }
           const d = res.data;
-          landNameEl.textContent = res.land_name + ' — AI Analysis Complete';
+          landNameEl.textContent = res.land_name + ' � AI Analysis Complete';
 
           // Crops
           let html = '<div style="margin-bottom:18px;">';
-          html += '<div style="font-weight:800;color:#6a1b9a;margin-bottom:10px;font-size:.95rem;">🌱 Recommended Crops</div>';
+          html += '<div style="font-weight:800;color:#6a1b9a;margin-bottom:10px;font-size:.95rem;">?? Recommended Crops</div>';
           html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">';
           (d.crops||[]).forEach(c => {
             const mc = c.match==='high'?'#27ae60':c.match==='medium'?'#f39c12':'#e74c3c';
@@ -464,27 +464,27 @@
           if (d.soil_health) {
             const sc = d.soil_health.overall==='Good'?'#27ae60':d.soil_health.overall==='Moderate'?'#f39c12':'#e74c3c';
             html += `<div style="background:#fff;border-radius:10px;padding:14px;margin-bottom:14px;border-left:4px solid ${sc};">
-              <div style="font-weight:800;color:#333;margin-bottom:4px;">🧪 Soil Health: <span style="color:${sc}">${d.soil_health.overall}</span></div>
+              <div style="font-weight:800;color:#333;margin-bottom:4px;">?? Soil Health: <span style="color:${sc}">${d.soil_health.overall}</span></div>
               <div style="font-size:.85rem;color:#555;">${d.soil_health.summary}</div>
             </div>`;
           }
 
           // Deficiencies
           if (d.deficiencies && d.deficiencies.length) {
-            html += '<div style="margin-bottom:14px;"><div style="font-weight:800;color:#6a1b9a;margin-bottom:8px;font-size:.9rem;">⚠️ Deficiencies & Fixes</div>';
+            html += '<div style="margin-bottom:14px;"><div style="font-weight:800;color:#6a1b9a;margin-bottom:8px;font-size:.9rem;">?? Deficiencies & Fixes</div>';
             html += '<div style="display:flex;flex-direction:column;gap:8px;">';
             d.deficiencies.forEach(def => {
               html += `<div style="background:#fff;border-radius:8px;padding:10px 14px;font-size:.84rem;border:1px solid #e0e0e0;">
-                <b style="color:#c62828;">${def.nutrient}</b> — ${def.level}
-                <div style="color:#555;margin-top:3px;">💊 ${def.fix}</div>
+                <b style="color:#c62828;">${def.nutrient}</b> � ${def.level}
+                <div style="color:#555;margin-top:3px;">?? ${def.fix}</div>
               </div>`;
             });
             html += '</div></div>';
           }
 
           // Season + Tips
-          if (d.season) html += `<div style="background:#e8f5e9;border-radius:8px;padding:10px 14px;font-size:.85rem;margin-bottom:10px;"><b style="color:#2e7d32;">📅 Best Season:</b> ${d.season}</div>`;
-          if (d.tips)   html += `<div style="background:#fff8e1;border-left:4px solid #f9a825;border-radius:8px;padding:10px 14px;font-size:.84rem;color:#5d4037;"><b>💡 Tips:</b> ${d.tips}</div>`;
+          if (d.season) html += `<div style="background:#e8f5e9;border-radius:8px;padding:10px 14px;font-size:.85rem;margin-bottom:10px;"><b style="color:#2e7d32;">?? Best Season:</b> ${d.season}</div>`;
+          if (d.tips)   html += `<div style="background:#fff8e1;border-left:4px solid #f9a825;border-radius:8px;padding:10px 14px;font-size:.84rem;color:#5d4037;"><b>?? Tips:</b> ${d.tips}</div>`;
 
           content.innerHTML = html;
         })

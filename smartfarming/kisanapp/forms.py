@@ -8,6 +8,7 @@ class FarmerRegistrationForm(forms.ModelForm):
         fields = [
             "full_name",
             "mobile",
+            "email",
             "land_record",
             "state",
             "district",

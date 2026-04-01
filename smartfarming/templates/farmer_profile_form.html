@@ -1,6 +1,6 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
-{% block title %}Farmer Profile Form - Agrikon{% endblock %}
+{% block title %}Farmer Profile Form - Kisan Acharya{% endblock %}
 
 {% block styles %}{{ block.super }}
 <style>
@@ -48,7 +48,7 @@
 .pf-field input:focus, .pf-field select:focus { border-color:#2e7d32; box-shadow:0 0 0 3px rgba(46,125,50,.1); }
 .pf-field small { font-size:.78rem; color:#888; }
 
-/* ── Doc checkbox card ── */
+/* -- Doc checkbox card -- */
 .doc-card { border:1.5px solid #c8e6c9; border-radius:10px; overflow:hidden; }
 .doc-card-check {
   display:flex; align-items:center; gap:10px; padding:12px 16px;
@@ -105,12 +105,12 @@
 <div class="pf-wrap">
 
   <div class="pf-hero">
-    <div class="pf-hero-icon">📋</div>
+    <div class="pf-hero-icon">??</div>
     <div>
       <h1>Farmer Profile Form</h1>
       <p>
         Fill in your details to build a complete profile. A higher score means faster government
-        scheme applications — your saved data is used automatically when you apply for any scheme.
+        scheme applications � your saved data is used automatically when you apply for any scheme.
       </p>
     </div>
   </div>
@@ -126,18 +126,18 @@
     <div class="score-label">Profile Completeness: {{ s }} / 100</div>
     <div class="score-status">
       {% if s >= 80 %}
-        ✅ Excellent — Your profile is complete. You can apply to all schemes directly.
+        ? Excellent � Your profile is complete. You can apply to all schemes directly.
       {% elif s >= 50 %}
-        ⚠️ Good — Add a few more details to unlock faster scheme applications.
+        ?? Good � Add a few more details to unlock faster scheme applications.
       {% else %}
-        ❌ Incomplete — Please fill in the required fields to apply for government schemes.
+        ? Incomplete � Please fill in the required fields to apply for government schemes.
       {% endif %}
     </div>
     {% endwith %}
   </div>
 
   <div class="tip-box">
-    💡 <strong>Tip:</strong> A score of 80 or above enables one-click direct apply for all government schemes.
+    ?? <strong>Tip:</strong> A score of 80 or above enables one-click direct apply for all government schemes.
     The three most important fields are <strong>Aadhaar Card</strong>, <strong>Bank Account</strong>,
     and <strong>Land Record (7/12 Utara)</strong>.
   </div>
@@ -148,7 +148,7 @@
     <!-- 1. Personal Documents -->
     <div class="pf-section">
       <div class="pf-section-head">
-        <span>🪪</span>
+        <span>??</span>
         <h2>Personal Documents</h2>
         <span class="pts">20 pts</span>
       </div>
@@ -204,7 +204,7 @@
     <!-- 2. Bank Account Details -->
     <div class="pf-section">
       <div class="pf-section-head">
-        <span>🏦</span>
+        <span>??</span>
         <h2>Bank Account Details</h2>
         <span class="pts">20 pts</span>
       </div>
@@ -237,7 +237,7 @@
     <!-- 3. Land Documents -->
     <div class="pf-section">
       <div class="pf-section-head">
-        <span>🗺️</span>
+        <span>???</span>
         <h2>Land Documents</h2>
         <span class="pts">20 pts</span>
       </div>
@@ -296,14 +296,14 @@
     <!-- 4. Income & Social Category -->
     <div class="pf-section">
       <div class="pf-section-head">
-        <span>📊</span>
+        <span>??</span>
         <h2>Income &amp; Social Category</h2>
         <span class="pts">20 pts</span>
       </div>
       <div class="pf-section-body">
         <div class="pf-grid">
           <div class="pf-field">
-            <label>Annual Income (₹)</label>
+            <label>Annual Income (?)</label>
             <input type="number" name="annual_income" value="{{ profile.annual_income }}" placeholder="e.g. 150000" min="0">
             <small>Total household income per year</small>
           </div>
@@ -368,7 +368,7 @@
     <!-- 5. Other Details -->
     <div class="pf-section">
       <div class="pf-section-head">
-        <span>📎</span>
+        <span>??</span>
         <h2>Other Details</h2>
         <span class="pts">20 pts</span>
       </div>
@@ -426,12 +426,12 @@
     </div>
 
     <div style="text-align:center; margin-top:32px;">
-      <button type="submit" class="pf-submit">💾 Save Profile &amp; Update Score</button>
+      <button type="submit" class="pf-submit">?? Save Profile &amp; Update Score</button>
     </div>
   </form>
 
   <div style="background:#f0f7ff; border-radius:10px; padding:16px 20px; margin-top:24px; font-size:.88rem; color:#1565c0; line-height:1.7;">
-    <strong>ℹ️ How this works:</strong><br>
+    <strong>?? How this works:</strong><br>
     When you click <em>Direct Apply</em> on any government scheme, your saved profile details
     (Aadhaar, bank account, land record, etc.) are automatically used to fill the application.
     You do not need to re-enter your information every time.
@@ -440,7 +440,7 @@
 
   <div style="text-align:center; margin-top:20px; padding-bottom:10px;">
     <a href="{% url 'govt_schemes' %}" style="color:#2e7d32; font-weight:600; text-decoration:none;">
-      ← Back to Government Schemes
+      ? Back to Government Schemes
     </a>
   </div>
 

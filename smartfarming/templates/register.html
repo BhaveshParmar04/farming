@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Farmer Register - Agrikon{% endblock %}
+{% block title %}Farmer Register - Kisan Acharya{% endblock %}
 
 {% block styles %}{{ block.super }}
 <style>
@@ -87,9 +87,9 @@
   <div class="rg-left">
     <div class="rg-left-img"></div>
     <div class="rg-left-content">
-      <img src="{% static 'assets/images/logo-light.png' %}" class="rg-left-logo" alt="Agrikon">
+      <img src="{% static 'assets/images/logo-light.png' %}" class="rg-left-logo" alt="Kisan Acharya">
       <h2>Smart Farming<br>Starts Here 🌾</h2>
-      <p>Join thousands of farmers using Agrikon to manage lands, get AI crop suggestions, and access government schemes.</p>
+      <p>Join thousands of farmers using Kisan Acharya to manage lands, get AI crop suggestions, and access government schemes.</p>
       <div class="rg-features">
         <div class="rg-feat"><span class="rg-feat-icon">🤖</span><span class="rg-feat-text">AI-powered crop recommendations</span></div>
         <div class="rg-feat"><span class="rg-feat-icon">🏛️</span><span class="rg-feat-text">Government scheme finder</span></div>
@@ -125,6 +125,10 @@
           <div class="rg-field">
             <label>Full Name *</label>
             <input type="text" name="full_name" class="rg-input" placeholder="Your full name" required>
+          </div>
+          <div class="rg-field">
+            <label>Email Address <span style="color:#aaa;font-weight:400;">(optional — for welcome email)</span></label>
+            <input type="email" name="email" class="rg-input" placeholder="yourname@gmail.com">
           </div>
           <div class="rg-field">
             <label>Mobile Number *</label>
@@ -228,7 +232,18 @@ function startTimer(){
     let m=Math.floor(timeLeft/60),s=timeLeft%60;
     timerDiv.innerHTML=`OTP expires in: ${m}:${s<10?'0'+s:s}`;
     timeLeft--;
-    if(timeLeft<0){clearInterval(timerInterval);let btn=document.getElementById("sendOtpBtn");btn.disabled=false;btn.textContent="Resend OTP";timerDiv.innerHTML="OTP expired";}
+    if(timeLeft<0){
+      clearInterval(timerInterval);
+      let btn=document.getElementById("sendOtpBtn");
+      btn.disabled=false;btn.textContent="Resend OTP";
+      timerDiv.innerHTML="OTP expired — please request a new OTP";
+      // Reset verify button and OTP input
+      document.getElementById("verifyOtpBtn").disabled=false;
+      document.getElementById("verifyOtpBtn").textContent="Verify";
+      document.getElementById("otpInput").value="";
+      document.getElementById("registerBtn").disabled=true;
+      document.getElementById("otpStatus").style.display="none";
+    }
   },1000);
 }
 document.getElementById("verifyOtpBtn").addEventListener("click",function(){
@@ -240,7 +255,19 @@ document.getElementById("verifyOtpBtn").addEventListener("click",function(){
   btn.disabled=true;btn.textContent="Verifying...";
   fetch("{% url 'verify_otp' %}",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","X-CSRFToken":getCookie("csrftoken")},body:new URLSearchParams({mobile,otp})})
   .then(r=>r.json()).then(data=>{
-    if(data.success){btn.style.display="none";document.getElementById("otpStatus").style.display="inline";errDiv.innerHTML="";document.getElementById("registerBtn").disabled=false;}
+    if(data.success){
+      btn.style.display="none";
+      document.getElementById("otpStatus").style.display="inline";
+      errDiv.innerHTML="";
+      document.getElementById("registerBtn").disabled=false;
+      // Refresh CSRF token by fetching a fresh one
+      fetch("{% url 'register' %}").then(r=>r.text()).then(html=>{
+        let match=html.match(/csrfmiddlewaretoken.*?value="([^"]+)"/);
+        if(match){
+          document.querySelector('[name=csrfmiddlewaretoken]').value=match[1];
+        }
+      });
+    }
     else{errDiv.innerHTML=data.message;btn.disabled=false;btn.textContent="Verify";}
   }).catch(()=>{errDiv.innerHTML="Error. Try again.";btn.disabled=false;btn.textContent="Verify";});
 });

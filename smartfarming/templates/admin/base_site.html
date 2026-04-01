@@ -1,4 +1,4 @@
-﻿{% extends "admin/base.html" %}
+{% extends "admin/base.html" %}
 {% load i18n %}
 
 {% block extrastyle %}{{ block.super }}
@@ -70,9 +70,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--g2)!important;outline
 {% block branding %}
 {{ block.super }}
 <div id="kisan-panels">
-  <a href="/admin/" {% if request.resolver_match.namespace == "farming_admin" %}class="kp-active"{% endif %}>🌾 Farming Admin</a>
-  <a href="/govt-admin/" {% if request.resolver_match.namespace == "govt_admin" %}class="kp-active"{% endif %}>🏛️ Govt Admin</a>
-  <a href="/buyer-admin/" {% if request.resolver_match.namespace == "buyer_admin" %}class="kp-active"{% endif %}>🛒 Buyer Admin</a>
+  <a href="/admin/" {% if request.resolver_match.namespace == "farming_admin" %}class="kp-active"{% endif %}>?? Farming Admin</a>
+  <a href="/govt-admin/" {% if request.resolver_match.namespace == "govt_admin" %}class="kp-active"{% endif %}>??? Govt Admin</a>
+  <a href="/buyer-admin/" {% if request.resolver_match.namespace == "buyer_admin" %}class="kp-active"{% endif %}>?? Buyer Admin</a>
 </div>
 {% endblock %}
 
@@ -85,7 +85,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--g2)!important;outline
 .msg-bell .mbadge{background:#e53935;color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;}
 </style>
 <a href="/admin/kisanapp/contactmessage/?is_read__exact=0" class="msg-bell">
-  📬
+  ??
   {% if unread_messages_count and unread_messages_count > 0 %}
   <span class="mbadge">{{ unread_messages_count }}</span>
   {% endif %}

@@ -39,6 +39,7 @@ class FarmerRegistration(models.Model):
     full_name = models.CharField(max_length=150)
     mobile = models.CharField(max_length=10, unique=True)
     mobile_verified = models.BooleanField(default=False)
+    email = models.EmailField(blank=True, null=True)
 
     land_record = models.CharField(max_length=100)
     state = models.CharField(max_length=50, choices=STATE_CHOICES)
@@ -487,13 +488,26 @@ from django.dispatch import receiver
 @receiver(post_save, sender=GovtScheme)
 def notify_farmers_new_scheme(sender, instance, created, **kwargs):
     if created and instance.is_active:
+        # SchemeNotification broadcast (farmer=None)
         SchemeNotification.objects.create(
-            farmer=None,  # broadcast to all
+            farmer=None,
             scheme=instance,
             notif_type="new_scheme",
             title=f"🆕 New Scheme: {instance.title}",
             message=f"Navi government scheme available che: '{instance.title}'. Category: {instance.get_category_display()}. Apply karo!",
         )
+        # Individual Notification for each farmer so bell icon shows it
+        farmers = FarmerRegistration.objects.all()
+        notifs = [
+            Notification(
+                farmer=farmer,
+                notif_type="general",
+                title=f"🏛️ New Govt Scheme: {instance.title}",
+                message=f"Navi government scheme available che: '{instance.title}'. Tamari eligibility check karo ane apply karo!",
+            )
+            for farmer in farmers
+        ]
+        Notification.objects.bulk_create(notifs)
 
 @receiver(post_save, sender=FarmerSchemeApplication)
 def notify_scheme_status_change(sender, instance, created, **kwargs):

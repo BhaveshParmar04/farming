@@ -1,4 +1,4 @@
-﻿from pathlib import Path
+from pathlib import Path
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -91,3 +91,12 @@ GEMINI_API_KEY = ""
 OPENAI_API_KEY = "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"
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Email config (Gmail SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'savajakhil12@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'pkdazopstyqbbkbx')
+DEFAULT_FROM_EMAIL = 'Kisan Acharya <savajakhil12@gmail.com>'

@@ -304,6 +304,50 @@ def register(request):
             farmer.mobile_verified = True
             farmer.save()
 
+            # Send welcome email
+            if farmer.email:
+                try:
+                    from django.core.mail import send_mail
+                    send_mail(
+                        subject="Welcome to Kisan Acharya 🌾 — Smart Farming Platform",
+                        message="",
+                        from_email=None,
+                        recipient_list=[farmer.email],
+                        html_message=f"""
+<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#f9fff9;border-radius:16px;overflow:hidden;border:1px solid #c8e6c9;">
+  <div style="background:linear-gradient(135deg,#1b5e20,#2e7d32);padding:32px 28px;text-align:center;">
+    <h1 style="color:#fff;margin:0;font-size:1.8rem;">🌾 Welcome to Kisan Acharya!</h1>
+    <p style="color:rgba(255,255,255,.85);margin:8px 0 0;font-size:.95rem;">Smart Farming Platform for Indian Farmers</p>
+  </div>
+  <div style="padding:28px;">
+    <p style="font-size:1rem;color:#1a4f1a;">Dear <strong>{farmer.full_name}</strong>,</p>
+    <p style="color:#444;line-height:1.7;">Thank you for registering on <strong>Kisan Acharya</strong>! You are now part of a growing community of smart farmers across India.</p>
+    <div style="background:#e8f5e9;border-radius:12px;padding:18px;margin:20px 0;">
+      <p style="margin:0 0 10px;font-weight:700;color:#1b5e20;">What you can do on Kisan Acharya:</p>
+      <ul style="margin:0;padding-left:20px;color:#2e7d32;line-height:2;">
+        <li>🗺️ Add and manage your lands</li>
+        <li>🤖 Get AI-powered crop suggestions</li>
+        <li>🏛️ Explore government schemes</li>
+        <li>📈 Check live market prices</li>
+        <li>🛒 Sell crops directly to buyers</li>
+      </ul>
+    </div>
+    <div style="text-align:center;margin:24px 0;">
+      <a href="https://farming-41nr.onrender.com" style="background:linear-gradient(135deg,#1b5e20,#2e7d32);color:#fff;padding:14px 32px;border-radius:30px;text-decoration:none;font-weight:700;font-size:1rem;">
+        🌾 Go to Kisan Acharya
+      </a>
+    </div>
+    <p style="color:#888;font-size:.82rem;text-align:center;margin:0;">If you have any questions, contact us at <a href="mailto:savajakhil12@gmail.com" style="color:#2e7d32;">savajakhil12@gmail.com</a></p>
+  </div>
+  <div style="background:#f1f8e9;padding:14px;text-align:center;border-top:1px solid #c8e6c9;">
+    <p style="margin:0;font-size:.78rem;color:#888;">© 2026 Kisan Acharya — Smart Farming Platform | Gujarat, India</p>
+  </div>
+</div>""",
+                    )
+                except Exception as e:
+                    print(f"EMAIL ERROR: {e}")
+                    pass  # Email fail thay to registration rok nahi
+
             # Optional: clean used OTPs for this mobile
             MobileOTP.objects.filter(mobile=mobile).delete()
 
@@ -695,7 +739,7 @@ def download_soil_form(request):
     story = []
 
     # Header
-    story.append(Paragraph("🌾 AGRIKON — Smart Farming Platform", title_style))
+    story.append(Paragraph("🌾 Kisan Acharya — Smart Farming Platform", title_style))
     story.append(Paragraph("Soil Testing Request Form", subtitle_style))
     story.append(Paragraph("Take this form to your nearest Soil Testing Centre", subtitle_style))
     story.append(Spacer(1, 0.4*cm))
@@ -799,7 +843,7 @@ def download_soil_form(request):
         "1. Take a soil sample from your land (0-15 cm depth) — collect from 5-6 different spots and mix well.",
         "2. Take approx. 500 grams of mixed soil in a clean bag.",
         "3. Bring this form and soil sample to your nearest Soil Testing Centre (Krishi Vigyan Kendra / APMC / Agriculture Department).",
-        "4. After getting the report, enter the values in Agrikon website under 'Add Land → Manual Soil Data'.",
+        "4. After getting the report, enter the values in Kisan Acharya website under 'Add Land → Manual Soil Data'.",
         "5. Our AI will then give you personalized crop recommendations based on your soil data.",
     ]
     for inst in instructions:
@@ -811,7 +855,7 @@ def download_soil_form(request):
     story.append(Table([['']], colWidths=[17*cm],
                         style=[('LINEABOVE', (0,0), (-1,0), 1, colors.HexColor('#c8e6c9'))]))
     story.append(Paragraph(
-        "Agrikon — Smart Farming Platform | For help: support@agrikon.in | www.agrikon.in",
+        "Kisan Acharya — Smart Farming Platform | For help: support@Kisan Acharya.in | www.Kisan Acharya.in",
         ParagraphStyle('footer', parent=styles['Normal'], fontSize=8,
                        textColor=colors.HexColor('#888888'), alignment=TA_CENTER)
     ))
@@ -820,7 +864,7 @@ def download_soil_form(request):
     buffer.seek(0)
 
     response = HttpResponse(buffer, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="Agrikon_Soil_Testing_Form.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="Kisan Acharya_Soil_Testing_Form.pdf"'
     return response
 
 def mark_activity_done(request, activity_id):
@@ -863,12 +907,12 @@ def notifications_api(request):
 
     items = []
 
-    # 1. Recent Notifications (last 12h, unread only)
+    # 1. Bell popup — only last 12 hours notifications
     notifs = Notification.objects.filter(
         farmer_id=farmer_id,
         is_read=False,
-        created_at__gte=cutoff_12h
-    ).select_related("land").order_by("-created_at")[:5]
+        created_at__gte=cutoff_12h,
+    ).select_related("land").order_by("-created_at")[:8]
 
     for n in notifs:
         diff = now - n.created_at
@@ -932,7 +976,7 @@ def notifications_api(request):
             "unread":  True,
         })
 
-    # Total unread count
+    # Total unread count — only last 12h notifications
     unread_count = (
         Notification.objects.filter(farmer_id=farmer_id, is_read=False, created_at__gte=cutoff_12h).count() +
         CropActivity.objects.filter(farmer_id=farmer_id, status="pending", is_read=False, due_date__gte=today, due_date__lte=next_15days).count() +
@@ -955,58 +999,86 @@ def notifications(request):
     from django.utils import timezone
     from collections import defaultdict
     today = timezone.now().date()
+    one_year_ago = today - timezone.timedelta(days=365)
 
+    # All notifications last 1 year — grouped by land
+    all_notifs = Notification.objects.filter(
+        farmer=farmer,
+        created_at__date__gte=one_year_ago,
+    ).select_related("land").order_by("-created_at")
+
+    # Group by land name
+    land_notifs = defaultdict(list)
+    for n in all_notifs:
+        land_name = n.land.land_name if n.land else "General"
+        land_notifs[land_name].append(n)
+
+    # Pending crop activities grouped by land
     activities = CropActivity.objects.filter(
         farmer=farmer, status="pending"
     ).select_related("land").order_by("due_date")
 
-    urgent   = activities.filter(due_date__lte=today)
-    upcoming = activities.filter(due_date__gt=today)
-
-    # Group by land
-    land_groups = defaultdict(lambda: {"urgent": [], "upcoming": []})
-    for act in urgent:
-        land_groups[act.land.land_name]["urgent"].append(act)
-    for act in upcoming:
-        land_groups[act.land.land_name]["upcoming"].append(act)
+    land_activities = defaultdict(lambda: {"urgent": [], "upcoming": []})
+    for act in activities:
+        key = act.land.land_name
+        if act.due_date <= today:
+            land_activities[key]["urgent"].append(act)
+        else:
+            land_activities[key]["upcoming"].append(act)
 
     # Govt scheme notifications
     scheme_notifs = SchemeNotification.objects.filter(
-        Q(farmer=farmer) | Q(farmer__isnull=True), is_read=False
-    ).select_related("scheme").order_by("-created_at")[:10]
+        Q(farmer=farmer) | Q(farmer__isnull=True)
+    ).select_related("scheme").order_by("-created_at")[:20]
 
-    # Mark all as read when page opened
-    activities.update(is_read=True)
+    # Mark all as read
     Notification.objects.filter(farmer=farmer, is_read=False).update(is_read=True)
+    CropActivity.objects.filter(farmer=farmer, status="pending", is_read=False).update(is_read=True)
     SchemeNotification.objects.filter(
         Q(farmer=farmer) | Q(farmer__isnull=True), is_read=False
     ).update(is_read=True)
 
     return render(request, 'notifications.html', {
         "farmer": farmer,
-        "urgent": urgent,
-        "upcoming": upcoming,
-        "urgent_count": urgent.count(),
-        "total_count": activities.count(),
-        "land_groups": dict(land_groups),
+        "land_notifs": dict(land_notifs),
+        "land_activities": dict(land_activities),
         "scheme_notifs": scheme_notifs,
+        "today": today,
     })
 
 
 def _generate_land_login_notifications(farmer):
-    """Create a Notification for each of the farmer's lands on login."""
-    lands = FarmerLand.objects.filter(farmer=farmer)
-    for land in lands:
+    """On login: create notifications for today's and tomorrow's pending crop activities."""
+    from django.utils import timezone
+    today = timezone.now().date()
+    tomorrow = today + timezone.timedelta(days=1)
+
+    activities = CropActivity.objects.filter(
+        farmer=farmer,
+        status="pending",
+        due_date__in=[today, tomorrow],
+    ).select_related("land")
+
+    for activity in activities:
+        # Avoid duplicate notification for same activity today
+        already = Notification.objects.filter(
+            farmer=farmer,
+            land=activity.land,
+            crop_name=activity.crop_name,
+            title__contains=activity.title,
+            created_at__date=today,
+        ).exists()
+        if already:
+            continue
+
+        due_label = "⏰ આજે" if activity.due_date == today else "📅 કાલે"
         Notification.objects.create(
             farmer=farmer,
-            land=land,
-            notif_type="general",
-            title=f"📍 {land.land_name} — Login Summary",
-            message=(
-                f"Tari '{land.land_name}' land ({land.land_area}) ni update: "
-                f"Water supply: {land.water_supply}. "
-                f"Soil method: {land.get_soil_method_display()}."
-            ),
+            land=activity.land,
+            crop_name=activity.crop_name,
+            notif_type=activity.activity_type,
+            title=f"{due_label}: {activity.title}",
+            message=f"{activity.land.land_name} – {activity.crop_name}: {activity.message}",
         )
 
 
