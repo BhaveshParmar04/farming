@@ -195,13 +195,40 @@
       /* ── GLOBAL RESPONSIVE ── */
       @media (max-width: 768px) {
 
-        /* Navbar */
-        .main-header__info { gap: 6px !important; }
-        #langBtn { font-size: 0.7rem !important; padding: 2px 6px !important; }
-        .notification-btn { margin-right: 14px !important; font-size: 18px !important; }
-        .robot-btn { margin-right: 6px !important; font-size: 18px !important; }
+        /* ── MOBILE NAVBAR FIX ── */
+        /* Hide all extra icons on mobile */
+        .profile-dropdown { display: none !important; }
+        .main-header__info { display: none !important; }
+        .notification-btn { display: none !important; }
+        .robot-btn { display: none !important; }
+        #navSearchBtn { display: none !important; }
 
-        /* Weather bar */
+        /* Logo left, hamburger right */
+        .main-menu .container {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          padding: 10px 16px !important;
+        }
+        .logo-box {
+          display: flex !important;
+          align-items: center !important;
+          gap: 0 !important;
+        }
+        .logo-box img { width: 110px !important; }
+        .mobile-nav__toggler {
+          font-size: 24px !important;
+          color: #1b5e20 !important;
+          cursor: pointer;
+          margin-left: auto !important;
+        }
+        /* Hide desktop menu list on mobile — keep in DOM so theme JS can copy to mobile nav */
+        .main-menu .main-menu__list { opacity: 0 !important; height: 0 !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important; pointer-events: none !important; }
+        /* About section images fix on mobile */
+        .about-one__images { position: relative !important; }
+        .about-one__images img:first-child { margin-left: 0 !important; width: 80% !important; }
+        .about-one__images img:last-of-type { margin-left: 20% !important; width: 70% !important; margin-top: -40px !important; }
+        .about-one__count { margin-left: 10px !important; }
         .wb-inner { flex-direction: column; align-items: flex-start; gap: 4px; padding: 6px 14px; }
         .wb-right { width: 100%; }
         .wb-forecast { display: none; }
@@ -732,6 +759,31 @@
         <!-- /.logo-box -->
         <div class="mobile-nav__container"></div>
         <!-- /.mobile-nav__container -->
+
+        <!-- Profile & Language inside mobile menu -->
+        <div style="padding:16px 20px;border-top:1px solid rgba(255,255,255,0.15);margin-top:10px;">
+          {% if request.session.farmer_id %}
+          <a href="{% url 'profile' %}" style="display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;padding:10px 0;font-size:0.95rem;">
+            <i class="fas fa-user-circle" style="font-size:1.3rem;"></i> View Profile
+          </a>
+          <a href="{% url 'logout' %}" style="display:flex;align-items:center;gap:10px;color:#ffb3b3;text-decoration:none;padding:10px 0;font-size:0.95rem;">
+            <i class="fas fa-sign-out-alt" style="font-size:1.2rem;"></i> Logout
+          </a>
+          {% else %}
+          <a href="{% url 'login' %}" style="display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;padding:10px 0;font-size:0.95rem;">
+            <i class="fas fa-sign-in-alt" style="font-size:1.2rem;"></i> Login
+          </a>
+          {% endif %}
+          <!-- Language selector in mobile menu -->
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);">
+            <p style="color:rgba(255,255,255,0.6);font-size:0.75rem;margin-bottom:8px;">Language</p>
+            <div style="display:flex;gap:8px;">
+              <button onclick="doLang('en','EN','🌐')" style="flex:1;padding:7px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;">🌐 EN</button>
+              <button onclick="doLang('gu','GJ','🌿')" style="flex:1;padding:7px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;">🌿 GJ</button>
+              <button onclick="doLang('hi','HI','🍀')" style="flex:1;padding:7px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;">🍀 HI</button>
+            </div>
+          </div>
+        </div>
 
         <ul class="mobile-nav__contact list-unstyled">
           <li>
