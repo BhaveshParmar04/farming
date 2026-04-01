@@ -521,6 +521,45 @@ def add_land(request):
             messages.error(request, "Please upload a soil report, or switch to manual entry.")
             return redirect("add_land")
 
+        if soil_method == "upload" and request.FILES.get("soil_report"):
+            uploaded_file = request.FILES["soil_report"]
+            ext = uploaded_file.name.split(".")[-1].lower()
+            if ext == "pdf":
+                try:
+                    from pypdf import PdfReader
+                    import io as _io
+                    import re
+                    file_bytes = uploaded_file.read()
+                    reader = PdfReader(_io.BytesIO(file_bytes))
+                    pdf_text = ""
+                    for page in reader.pages:
+                        pdf_text += page.extract_text() or ""
+                    pdf_lower = pdf_text.lower()
+                    soil_keywords = [
+                        r"\bnitrogen\b", r"\bphosphorus\b", r"\bpotassium\b",
+                        r"\borganic carbon\b", r"\belectrical conductivity\b",
+                        r"\bsoil report\b", r"\bsoil health\b", r"\bsoil test\b",
+                        r"\bsoil sample\b", r"\bph value\b", r"\bsoil ph\b",
+                        r"\bzinc\b", r"\bsulphur\b", r"\bmanganese\b",
+                        r"\bमिट्टी\b", r"\bkrishi vigyan\b", r"\bsoil fertility\b",
+                    ]
+                    has_soil_data = any(re.search(kw, pdf_lower) for kw in soil_keywords)
+                    if not has_soil_data:
+                        messages.error(request, "આ PDF માં soil report data મળ્યો નથી. કૃપા કરીને સાચો Soil Testing Report PDF upload કરો.")
+                        return redirect("add_land")
+                    # Reset file pointer for saving
+                    from django.core.files.uploadedfile import InMemoryUploadedFile
+                    import sys
+                    uploaded_file = InMemoryUploadedFile(
+                        _io.BytesIO(file_bytes), 'soil_report',
+                        uploaded_file.name, uploaded_file.content_type,
+                        sys.getsizeof(_io.BytesIO(file_bytes)), None
+                    )
+                    request.FILES['soil_report'] = uploaded_file
+                except Exception:
+                    messages.error(request, "PDF read કરવામાં error આવ્યો. બીજો PDF try કરો.")
+                    return redirect("add_land")
+
         if soil_method == "manual":
             ph = request.POST.get("ph", "").strip()
             n  = request.POST.get("n", "").strip()
@@ -1872,10 +1911,44 @@ Reply ONLY in this JSON format:
                     max_tokens=1000,
                 )
             else:
-                # PDF — send as text prompt with location info
+                # PDF — extract text and validate soil content
+                try:
+                    from pypdf import PdfReader
+                    import io as _io
+                    reader = PdfReader(_io.BytesIO(file_bytes))
+                    pdf_text = ""
+                    for page in reader.pages:
+                        pdf_text += page.extract_text() or ""
+                except Exception:
+                    pdf_text = ""
+
+                # Check if PDF contains soil-related keywords (strict match)
+                import re
+                soil_keywords = [
+                    r"\bnitrogen\b", r"\bphosphorus\b", r"\bpotassium\b",
+                    r"\borganic carbon\b", r"\belectrical conductivity\b",
+                    r"\bsoil report\b", r"\bsoil health\b", r"\bsoil test\b",
+                    r"\bsoil sample\b", r"\bph value\b", r"\bsoil ph\b",
+                    r"\bzinc\b", r"\bsulphur\b", r"\bmanganese\b",
+                    r"\bमिट्टी\b", r"\bkrishi vigyan\b", r"\bsoil fertility\b",
+                ]
+                pdf_lower = pdf_text.lower()
+                has_soil_data = any(re.search(kw, pdf_lower) for kw in soil_keywords)
+
+                if not has_soil_data:
+                    return JsonResponse({
+                        "success": False,
+                        "message": "આ PDF માં soil report data મળ્યો નથી. કૃપા કરીને સાચો soil testing report PDF upload કરો, અથવા Manual Soil Data વાપરો."
+                    })
+
                 prompt_text = f"""You are an expert Indian agricultural scientist.
-A farmer from {land.farmer.district}, {land.farmer.state}, India has uploaded a soil report (PDF).
-Based on typical soil conditions of this region and water supply ({land.water_supply}), provide top 3 crop recommendations, soil health assessment, deficiencies and fixes, best season.
+A farmer from {land.farmer.district}, {land.farmer.state}, India has uploaded a soil report PDF.
+Here is the extracted text from the PDF:
+
+{pdf_text[:3000]}
+
+Based on the soil data in this report, provide top 3 crop recommendations with reasons, soil health assessment, deficiencies and fixes, best season.
+If the data is incomplete, use what is available.
 Reply ONLY in this JSON format:
 {JSON_SCHEMA}"""
                 response = client.chat.completions.create(
