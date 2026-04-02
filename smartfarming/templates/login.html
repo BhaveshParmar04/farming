@@ -240,8 +240,10 @@ function sendOTP(){
             sendBtn.innerText = "OTP Sent";
             loginSuccess.innerHTML = data.message;
 
-            // demo only - remove later
-            alert("Demo OTP: " + data.demo_otp);
+            // Show OTP on page for testing (remove in production with real SMS)
+            if(data.demo_otp){
+                loginSuccess.innerHTML = data.message + ' <span style="background:#e8f5e9;color:#1b5e20;padding:4px 10px;border-radius:6px;font-weight:700;font-size:1rem;">OTP: ' + data.demo_otp + '</span>';
+            }
 
             startTimer();
         }else{
