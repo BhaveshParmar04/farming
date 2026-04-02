@@ -232,17 +232,23 @@ function sendOTP(){
             mobile: mobile
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if(!response.ok) {
+            return response.text().then(t => { throw new Error('Server error: ' + response.status + ' ' + t.substring(0,100)); });
+        }
+        return response.json();
+    })
     .then(data => {
         if(data.success){
             document.getElementById("otpBox").style.display = "block";
             sendBtn.disabled = true;
             sendBtn.innerText = "OTP Sent";
-            loginSuccess.innerHTML = data.message;
 
-            // Show OTP on page for testing (remove in production with real SMS)
+            // Show OTP on page for testing
             if(data.demo_otp){
                 loginSuccess.innerHTML = data.message + ' <span style="background:#e8f5e9;color:#1b5e20;padding:4px 10px;border-radius:6px;font-weight:700;font-size:1rem;">OTP: ' + data.demo_otp + '</span>';
+            } else {
+                loginSuccess.innerHTML = data.message;
             }
 
             startTimer();
@@ -251,7 +257,7 @@ function sendOTP(){
         }
     })
     .catch(error => {
-        mobileError.innerHTML = "Something went wrong while sending OTP.";
+        mobileError.innerHTML = "Error: " + error.message;
         console.log(error);
     });
 }
