@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: farming
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python smartfarming/manage.py migrate --noinput && python smartfarming/manage.py collectstatic --noinput
+    startCommand: cd smartfarming && gunicorn smartfarming.wsgi:application
