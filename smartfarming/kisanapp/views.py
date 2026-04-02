@@ -1101,9 +1101,8 @@ def send_login_otp(request):
         return JsonResponse({"success": False, "message": "Mobile number must be exactly 10 digits"})
 
     # check user exists or not
-    try:
-        farmer = FarmerRegistration.objects.get(mobile=mobile)
-    except FarmerRegistration.DoesNotExist:
+    farmer = FarmerRegistration.objects.filter(mobile=mobile).first()
+    if not farmer:
         return JsonResponse({"success": False, "message": "User does not exist. Please register first."})
 
     # delete old unverified OTPs for this mobile
@@ -1111,11 +1110,15 @@ def send_login_otp(request):
 
     otp = str(random.randint(100000, 999999))
 
-    MobileOTP.objects.create(
-        mobile=mobile,
-        otp=otp,
-        expires_at=timezone.now() + timedelta(minutes=2)
-    )
+    try:
+        MobileOTP.objects.create(
+            mobile=mobile,
+            otp=otp,
+            expires_at=timezone.now() + timedelta(minutes=2)
+        )
+    except Exception as e:
+        # debug mode, show real error cause; remove in production
+        return JsonResponse({"success": False, "message": f"Could not save OTP: {e}"}, status=500)
 
     # demo/testing only
     # production me SMS API use karna
@@ -1146,9 +1149,8 @@ def verify_login_otp(request):
         return JsonResponse({"success": False, "message": "OTP must be exactly 6 digits"})
 
     # check user exists
-    try:
-        farmer = FarmerRegistration.objects.get(mobile=mobile)
-    except FarmerRegistration.DoesNotExist:
+    farmer = FarmerRegistration.objects.filter(mobile=mobile).first()
+    if not farmer:
         return JsonResponse({"success": False, "message": "User does not exist. Please register first."})
 
     otp_obj = MobileOTP.objects.filter(
