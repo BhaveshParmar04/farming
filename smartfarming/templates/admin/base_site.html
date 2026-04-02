@@ -70,9 +70,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--g2)!important;outline
 {% block branding %}
 {{ block.super }}
 <div id="kisan-panels">
-  <a href="/admin/" {% if request.resolver_match.namespace == "farming_admin" %}class="kp-active"{% endif %}>?? Farming Admin</a>
-  <a href="/govt-admin/" {% if request.resolver_match.namespace == "govt_admin" %}class="kp-active"{% endif %}>??? Govt Admin</a>
-  <a href="/buyer-admin/" {% if request.resolver_match.namespace == "buyer_admin" %}class="kp-active"{% endif %}>?? Buyer Admin</a>
+  <a href="/admin/" {% if request.resolver_match.namespace == "farming_admin" %}class="kp-active"{% endif %}>🌾 Farming Admin</a>
+  <a href="/govt-admin/" {% if request.resolver_match.namespace == "govt_admin" %}class="kp-active"{% endif %}>🏛️ Govt Admin</a>
+  <a href="/buyer-admin/" {% if request.resolver_match.namespace == "buyer_admin" %}class="kp-active"{% endif %}>🛒 Buyer Admin</a>
 </div>
 {% endblock %}
 

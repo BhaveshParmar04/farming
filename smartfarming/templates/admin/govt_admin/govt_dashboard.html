@@ -1,4 +1,4 @@
-{% extends "admin/govt_admin/base_site.html" %}
+﻿{% extends "admin/govt_admin/base_site.html" %}
 {% load i18n static %}
 {% block title %}Govt Admin Dashboard{% endblock %}
 {% block content_title %}{% endblock %}
@@ -53,37 +53,37 @@
   <div class="kd-bg2"></div>
   <div class="kd-hero-inner">
     <div>
-      <div class="kd-badge">??? Government Portal</div>
+      <div class="kd-badge">🏛️ Government Portal</div>
       <h1 style="color:#fff;">Farmer Govt<br>Scheme Admin Panel</h1>
       <p>Manage government schemes, farmer applications,<br>and profile verification in real-time.</p>
       <div class="kd-pills">
-        <span class="kd-pill">??? {{ total_schemes }} Schemes</span>
-        <span class="kd-pill">?? {{ total_applications }} Applications</span>
-        <span class="kd-pill">? {{ approved_count }} Approved</span>
+        <span class="kd-pill">🏛️ {{ total_schemes }} Schemes</span>
+        <span class="kd-pill">📝 {{ total_applications }} Applications</span>
+        <span class="kd-pill">✅ {{ approved_count }} Approved</span>
       </div>
     </div>
-    <div class="kd-hero-right">???</div>
+    <div class="kd-hero-right">🏛️</div>
   </div>
 </div>
 
 <div class="kd-stats">
-  <div class="kd-stat"><div class="si">???</div><div class="sn">{{ total_schemes }}</div><div class="sl">Schemes</div></div>
-  <div class="kd-stat"><div class="si">??</div><div class="sn">{{ total_applications }}</div><div class="sl">Applications</div></div>
-  <div class="kd-stat"><div class="si">?</div><div class="sn">{{ approved_count }}</div><div class="sl">Approved</div></div>
-  <div class="kd-stat"><div class="si">?</div><div class="sn">{{ pending_count }}</div><div class="sl">Pending</div></div>
-  <div class="kd-stat"><div class="si">??</div><div class="sn">{{ total_profiles }}</div><div class="sl">Profiles</div></div>
+  <div class="kd-stat"><div class="si">🏛️</div><div class="sn">{{ total_schemes }}</div><div class="sl">Schemes</div></div>
+  <div class="kd-stat"><div class="si">📝</div><div class="sn">{{ total_applications }}</div><div class="sl">Applications</div></div>
+  <div class="kd-stat"><div class="si">✅</div><div class="sn">{{ approved_count }}</div><div class="sl">Approved</div></div>
+  <div class="kd-stat"><div class="si">⏳</div><div class="sn">{{ pending_count }}</div><div class="sl">Pending</div></div>
+  <div class="kd-stat"><div class="si">👤</div><div class="sn">{{ total_profiles }}</div><div class="sl">Profiles</div></div>
 </div>
 
 <div class="kd-quick">
-  <a href="/govt-admin/kisanapp/govtscheme/" class="kd-ql"><span class="qi">???</span><div><div>Govt Schemes</div><div style="font-size:.7rem;color:#888;font-weight:400">Add / edit schemes</div></div></a>
-  <a href="/govt-admin/kisanapp/farmerschemeapplication/" class="kd-ql"><span class="qi">??</span><div><div>Applications</div><div style="font-size:.7rem;color:#888;font-weight:400">Review &amp; approve</div></div></a>
-  <a href="/govt-admin/kisanapp/farmerprofile/" class="kd-ql"><span class="qi">??</span><div><div>Farmer Profiles</div><div style="font-size:.7rem;color:#888;font-weight:400">Document verification</div></div></a>
-  <a href="/govt-admin/kisanapp/schemenotification/" class="kd-ql"><span class="qi">??</span><div><div>Notifications</div><div style="font-size:.7rem;color:#888;font-weight:400">Scheme notifications</div></div></a>
+  <a href="/govt-admin/kisanapp/govtscheme/" class="kd-ql"><span class="qi">🏛️</span><div><div>Govt Schemes</div><div style="font-size:.7rem;color:#888;font-weight:400">Add / edit schemes</div></div></a>
+  <a href="/govt-admin/kisanapp/farmerschemeapplication/" class="kd-ql"><span class="qi">📝</span><div><div>Applications</div><div style="font-size:.7rem;color:#888;font-weight:400">Review &amp; approve</div></div></a>
+  <a href="/govt-admin/kisanapp/farmerprofile/" class="kd-ql"><span class="qi">👤</span><div><div>Farmer Profiles</div><div style="font-size:.7rem;color:#888;font-weight:400">Document verification</div></div></a>
+  <a href="/govt-admin/kisanapp/schemenotification/" class="kd-ql"><span class="qi">🔔</span><div><div>Notifications</div><div style="font-size:.7rem;color:#888;font-weight:400">Scheme notifications</div></div></a>
 </div>
 
 <div class="kd-grid">
   <div class="kd-card">
-    <div class="kd-ch"><h2>?? Recent Applications</h2><a href="/govt-admin/kisanapp/farmerschemeapplication/">View All ?</a></div>
+    <div class="kd-ch"><h2>📝 Recent Applications</h2><a href="/govt-admin/kisanapp/farmerschemeapplication/">View All →</a></div>
     <div class="kd-cb">
       {% for app in recent_applications %}
       <div class="kd-li">
@@ -98,12 +98,12 @@
     </div>
   </div>
   <div class="kd-card">
-    <div class="kd-ch"><h2>??? Active Schemes</h2><a href="/govt-admin/kisanapp/govtscheme/">View All ?</a></div>
+    <div class="kd-ch"><h2>🏛️ Active Schemes</h2><a href="/govt-admin/kisanapp/govtscheme/">View All →</a></div>
     <div class="kd-cb">
       {% for scheme in active_schemes %}
       <div class="kd-li">
-        <div class="kd-av">???</div>
-        <div class="kd-li-info"><div class="nm">{{ scheme.title }}</div><div class="sb">{{ scheme.category }} � {{ scheme.applications.count }} applications</div></div>
+        <div class="kd-av">🏛️</div>
+        <div class="kd-li-info"><div class="nm">{{ scheme.title }}</div><div class="sb">{{ scheme.category }} · {{ scheme.applications.count }} applications</div></div>
         <span class="kb kb-ap">Active</span>
       </div>
       {% empty %}<p style="text-align:center;color:#aaa;padding:16px 0;font-size:.85rem;">No active schemes.</p>{% endfor %}

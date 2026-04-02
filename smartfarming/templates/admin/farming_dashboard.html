@@ -1,4 +1,4 @@
-{% extends "admin/base_site.html" %}
+﻿{% extends "admin/base_site.html" %}
 {% load i18n static %}
 {% block title %}Farming Admin Dashboard{% endblock %}
 {% block content_title %}{% endblock %}
@@ -53,69 +53,69 @@
   <div class="kd-bg2"></div>
   <div class="kd-hero-inner">
     <div>
-      <div class="kd-badge">?? Farming Portal</div>
+      <div class="kd-badge">🌾 Farming Portal</div>
       <h1 style="color:#fff;">Farmer<br>Admin Panel</h1>
       <p>Manage farmers, crop listings, farming tools,<br>and monitor all activities in real-time.</p>
       <div class="kd-pills">
-        <span class="kd-pill">????? {{ total_farmers }} Farmers</span>
-        <span class="kd-pill">?? {{ total_crops }} Crops</span>
-        <span class="kd-pill">?? {{ total_tools }} Tools</span>
+        <span class="kd-pill">🧑‍🌾 {{ total_farmers }} Farmers</span>
+        <span class="kd-pill">🌽 {{ total_crops }} Crops</span>
+        <span class="kd-pill">🔧 {{ total_tools }} Tools</span>
       </div>
     </div>
-    <div class="kd-hero-right">??</div>
+    <div class="kd-hero-right">🌾</div>
   </div>
 </div>
 
 <div class="kd-stats">
   {% if unread_messages %}
   <div style="grid-column:1/-1;background:linear-gradient(135deg,#e65100,#ff6d00);color:#fff;border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:14px;margin-bottom:4px;">
-    <span style="font-size:1.8rem;">??</span>
+    <span style="font-size:1.8rem;">📬</span>
     <div style="flex:1;">
       <div style="font-weight:800;font-size:1rem;">{{ unread_messages }} New Message{{ unread_messages|pluralize }}</div>
       {% for msg in recent_messages %}
-      <div style="font-size:.82rem;opacity:.9;margin-top:2px;">{{ msg.name }} � {{ msg.message|truncatechars:50 }}</div>
+      <div style="font-size:.82rem;opacity:.9;margin-top:2px;">{{ msg.name }} — {{ msg.message|truncatechars:50 }}</div>
       {% endfor %}
     </div>
-    <a href="/admin/kisanapp/contactmessage/" style="background:rgba(255,255,255,.2);color:#fff;padding:8px 16px;border-radius:20px;font-size:.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">View All ?</a>
+    <a href="/admin/kisanapp/contactmessage/" style="background:rgba(255,255,255,.2);color:#fff;padding:8px 16px;border-radius:20px;font-size:.82rem;font-weight:700;text-decoration:none;white-space:nowrap;">View All →</a>
   </div>
   {% endif %}
-  <div class="kd-stat"><div class="si">?????</div><div class="sn">{{ total_farmers }}</div><div class="sl">Farmers</div></div>
-  <div class="kd-stat"><div class="si">??</div><div class="sn">{{ total_crops }}</div><div class="sl">Crop Listings</div></div>
-  <div class="kd-stat"><div class="si">??</div><div class="sn">{{ total_tools }}</div><div class="sl">Farming Tools</div></div>
-  <div class="kd-stat"><div class="si">??</div><div class="sn">{{ total_schemes }}</div><div class="sl">Govt Schemes</div></div>
-  <div class="kd-stat"><div class="si">??</div><div class="sn">{{ total_applications }}</div><div class="sl">Applications</div></div>
-  <div class="kd-stat"><div class="si">??</div><div class="sn">{{ total_notifications }}</div><div class="sl">Notifications</div></div>
+  <div class="kd-stat"><div class="si">🧑‍🌾</div><div class="sn">{{ total_farmers }}</div><div class="sl">Farmers</div></div>
+  <div class="kd-stat"><div class="si">🌽</div><div class="sn">{{ total_crops }}</div><div class="sl">Crop Listings</div></div>
+  <div class="kd-stat"><div class="si">🔧</div><div class="sn">{{ total_tools }}</div><div class="sl">Farming Tools</div></div>
+  <div class="kd-stat"><div class="si">📋</div><div class="sn">{{ total_schemes }}</div><div class="sl">Govt Schemes</div></div>
+  <div class="kd-stat"><div class="si">📝</div><div class="sn">{{ total_applications }}</div><div class="sl">Applications</div></div>
+  <div class="kd-stat"><div class="si">🔔</div><div class="sn">{{ total_notifications }}</div><div class="sl">Notifications</div></div>
 </div>
 
 <div class="kd-quick">
-  <a href="/admin/kisanapp/farmerregistration/" class="kd-ql"><span class="qi">?????</span><div><div>Farmers</div><div style="font-size:.7rem;color:#888;font-weight:400">View &amp; manage</div></div></a>
-  <a href="/admin/kisanapp/croplisting/" class="kd-ql"><span class="qi">??</span><div><div>Crop Listings</div><div style="font-size:.7rem;color:#888;font-weight:400">Crop marketplace</div></div></a>
-  <a href="/admin/kisanapp/farmingtool/" class="kd-ql"><span class="qi">??</span><div><div>Farming Tools</div><div style="font-size:.7rem;color:#888;font-weight:400">Tool listings</div></div></a>
-  <a href="/admin/kisanapp/farmerland/" class="kd-ql"><span class="qi">???</span><div><div>Farmer Lands</div><div style="font-size:.7rem;color:#888;font-weight:400">Land records</div></div></a>
-  <a href="/admin/kisanapp/cropactivity/" class="kd-ql"><span class="qi">??</span><div><div>Crop Activities</div><div style="font-size:.7rem;color:#888;font-weight:400">Schedules</div></div></a>
-  <a href="/admin/kisanapp/govtscheme/" class="kd-ql"><span class="qi">???</span><div><div>Govt Schemes</div><div style="font-size:.7rem;color:#888;font-weight:400">Add / edit</div></div></a>
+  <a href="/admin/kisanapp/farmerregistration/" class="kd-ql"><span class="qi">🧑‍🌾</span><div><div>Farmers</div><div style="font-size:.7rem;color:#888;font-weight:400">View &amp; manage</div></div></a>
+  <a href="/admin/kisanapp/croplisting/" class="kd-ql"><span class="qi">🌽</span><div><div>Crop Listings</div><div style="font-size:.7rem;color:#888;font-weight:400">Crop marketplace</div></div></a>
+  <a href="/admin/kisanapp/farmingtool/" class="kd-ql"><span class="qi">🔧</span><div><div>Farming Tools</div><div style="font-size:.7rem;color:#888;font-weight:400">Tool listings</div></div></a>
+  <a href="/admin/kisanapp/farmerland/" class="kd-ql"><span class="qi">🗺️</span><div><div>Farmer Lands</div><div style="font-size:.7rem;color:#888;font-weight:400">Land records</div></div></a>
+  <a href="/admin/kisanapp/cropactivity/" class="kd-ql"><span class="qi">📅</span><div><div>Crop Activities</div><div style="font-size:.7rem;color:#888;font-weight:400">Schedules</div></div></a>
+  <a href="/admin/kisanapp/govtscheme/" class="kd-ql"><span class="qi">🏛️</span><div><div>Govt Schemes</div><div style="font-size:.7rem;color:#888;font-weight:400">Add / edit</div></div></a>
 </div>
 
 <div class="kd-grid">
   <div class="kd-card">
-    <div class="kd-ch"><h2>????? Recent Farmers</h2><a href="/admin/kisanapp/farmerregistration/">View All ?</a></div>
+    <div class="kd-ch"><h2>🧑‍🌾 Recent Farmers</h2><a href="/admin/kisanapp/farmerregistration/">View All →</a></div>
     <div class="kd-cb">
       {% for farmer in recent_farmers %}
       <div class="kd-li">
         <div class="kd-av">{{ farmer.full_name|first }}</div>
-        <div class="kd-li-info"><div class="nm">{{ farmer.full_name }}</div><div class="sb">{{ farmer.mobile }} � {{ farmer.district }}, {{ farmer.state }}</div></div>
+        <div class="kd-li-info"><div class="nm">{{ farmer.full_name }}</div><div class="sb">{{ farmer.mobile }} · {{ farmer.district }}, {{ farmer.state }}</div></div>
         {% if farmer.mobile_verified %}<span class="kb kb-v">Verified</span>{% else %}<span class="kb kb-i">Unverified</span>{% endif %}
       </div>
       {% empty %}<p style="text-align:center;color:#aaa;padding:16px 0;font-size:.85rem;">No farmers yet.</p>{% endfor %}
     </div>
   </div>
   <div class="kd-card">
-    <div class="kd-ch"><h2>?? Recent Crop Listings</h2><a href="/admin/kisanapp/croplisting/">View All ?</a></div>
+    <div class="kd-ch"><h2>🌽 Recent Crop Listings</h2><a href="/admin/kisanapp/croplisting/">View All →</a></div>
     <div class="kd-cb">
       {% for crop in recent_crops %}
       <div class="kd-li">
         <div class="kd-av">{{ crop.name|first }}</div>
-        <div class="kd-li-info"><div class="nm">{{ crop.name }}</div><div class="sb">{{ crop.farmer.full_name }} � ?{{ crop.price }}</div></div>
+        <div class="kd-li-info"><div class="nm">{{ crop.name }}</div><div class="sb">{{ crop.farmer.full_name }} · ₹{{ crop.price }}</div></div>
         {% if crop.is_active %}<span class="kb kb-a">Active</span>{% else %}<span class="kb kb-i">Inactive</span>{% endif %}
       </div>
       {% empty %}<p style="text-align:center;color:#aaa;padding:16px 0;font-size:.85rem;">No crops yet.</p>{% endfor %}
