@@ -405,7 +405,7 @@
       rel="stylesheet"
       href="{% static 'assets/css/bootstrap-select.min.css' %}"
     />
-    <link rel="stylesheet" href="{% static 'assets/css/Kisan Acharya-icons.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/agrikon-icons.css' %}" />
     <link
       rel="stylesheet"
       href="{% static 'assets/css/nouislider.min.css' %}"
@@ -748,6 +748,7 @@
           </div>
         </div>
       </div>
+      {% block after_footer %}{% endblock %}
     </div>
     <!-- /.page-wrapper -->
 
@@ -887,14 +888,6 @@
             img.style.width = 'auto';
             img.style.display = 'block';
           });
-          var span = stickyLogo.querySelector('a > span');
-          if (span) span.style.fontSize = '1.1rem';
-        }
-      }, 300);
-    });
-    </script> img.style.maxWidth = 'none';
-            }
-          }
           var span = stickyLogo.querySelector('a > span');
           if (span) span.style.fontSize = '1.1rem';
         }

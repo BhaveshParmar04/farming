@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+git add templates/base.html templates/index.html{% extends "base.html" %}
 {% load static %}
 {% block title %}Home - Kisan Acharya{% endblock %}
 {% block content %}
@@ -24,9 +24,7 @@
       <div class="swiper-slide">
         <div
           class="image-layer"
-          style="
-            background-image: url('{% static 'assets/images/main-slider/main-slider-1-1.jpg' %}');
-          "
+          style="background-image: url("{% static 'assets/images/main-slider/main-slider-1-1.jpg' %}");"
         ></div>
         <!-- /.image-layer -->
         <div class="container">
@@ -53,7 +51,9 @@
       </div>
       <!-- /.swiper-slide -->
       <div class="swiper-slide">
-       <div class="image-layer" style="background-image: url('{% static "assets/images/main-slider/main-slider-1-2.jpg" %}');"></div>
+        <div class="image-layer" style="background-image: url('{% static 'assets/images/main-slider/main-slider-1-2.jpg' %}');">
+
+      </div>
         <!-- /.image-layer -->
         <div class="container">
           <div class="row">
@@ -1044,7 +1044,7 @@
             {% endif %}
           {% endfor %}
         {% endif %}
-        <form method="POST" action="{% url 'contact' %}" class="contact-one__form">
+        <form method="POST" action="" class="contact-one__form">
           {% csrf_token %}
           <div class="row">
             <div class="col-lg-12">
@@ -1262,4 +1262,9 @@
   <!-- /.container -->
 </div> {% endcomment %}
 <!-- /.client-carousel -->
+{% block after_footer %}
+<div style="text-align: center; padding: 10px; background: #1b5e20; color: #fff; margin: 0; font-weight: 500;">
+  © Copyright 2026 by Kisan Acharya — Smart Farming Platform
+</div>
+{% endblock %}
 {% endblock %}
