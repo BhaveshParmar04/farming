@@ -220,9 +220,19 @@ document.getElementById("sendOtpBtn").addEventListener("click",function(){
   error.innerHTML="";
   fetch("{% url 'send_otp' %}",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","X-CSRFToken":getCookie("csrftoken")},body:new URLSearchParams({mobile})})
   .then(r=>r.json()).then(data=>{
-    if(data.success){document.getElementById("otpSection").style.display="block";document.getElementById("sendOtpBtn").textContent="✅ OTP Sent";document.getElementById("sendOtpBtn").disabled=true;startTimer();}
+    if(data.success){
+      document.getElementById("otpSection").style.display="block";
+      document.getElementById("sendOtpBtn").textContent="✅ OTP Sent";
+      document.getElementById("sendOtpBtn").disabled=true;
+      // Show OTP on screen for testing
+      if(data.otp || data.demo_otp){
+        var otpVal = data.otp || data.demo_otp;
+        document.getElementById("mobileError").innerHTML='<span style="color:#1b5e20;background:#e8f5e9;padding:4px 10px;border-radius:6px;font-weight:700;">OTP: '+otpVal+'</span>';
+      }
+      startTimer();
+    }
     else{error.innerHTML=data.message;}
-  }).catch(()=>{error.innerHTML="Something went wrong.";});
+  }).catch(()=>{error.innerHTML="Something went wrong.";});;
 });
 function startTimer(){
   let timerDiv=document.getElementById("otpTimer");
