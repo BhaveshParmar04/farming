@@ -1,8 +1,7 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
 
-{% block extrastyle %}{{ block.super }}
-<style>
+{% block extrastyle %}<style>
 :root{--g1:#1b5e20;--g2:#2e7d32;--g3:#43a047;--pale:#e8f5e9;--border:#c8e6c9;}
 
 #header{background:linear-gradient(135deg,var(--g1),var(--g2))!important;color:#fff;padding-bottom:0!important;}
@@ -68,7 +67,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--g2)!important;outline
 {% endblock %}
 
 {% block branding %}
-{{ block.super }}
 <div id="kisan-panels">
   <a href="/admin/" {% if request.resolver_match.namespace == "farming_admin" %}class="kp-active"{% endif %}>🌾 Farming Admin</a>
   <a href="/govt-admin/" {% if request.resolver_match.namespace == "govt_admin" %}class="kp-active"{% endif %}>🏛️ Govt Admin</a>
@@ -92,5 +90,4 @@ input:focus,select:focus,textarea:focus{border-color:var(--g2)!important;outline
   Messages
 </a>
 {% endif %}
-{{ block.super }}
 {% endblock %}

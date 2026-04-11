@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 import random
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib import messages
 from django.utils import timezone
-from .utils import send_sms_otp
-from .models import MobileOTP
+from .utils import send_email_otp
+# from .utils import send_sms_otp  # commented out — replaced by email OTP
+from .models import MobileOTP, EmailOTP
 from .models import FarmerRegistration, MobileOTP
 from .forms import FarmerRegistrationForm
 from datetime import timedelta
@@ -283,20 +285,22 @@ def market_price(request):
     }
     return render(request, "market_price.html", context)
 
+@ensure_csrf_cookie
 def register(request):
     if request.method == "POST":
         form = FarmerRegistrationForm(request.POST)
 
         mobile = request.POST.get("mobile", "").strip()
+        email  = request.POST.get("email", "").strip()
 
-        # Check OTP verification before saving
-        otp_record = MobileOTP.objects.filter(
-            mobile=mobile,
+        # Check email OTP verification before saving
+        otp_record = EmailOTP.objects.filter(
+            email=email,
             is_verified=True
         ).order_by("-created_at").first()
 
         if not otp_record:
-            messages.error(request, "Please verify your mobile number first.")
+            messages.error(request, "Please verify your email address first.")
             return render(request, "register.html", {"form": form})
 
         if form.is_valid():
@@ -348,8 +352,8 @@ def register(request):
                     print(f"EMAIL ERROR: {e}")
                     pass  # Email fail thay to registration rok nahi
 
-            # Optional: clean used OTPs for this mobile
-            MobileOTP.objects.filter(mobile=mobile).delete()
+            # Optional: clean used OTPs for this email
+            EmailOTP.objects.filter(email=email).delete()
 
             messages.success(request, "Registration successful.")
             return redirect("home")
@@ -361,51 +365,47 @@ def register(request):
 
 @require_POST
 def send_otp(request):
+    # ── Email OTP for farmer registration ──
+    email = request.POST.get("email", "").strip()
 
-    mobile = request.POST.get("mobile", "").strip()
+    if not email or "@" not in email:
+        return JsonResponse({"success": False, "message": "Invalid email address."})
 
-    if not mobile.isdigit() or len(mobile) != 10:
-        return JsonResponse({"success": False, "message": "Invalid mobile number."})
-
-    # delete previous OTP
-    MobileOTP.objects.filter(mobile=mobile).delete()
+    # delete previous unverified OTPs for this email
+    EmailOTP.objects.filter(email=email, is_verified=False).delete()
 
     otp = str(random.randint(100000, 999999))
-
-    MobileOTP.objects.create(
-        mobile=mobile,
+    EmailOTP.objects.create(
+        email=email,
         otp=otp,
-        expires_at=timezone.now() + timezone.timedelta(minutes=2)
+        expires_at=timezone.now() + timedelta(minutes=10)
     )
-    # testing
-    print(f"OTP for {mobile} is: {otp}")
-    
-    return JsonResponse({
-        "success": True,
-        "message": "OTP sent successfully. Check terminal."
-    })
-    # send OTP using Fast2SMS
-    # sms_response = send_sms_otp(mobile, otp)
-    # print("SMS Response:", sms_response)  # Debugging line
 
-    # if sms_response.get("return"):
-    #     return JsonResponse({
-    #         "success": True,
-    #         "message": "OTP sent successfully"
-    #     })
-    # else:
-    #     return JsonResponse({
-    #         "success": False,
-    #         "message": "Failed to send OTP"
-    #     })  
+    sent, err = send_email_otp(email, otp)
+    if sent:
+        return JsonResponse({"success": True, "message": f"OTP sent to {email}"})
+    else:
+        return JsonResponse({"success": False, "message": f"Failed to send OTP: {err}"})
+
+    # ── Old mobile OTP (commented out) ──
+    # mobile = request.POST.get("mobile", "").strip()
+    # if not mobile.isdigit() or len(mobile) != 10:
+    #     return JsonResponse({"success": False, "message": "Invalid mobile number."})
+    # MobileOTP.objects.filter(mobile=mobile).delete()
+    # otp = str(random.randint(100000, 999999))
+    # MobileOTP.objects.create(mobile=mobile, otp=otp, expires_at=timezone.now() + timezone.timedelta(minutes=2))
+    # print(f"OTP for {mobile} is: {otp}")
+    # return JsonResponse({"success": True, "message": "OTP sent successfully. Check terminal."})
+
 
 @require_POST
 def verify_otp(request):
-    mobile = request.POST.get("mobile", "").strip()
-    otp = request.POST.get("otp", "").strip()
+    # ── Email OTP verification for farmer registration ──
+    email = request.POST.get("email", "").strip()
+    otp   = request.POST.get("otp", "").strip()
 
-    otp_record = MobileOTP.objects.filter(
-        mobile=mobile,
+    otp_record = EmailOTP.objects.filter(
+        email=email,
         otp=otp,
         is_verified=False
     ).order_by("-created_at").first()
@@ -414,12 +414,20 @@ def verify_otp(request):
         return JsonResponse({"success": False, "message": "Invalid OTP."})
 
     if otp_record.is_expired():
-        return JsonResponse({"success": False, "message": "OTP expired."})
+        return JsonResponse({"success": False, "message": "OTP expired. Please request a new one."})
 
     otp_record.is_verified = True
     otp_record.save()
 
-    return JsonResponse({"success": True, "message": "OTP verified successfully."})
+    return JsonResponse({"success": True, "message": "Email verified successfully."})
+
+    # ── Old mobile OTP verify (commented out) ──
+    # mobile = request.POST.get("mobile", "").strip()
+    # otp_record = MobileOTP.objects.filter(mobile=mobile, otp=otp, is_verified=False).order_by("-created_at").first()
+    # if not otp_record: return JsonResponse({"success": False, "message": "Invalid OTP."})
+    # if otp_record.is_expired(): return JsonResponse({"success": False, "message": "OTP expired."})
+    # otp_record.is_verified = True; otp_record.save()
+    # return JsonResponse({"success": True, "message": "OTP verified successfully."})
 
 @farmer_required
 def farming_guide(request):
@@ -474,16 +482,17 @@ def ai_assistant(request):
 
 @require_POST
 def ai_chat(request):
-    """AJAX: Real OpenAI chat for farming assistant."""
-    from openai import OpenAI
+    """AJAX: Gemini-powered farming assistant chatbot."""
+    from google import genai
+    from google.genai import types
     from django.conf import settings
-    import base64, json as _json
+    import re
 
-    api_key = getattr(settings, "OPENAI_API_KEY", "")
+    api_key = getattr(settings, "GEMINI_API_KEY", "")
     if not api_key:
-        return JsonResponse({"success": False, "message": "OpenAI API key not configured."})
+        return JsonResponse({"success": False, "message": "Gemini API key not configured."})
 
-    client = OpenAI(api_key=api_key)
+    client = genai.Client(api_key=api_key)
 
     message = request.POST.get("message", "").strip()
     lang = request.POST.get("lang", "en")
@@ -495,48 +504,45 @@ def ai_chat(request):
     system_prompt = f"""You are SmartFarm AI, an expert Indian agricultural assistant.
 Always respond in {lang_name} language only.
 Help farmers with: crop selection, soil health, fertilizers, pest control, irrigation, crop diseases, government schemes, market prices.
-Keep responses concise, practical and farmer-friendly.
+Keep responses concise, practical and farmer-friendly. Do NOT use markdown formatting like **bold** or *italic* — use plain text only.
 If analyzing a crop image, identify: disease name, cause, treatment, prevention."""
 
-    try:
-        if image_file:
-            # Vision — image + optional text
-            img_bytes = image_file.read()
-            b64 = base64.b64encode(img_bytes).decode()
-            ext = image_file.name.split(".")[-1].lower()
-            mime = "image/jpeg" if ext in ["jpg","jpeg"] else "image/png" if ext == "png" else "image/jpeg"
+    MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite"]
 
-            user_content = [
-                {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}},
-                {"type": "text", "text": message or "Analyze this crop image and identify any disease, cause, treatment and prevention tips."}
-            ]
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_content}
-                ],
-                max_tokens=600,
-            )
-        else:
-            # Text only
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": message}
-                ],
-                max_tokens=500,
-            )
+    def clean(text):
+        text = re.sub(r'\*{1,2}(.+?)\*{1,2}', r'\1', text)  # remove **bold** and *italic*
+        text = re.sub(r'^#{1,6}\s+', '', text, flags=re.MULTILINE)  # remove headers
+        text = re.sub(r'`{1,3}', '', text)  # remove code ticks
+        return text.strip()
 
-        reply = response.choices[0].message.content.strip()
-        return JsonResponse({"success": True, "reply": reply})
+    last_err = ""
+    for model_name in MODELS:
+        try:
+            if image_file:
+                image_file.seek(0)
+                img_bytes = image_file.read()
+                ext = image_file.name.split(".")[-1].lower()
+                mime = "image/jpeg" if ext in ["jpg", "jpeg"] else "image/png"
+                text = message or "Analyze this crop image and identify any disease, cause, treatment and prevention tips."
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=[system_prompt + "\n" + text, types.Part.from_bytes(data=img_bytes, mime_type=mime)],
+                )
+            else:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=system_prompt + "\n\nUser: " + message,
+                )
+            return JsonResponse({"success": True, "reply": clean(response.text)})
+        except Exception as e:
+            last_err = str(e)
+            if "429" in last_err or "quota" in last_err.lower() or "503" in last_err or "unavailable" in last_err.lower():
+                continue  # try next model
+            break  # non-retryable error
 
-    except Exception as e:
-        err = str(e)
-        if "429" in err:
-            return JsonResponse({"success": False, "message": "API quota exceeded. Please try again later."})
-        return JsonResponse({"success": False, "message": f"Error: {err}"})
+    if "429" in last_err or "quota" in last_err.lower():
+        return JsonResponse({"success": False, "message": "All AI models are busy right now. Please try again in a moment."})
+    return JsonResponse({"success": False, "message": f"Error: {last_err}"})
 
 def add_land(request):
     farmer_id = request.session.get("farmer_id")
@@ -1082,6 +1088,7 @@ def _generate_land_login_notifications(farmer):
         )
 
 
+@ensure_csrf_cookie
 def login(request):
      return render(request, "login.html")
 
@@ -1089,72 +1096,56 @@ def send_login_otp(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Invalid request method"})
 
-    mobile = request.POST.get("mobile", "").strip()
+    email = request.POST.get("email", "").strip()
 
-    if not mobile:
-        return JsonResponse({"success": False, "message": "Please enter mobile number"})
+    if not email or "@" not in email:
+        return JsonResponse({"success": False, "message": "Please enter a valid email address"})
 
-    if not mobile.isdigit():
-        return JsonResponse({"success": False, "message": "Mobile number must contain only digits"})
-
-    if len(mobile) != 10:
-        return JsonResponse({"success": False, "message": "Mobile number must be exactly 10 digits"})
-
-    # check user exists or not
-    farmer = FarmerRegistration.objects.filter(mobile=mobile).first()
+    farmer = FarmerRegistration.objects.filter(email=email).first()
     if not farmer:
-        return JsonResponse({"success": False, "message": "User does not exist. Please register first."})
+        # Check if a farmer exists but has no email linked (old registration)
+        return JsonResponse({"success": False, "message": "No account found with this email. If you registered before, please contact support to link your email, or register again."})
 
-    # delete old unverified OTPs for this mobile
-    MobileOTP.objects.filter(mobile=mobile, is_verified=False).delete()
+    EmailOTP.objects.filter(email=email, is_verified=False).delete()
 
     otp = str(random.randint(100000, 999999))
-
     try:
-        MobileOTP.objects.create(
-            mobile=mobile,
+        EmailOTP.objects.create(
+            email=email,
             otp=otp,
-            expires_at=timezone.now() + timedelta(minutes=2)
+            expires_at=timezone.now() + timedelta(minutes=10)
         )
     except Exception as e:
-        # debug mode, show real error cause; remove in production
         return JsonResponse({"success": False, "message": f"Could not save OTP: {e}"}, status=500)
 
-    # demo/testing only
-    # production me SMS API use karna
-    return JsonResponse({
-        "success": True,
-        "message": "OTP sent successfully",
-        "demo_otp": otp
-    })
+    sent, err = send_email_otp(email, otp)
+    if sent:
+        parts = email.split("@")
+        masked = parts[0][:2] + "***@" + parts[1] if len(parts) == 2 else email
+        return JsonResponse({"success": True, "message": f"OTP sent to {masked}"})
+    else:
+        return JsonResponse({"success": False, "message": f"Failed to send OTP: {err}"})
 
 
 def verify_login_otp(request):
     if request.method != "POST":
         return JsonResponse({"success": False, "message": "Invalid request method"})
 
-    mobile = request.POST.get("mobile", "").strip()
-    otp = request.POST.get("otp", "").strip()
+    email = request.POST.get("email", "").strip()
+    otp   = request.POST.get("otp", "").strip()
 
-    if not mobile:
-        return JsonResponse({"success": False, "message": "Please enter mobile number"})
+    if not email or "@" not in email:
+        return JsonResponse({"success": False, "message": "Please enter a valid email address"})
 
-    if not mobile.isdigit() or len(mobile) != 10:
-        return JsonResponse({"success": False, "message": "Enter a valid 10 digit mobile number"})
-
-    if not otp:
-        return JsonResponse({"success": False, "message": "Please enter OTP"})
-
-    if not otp.isdigit() or len(otp) != 6:
+    if not otp or not otp.isdigit() or len(otp) != 6:
         return JsonResponse({"success": False, "message": "OTP must be exactly 6 digits"})
 
-    # check user exists
-    farmer = FarmerRegistration.objects.filter(mobile=mobile).first()
+    farmer = FarmerRegistration.objects.filter(email=email).first()
     if not farmer:
-        return JsonResponse({"success": False, "message": "User does not exist. Please register first."})
+        return JsonResponse({"success": False, "message": "No account found with this email."})
 
-    otp_obj = MobileOTP.objects.filter(
-        mobile=mobile,
+    otp_obj = EmailOTP.objects.filter(
+        email=email,
         otp=otp,
         is_verified=False
     ).order_by("-created_at").first()
@@ -1163,25 +1154,16 @@ def verify_login_otp(request):
         return JsonResponse({"success": False, "message": "Invalid OTP"})
 
     if otp_obj.is_expired():
-        return JsonResponse({"success": False, "message": "OTP has expired. Please resend OTP."})
+        return JsonResponse({"success": False, "message": "OTP has expired. Please request a new one."})
 
     otp_obj.is_verified = True
     otp_obj.save()
 
-    # mark mobile verified
-    farmer.mobile_verified = True
-    farmer.save()
-
-    # session login
-    request.session["farmer_id"] = farmer.id
-    request.session["farmer_name"] = farmer.full_name
+    request.session["farmer_id"]     = farmer.id
+    request.session["farmer_name"]   = farmer.full_name
     request.session["farmer_mobile"] = farmer.mobile
 
-    return JsonResponse({
-        "success": True,
-        "message": "Login successful",
-        "redirect_url": "/"
-    })
+    return JsonResponse({"success": True, "message": "Login successful", "redirect_url": "/"})
 
 
 def logout(request):
@@ -1467,13 +1449,15 @@ def location_states(request):
 #  BUYER VIEWS
 # ─────────────────────────────────────────────
 
+@ensure_csrf_cookie
 def buyer_register(request):
     if request.method == "POST":
         mobile = request.POST.get("mobile", "").strip()
-        otp_record = MobileOTP.objects.filter(mobile=mobile, is_verified=True).order_by("-created_at").first()
+        email  = request.POST.get("email", "").strip()
+        otp_record = EmailOTP.objects.filter(email=email, is_verified=True).order_by("-created_at").first()
         ctx = {"buyer_states": Buyer.STATE_CHOICES, "states": Buyer.STATE_CHOICES, "crop_choices": Buyer.CROP_CHOICES}
         if not otp_record:
-            ctx["error"] = "Please verify your mobile number first."
+            ctx["error"] = "Please verify your email address first."
             return render(request, "buyer_register.html", ctx)
         full_name        = request.POST.get("full_name", "").strip()
         company          = request.POST.get("company", "").strip()
@@ -1492,11 +1476,11 @@ def buyer_register(request):
             ctx["error"] = "Mobile already registered. Please login."
             return render(request, "buyer_register.html", ctx)
         buyer = Buyer.objects.create(
-            full_name=full_name, mobile=mobile, mobile_verified=True,
+            full_name=full_name, mobile=mobile, email=email, mobile_verified=True,
             company=company, locations=locations,
             interested_crops=interested_crops, notes=notes,
         )
-        MobileOTP.objects.filter(mobile=mobile).delete()
+        EmailOTP.objects.filter(email=email).delete()
         request.session["buyer_id"]   = buyer.id
         request.session["buyer_name"] = buyer.full_name
         messages.success(request, "Registration successful!")
@@ -1507,6 +1491,7 @@ def buyer_register(request):
     })
 
 
+@ensure_csrf_cookie
 def buyer_login(request):
     return render(request, "buyer_login.html")
 
@@ -1515,34 +1500,66 @@ def send_buyer_otp(request):
     if request.method != "POST":
         return JsonResponse({"success": False})
     mobile = request.POST.get("mobile", "").strip()
+    email  = request.POST.get("email", "").strip()
+
     if not mobile.isdigit() or len(mobile) != 10:
         return JsonResponse({"success": False, "message": "Invalid mobile number."})
-    MobileOTP.objects.filter(mobile=mobile, is_verified=False).delete()
+    if not email or "@" not in email:
+        return JsonResponse({"success": False, "message": "Invalid email address."})
+
+    EmailOTP.objects.filter(email=email, is_verified=False).delete()
     otp = str(random.randint(100000, 999999))
-    MobileOTP.objects.create(mobile=mobile, otp=otp, expires_at=timezone.now() + timedelta(minutes=2))
-    print(f"[BUYER OTP] {mobile} → {otp}")
-    return JsonResponse({"success": True, "message": "OTP sent.", "demo_otp": otp})
+    EmailOTP.objects.create(email=email, otp=otp, expires_at=timezone.now() + timedelta(minutes=10))
+
+    sent, err = send_email_otp(email, otp)
+    if sent:
+        parts = email.split("@")
+        masked = parts[0][:2] + "***@" + parts[1] if len(parts) == 2 else email
+        return JsonResponse({"success": True, "message": f"OTP sent to {masked}"})
+    return JsonResponse({"success": False, "message": f"Failed to send OTP: {err}"})
+
+    # ── Old mobile OTP (commented out) ──
+    # MobileOTP.objects.filter(mobile=mobile, is_verified=False).delete()
+    # otp = str(random.randint(100000, 999999))
+    # MobileOTP.objects.create(mobile=mobile, otp=otp, expires_at=timezone.now() + timedelta(minutes=2))
+    # print(f"[BUYER OTP] {mobile} → {otp}")
+    # return JsonResponse({"success": True, "message": "OTP sent.", "demo_otp": otp})
 
 
 def verify_buyer_login_otp(request):
     if request.method != "POST":
         return JsonResponse({"success": False})
     mobile = request.POST.get("mobile", "").strip()
+    email  = request.POST.get("email", "").strip()
     otp    = request.POST.get("otp", "").strip()
+
     try:
         buyer = Buyer.objects.get(mobile=mobile)
     except Buyer.DoesNotExist:
         return JsonResponse({"success": False, "message": "Mobile not registered. Please register first."})
-    otp_obj = MobileOTP.objects.filter(mobile=mobile, otp=otp, is_verified=False).order_by("-created_at").first()
+
+    # use the email from buyer record for login, or the submitted email for registration verify
+    verify_email = buyer.email if buyer.email else email
+    if not verify_email:
+        return JsonResponse({"success": False, "message": "No email linked to this account."})
+
+    otp_obj = EmailOTP.objects.filter(email=verify_email, otp=otp, is_verified=False).order_by("-created_at").first()
     if not otp_obj:
         return JsonResponse({"success": False, "message": "Invalid OTP."})
     if otp_obj.is_expired():
         return JsonResponse({"success": False, "message": "OTP expired."})
+
     otp_obj.is_verified = True
     otp_obj.save()
     request.session["buyer_id"]   = buyer.id
     request.session["buyer_name"] = buyer.full_name
     return JsonResponse({"success": True, "redirect_url": "/buyer/dashboard/"})
+
+    # ── Old mobile OTP verify (commented out) ──
+    # otp_obj = MobileOTP.objects.filter(mobile=mobile, otp=otp, is_verified=False).order_by("-created_at").first()
+    # if not otp_obj: return JsonResponse({"success": False, "message": "Invalid OTP."})
+    # if otp_obj.is_expired(): return JsonResponse({"success": False, "message": "OTP expired."})
+    # otp_obj.is_verified = True; otp_obj.save()
 
 
 def buyer_dashboard(request):
@@ -1904,7 +1921,7 @@ def farmer_profile_form(request):
 # ─── Soil AI Suggestion ───────────────────────────────────────────────────────
 @require_POST
 def soil_ai_suggest(request):
-    """AJAX: Analyze soil data and return crop suggestions using OpenAI."""
+    """AJAX: Analyze soil data and return crop suggestions using Gemini."""
     farmer_id = request.session.get("farmer_id")
     if not farmer_id:
         return JsonResponse({"success": False, "message": "Login required."})
@@ -1912,15 +1929,16 @@ def soil_ai_suggest(request):
     land_id = request.POST.get("land_id")
     land = get_object_or_404(FarmerLand, id=land_id, farmer_id=farmer_id)
 
-    from openai import OpenAI
+    from google import genai
+    from google.genai import types
     from django.conf import settings
-    import base64, json as _json
+    import json as _json
 
-    api_key = getattr(settings, "OPENAI_API_KEY", "")
+    api_key = getattr(settings, "GEMINI_API_KEY", "")
     if not api_key:
-        return JsonResponse({"success": False, "message": "OPENAI_API_KEY not configured in settings.py"})
+        return JsonResponse({"success": False, "message": "GEMINI_API_KEY not configured in settings.py"})
 
-    client = OpenAI(api_key=api_key)
+    client = genai.Client(api_key=api_key)
 
     JSON_SCHEMA = """{
   "crops": [{"name": "...", "reason": "...", "match": "high/medium/low"}],
@@ -1951,41 +1969,36 @@ Soil Analysis Data:
 - Land Area: {land.land_area}
 
 Based on this soil data provide top 3 crop recommendations with reasons, soil health assessment, deficiencies and fixes, best season.
-Reply ONLY in this JSON format:
+Reply ONLY in valid JSON matching this format exactly (no markdown, no extra text):
 {JSON_SCHEMA}"""
 
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-                response_format={"type": "json_object"},
-                max_tokens=1000,
+            response = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt,
             )
-            raw = response.choices[0].message.content.strip()
+            raw = response.text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
             result = _json.loads(raw)
 
         elif land.soil_method == "upload" and land.soil_report:
             ext = land.soil_report.name.split(".")[-1].lower()
             with open(land.soil_report.path, "rb") as f:
                 file_bytes = f.read()
-            b64 = base64.b64encode(file_bytes).decode()
 
             if ext in ["jpg", "jpeg", "png"]:
-                mime = "image/jpeg" if ext in ["jpg","jpeg"] else "image/png"
+                mime = "image/jpeg" if ext in ["jpg", "jpeg"] else "image/png"
                 prompt_text = f"""You are an expert Indian agricultural scientist. This is a soil health report image from {land.farmer.district}, {land.farmer.state}, India.
 Analyze it and provide top 3 crop recommendations, soil health assessment, deficiencies and fixes, best season.
-Reply ONLY in this JSON format:
+Reply ONLY in valid JSON matching this format exactly (no markdown, no extra text):
 {JSON_SCHEMA}"""
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": [
-                        {"type": "text", "text": prompt_text},
-                        {"type": "image_url", "image_url": {"url": f"data:{mime};base64,{b64}"}},
-                    ]}],
-                    response_format={"type": "json_object"},
-                    max_tokens=1000,
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=[
+                        prompt_text,
+                        types.Part.from_bytes(data=file_bytes, mime_type=mime),
+                    ],
                 )
             else:
-                # PDF — extract text and validate soil content
+                # PDF — extract text
                 try:
                     from pypdf import PdfReader
                     import io as _io
@@ -1996,7 +2009,6 @@ Reply ONLY in this JSON format:
                 except Exception:
                     pdf_text = ""
 
-                # Check if PDF contains soil-related keywords (strict match)
                 import re
                 soil_keywords = [
                     r"\bnitrogen\b", r"\bphosphorus\b", r"\bpotassium\b",
@@ -2006,10 +2018,7 @@ Reply ONLY in this JSON format:
                     r"\bzinc\b", r"\bsulphur\b", r"\bmanganese\b",
                     r"\bमिट्टी\b", r"\bkrishi vigyan\b", r"\bsoil fertility\b",
                 ]
-                pdf_lower = pdf_text.lower()
-                has_soil_data = any(re.search(kw, pdf_lower) for kw in soil_keywords)
-
-                if not has_soil_data:
+                if not any(re.search(kw, pdf_text.lower()) for kw in soil_keywords):
                     return JsonResponse({
                         "success": False,
                         "message": "આ PDF માં soil report data મળ્યો નથી. કૃપા કરીને સાચો soil testing report PDF upload કરો, અથવા Manual Soil Data વાપરો."
@@ -2017,22 +2026,19 @@ Reply ONLY in this JSON format:
 
                 prompt_text = f"""You are an expert Indian agricultural scientist.
 A farmer from {land.farmer.district}, {land.farmer.state}, India has uploaded a soil report PDF.
-Here is the extracted text from the PDF:
+Extracted text:
 
 {pdf_text[:3000]}
 
-Based on the soil data in this report, provide top 3 crop recommendations with reasons, soil health assessment, deficiencies and fixes, best season.
-If the data is incomplete, use what is available.
-Reply ONLY in this JSON format:
+Provide top 3 crop recommendations, soil health assessment, deficiencies and fixes, best season.
+Reply ONLY in valid JSON matching this format exactly (no markdown, no extra text):
 {JSON_SCHEMA}"""
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": prompt_text}],
-                    response_format={"type": "json_object"},
-                    max_tokens=1000,
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt_text,
                 )
 
-            raw = response.choices[0].message.content.strip()
+            raw = response.text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
             result = _json.loads(raw)
 
         else:

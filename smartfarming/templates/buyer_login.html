@@ -1,88 +1,183 @@
-{% extends "buyer_base.html" %}
-{% load static %}
-{% block title %}Buyer Login - Kisan Acharya{% endblock %}
-
-{% block content %}
-<div class="bp-hero" style="padding:32px 28px 28px;">
-  <div class="bp-hero-inner" style="text-align:center;">
-    <div class="bp-hero-badge"><i class="fas fa-lock" style="font-size:0.7rem;"></i> Secure Login</div>
-    <h1><i class="fas fa-sign-in-alt" style="margin-right:10px;opacity:0.9;"></i>Buyer Login</h1>
-    <p>New buyer? <a href="{% url 'buyer_register' %}" style="color:#a5d6a7;font-weight:700;">Register here →</a></p>
+{% extends "buyer_base.html" %} {% load static %} {% block title %}Buyer Login -
+Kisan Acharya{% endblock %} {% block content %}
+<div class="bp-hero" style="padding: 32px 28px 28px">
+  <div class="bp-hero-inner" style="text-align: center">
+    <div class="bp-hero-badge">
+      <i class="fas fa-lock" style="font-size: 0.7rem"></i> Secure Login
+    </div>
+    <h1>
+      <i class="fas fa-sign-in-alt" style="margin-right: 10px; opacity: 0.9"></i
+      >Buyer Login
+    </h1>
+    <p>
+      New buyer?
+      <a
+        href="{% url 'buyer_register' %}"
+        style="color: #a5d6a7; font-weight: 700"
+        >Register here →</a
+      >
+    </p>
   </div>
 </div>
 
-<div style="max-width:460px;margin:40px auto;padding:0 20px 80px;">
-  <div class="bp-card" style="padding:32px;">
-
+<div style="max-width: 460px; margin: 40px auto; padding: 0 20px 80px">
+  <div class="bp-card" style="padding: 32px">
     <!-- Mobile -->
-    <div style="margin-bottom:18px;">
-      <label class="bp-label"><i class="fas fa-mobile-alt me-1"></i> Mobile Number</label>
+    <div style="margin-bottom: 18px">
+      <label class="bp-label"
+        ><i class="fas fa-mobile-alt me-1"></i> Mobile Number</label
+      >
+      <input
+        type="tel"
+        id="login_mobile"
+        maxlength="10"
+        placeholder="10 digit mobile number"
+        class="bp-input"
+      />
+    </div>
+    <div style="margin-bottom: 18px">
+      <label class="bp-label"
+        ><i class="fas fa-envelope me-1"></i> Email Address
+        <span style="font-weight: 400; color: #aaa"
+          >(OTP will be sent here)</span
+        ></label
+      >
       <div class="otp-group">
-        <input type="tel" id="login_mobile" maxlength="10" placeholder="10 digit mobile number" class="bp-input">
-        <button type="button" id="sendLoginOtp">Send OTP</button>
+        <input
+          type="email"
+          id="login_email"
+          placeholder="yourname@gmail.com"
+          class="bp-input"
+        />
+        <button type="button" id="sendLoginOtp">Get OTP on Email</button>
       </div>
     </div>
 
     <!-- OTP -->
-    <div id="otpRow" style="display:none;margin-bottom:20px;">
+    <div id="otpRow" style="display: none; margin-bottom: 20px">
       <label class="bp-label"><i class="fas fa-key me-1"></i> OTP</label>
       <div class="otp-group">
-        <input type="text" id="login_otp" maxlength="6" placeholder="Enter 6-digit OTP" class="bp-input" style="letter-spacing:4px;font-size:1.1rem;font-weight:700;">
-        <button type="button" id="verifyLoginOtp" style="background:#1565c0;">Login</button>
+        <input
+          type="text"
+          id="login_otp"
+          maxlength="6"
+          placeholder="Enter 6-digit OTP"
+          class="bp-input"
+          style="letter-spacing: 4px; font-size: 1.1rem; font-weight: 700"
+        />
+        <button type="button" id="verifyLoginOtp" style="background: #1565c0">
+          Login
+        </button>
       </div>
-      <div id="loginMsg" style="font-size:0.82rem;margin-top:8px;padding:8px 12px;border-radius:6px;display:none;"></div>
+      <div
+        id="loginMsg"
+        style="
+          font-size: 0.82rem;
+          margin-top: 8px;
+          padding: 8px 12px;
+          border-radius: 6px;
+          display: none;
+        "
+      ></div>
     </div>
 
-    <div style="text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--green-border);">
-      <p style="font-size:0.82rem;color:var(--text-muted);">
+    <div
+      style="
+        text-align: center;
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid var(--green-border);
+      "
+    >
+      <p style="font-size: 0.82rem; color: var(--text-muted)">
         Don't have an account?
-        <a href="{% url 'buyer_register' %}" style="color:var(--green);font-weight:700;">Register as Buyer</a>
+        <a
+          href="{% url 'buyer_register' %}"
+          style="color: var(--green); font-weight: 700"
+          >Register as Buyer</a
+        >
       </p>
     </div>
   </div>
 </div>
 
 <script>
-document.getElementById('sendLoginOtp').addEventListener('click', function() {
-  const mob = document.getElementById('login_mobile').value.trim();
-  if (mob.length !== 10 || !/^\d+$/.test(mob)) { alert('Valid 10 digit mobile enter karo.'); return; }
-  this.disabled = true; this.textContent = 'Sending...';
-  const btn = this;
-  fetch('/buyer/send-otp/', {
-    method: 'POST',
-    headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded'},
-    body: 'mobile=' + mob
-  }).then(r => r.json()).then(d => {
-    btn.disabled = false; btn.textContent = 'Resend';
-    document.getElementById('otpRow').style.display = 'block';
-    const msg = document.getElementById('loginMsg');
-    msg.style.display = 'block';
-    msg.textContent = d.demo_otp ? '(Demo OTP: ' + d.demo_otp + ')' : d.message;
-    msg.style.background = '#e8f5e9'; msg.style.color = '#1b5e20';
-  });
-});
+  document
+    .getElementById("sendLoginOtp")
+    .addEventListener("click", function () {
+      const mob = document.getElementById("login_mobile").value.trim();
+      const email = document.getElementById("login_email").value.trim();
+      if (mob.length !== 10 || !/^\d+$/.test(mob)) {
+        alert("Valid 10 digit mobile enter karo.");
+        return;
+      }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert("Valid email address enter karo.");
+        return;
+      }
+      this.disabled = true;
+      this.textContent = "Sending...";
+      const btn = this;
+      fetch("/buyer/send-otp/", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: "mobile=" + mob + "&email=" + encodeURIComponent(email),
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          btn.disabled = false;
+          btn.textContent = "Resend";
+          document.getElementById("otpRow").style.display = "block";
+          const msg = document.getElementById("loginMsg");
+          msg.style.display = "block";
+          msg.textContent = d.message;
+          msg.style.background = d.success ? "#e8f5e9" : "#ffebee";
+          msg.style.color = d.success ? "#1b5e20" : "#b71c1c";
+        });
+    });
 
-document.getElementById('verifyLoginOtp').addEventListener('click', function() {
-  const mob = document.getElementById('login_mobile').value.trim();
-  const otp = document.getElementById('login_otp').value.trim();
-  this.disabled = true; this.textContent = 'Verifying...';
-  const btn = this;
-  fetch('/buyer/verify-otp/', {
-    method: 'POST',
-    headers: {'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded'},
-    body: 'mobile=' + mob + '&otp=' + otp
-  }).then(r => r.json()).then(d => {
-    btn.disabled = false; btn.textContent = 'Login';
-    const msg = document.getElementById('loginMsg');
-    msg.style.display = 'block';
-    msg.textContent = d.message;
-    if (d.success) {
-      msg.style.background = '#e8f5e9'; msg.style.color = '#1b5e20';
-      window.location.href = d.redirect_url;
-    } else {
-      msg.style.background = '#ffebee'; msg.style.color = '#b71c1c';
-    }
-  });
-});
+  document
+    .getElementById("verifyLoginOtp")
+    .addEventListener("click", function () {
+      const mob = document.getElementById("login_mobile").value.trim();
+      const email = document.getElementById("login_email").value.trim();
+      const otp = document.getElementById("login_otp").value.trim();
+      this.disabled = true;
+      this.textContent = "Verifying...";
+      const btn = this;
+      fetch("/buyer/verify-otp/", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body:
+          "mobile=" +
+          mob +
+          "&email=" +
+          encodeURIComponent(email) +
+          "&otp=" +
+          otp,
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          btn.disabled = false;
+          btn.textContent = "Login";
+          const msg = document.getElementById("loginMsg");
+          msg.style.display = "block";
+          msg.textContent = d.message;
+          if (d.success) {
+            msg.style.background = "#e8f5e9";
+            msg.style.color = "#1b5e20";
+            window.location.href = d.redirect_url;
+          } else {
+            msg.style.background = "#ffebee";
+            msg.style.color = "#b71c1c";
+          }
+        });
+    });
 </script>
 {% endblock %}

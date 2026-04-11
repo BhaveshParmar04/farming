@@ -1,487 +1,486 @@
-﻿{% extends "base.html" %}
-{% load static %}
-{% block title %}Farmer Profile Form - Agrikon{% endblock %}
-
-{% block styles %}{{ block.super }}
-<style>
-:root { --green:#2e7d32; --light-green:#e8f5e9; }
-.pf-wrap { max-width:900px; margin:40px auto 80px; padding:0 20px; }
-.pf-hero {
-  background:linear-gradient(135deg,#1a6b3c,#2e9e5b);
-  border-radius:16px; padding:28px 32px; color:#fff;
-  margin-bottom:28px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;
-}
-.pf-hero-icon { font-size:3rem; flex-shrink:0; }
-.pf-hero h1 { margin:0 0 6px; font-size:1.6rem; font-weight:800; }
-.pf-hero p  { margin:0; opacity:.88; font-size:.95rem; line-height:1.5; }
-.score-ring-wrap { text-align:center; margin-bottom:28px; }
-.score-ring {
-  width:140px; height:140px; border-radius:50%;
-  display:inline-flex; align-items:center; justify-content:center;
-  font-size:2.2rem; font-weight:800; color:#fff; margin-bottom:10px;
-  box-shadow:0 8px 24px rgba(0,0,0,.15);
-}
-.score-label  { font-size:1rem; color:#444; font-weight:600; margin-bottom:4px; }
-.score-status { font-size:.88rem; color:#666; margin-top:4px; }
-.score-bar-wrap { background:#e0e0e0; border-radius:20px; height:12px; margin:8px auto 4px; overflow:hidden; max-width:320px; }
-.score-bar { height:100%; border-radius:20px; transition:width 1.2s ease; }
-.tip-box {
-  background:#fff8e1; border-left:4px solid #f9a825;
-  border-radius:8px; padding:13px 18px; margin-bottom:24px;
-  font-size:.9rem; color:#5d4037; line-height:1.6;
-}
-.pf-section { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.08); margin-bottom:20px; overflow:hidden; }
-.pf-section-head {
-  background:var(--light-green); padding:14px 20px;
-  display:flex; align-items:center; gap:10px; border-bottom:1px solid #c8e6c9;
-}
-.pf-section-head h2 { margin:0; font-size:1rem; color:#1b5e20; font-weight:700; }
-.pf-section-head .pts { margin-left:auto; background:#2e7d32; color:#fff; border-radius:12px; padding:2px 10px; font-size:.78rem; font-weight:700; }
-.pf-section-body { padding:20px; }
-.pf-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
-.pf-field { display:flex; flex-direction:column; gap:5px; }
-.pf-field label { font-size:.78rem; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
-.pf-field input, .pf-field select {
-  border:1.5px solid #c8e6c9; border-radius:8px; padding:10px 12px;
-  font-size:.95rem; outline:none; transition:.15s; background:#fafff9; color:#222;
-}
-.pf-field input:focus, .pf-field select:focus { border-color:#2e7d32; box-shadow:0 0 0 3px rgba(46,125,50,.1); }
-.pf-field small { font-size:.78rem; color:#888; }
-
-/* ── Doc checkbox card ── */
-.doc-card { border:1.5px solid #c8e6c9; border-radius:10px; overflow:hidden; }
-.doc-card-check {
-  display:flex; align-items:center; gap:10px; padding:12px 16px;
-  background:#f4fef0; cursor:pointer; user-select:none; transition:.15s;
-}
-.doc-card-check:hover { background:#e8f5e9; border-color:#2e7d32; }
-.doc-card-check input[type=checkbox] { width:18px; height:18px; accent-color:#2e7d32; cursor:pointer; flex-shrink:0; }
-.doc-card-check span { font-size:.92rem; color:#333; font-weight:600; }
-.doc-card-check .arrow { margin-left:auto; color:#2e7d32; font-size:.8rem; transition:transform .2s; }
-.doc-expand {
-  display:none; padding:14px 16px; background:#fff;
-  border-top:1px solid #e8f5e9; gap:10px; flex-direction:column;
-}
-.doc-expand.open { display:flex; }
-.doc-expand label { font-size:.75rem; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:2px; }
-.doc-expand input[type=text], .doc-expand input[type=file] {
-  border:1.5px solid #c8e6c9; border-radius:7px; padding:9px 12px;
-  font-size:.92rem; outline:none; background:#fafff9; width:100%;
-}
-.doc-expand input[type=text]:focus { border-color:#2e7d32; box-shadow:0 0 0 3px rgba(46,125,50,.1); }
-.doc-expand .or-divider {
-  text-align:center; font-size:.78rem; color:#aaa; font-weight:600;
-  position:relative; margin:2px 0;
-}
-.doc-expand .or-divider::before, .doc-expand .or-divider::after {
-  content:''; position:absolute; top:50%; width:42%; height:1px; background:#e0e0e0;
-}
-.doc-expand .or-divider::before { left:0; }
-.doc-expand .or-divider::after  { right:0; }
-.doc-thumb { width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid #c8e6c9; margin-top:4px; }
-
-/* pf-check kept for non-doc checkboxes */
-.pf-check {
-  display:flex; align-items:center; gap:10px; padding:11px 14px;
-  background:#f4fef0; border-radius:8px; border:1.5px solid #c8e6c9;
-  cursor:pointer; transition:.15s; user-select:none;
-}
-.pf-check:hover { border-color:#2e7d32; background:#e8f5e9; }
-.pf-check input[type=checkbox] { width:18px; height:18px; accent-color:#2e7d32; cursor:pointer; flex-shrink:0; }
-.pf-check span { font-size:.92rem; color:#333; font-weight:500; }
-
-.pf-submit {
-  background:linear-gradient(135deg,#2e7d32,#4caf50); color:#fff;
-  border:none; padding:14px 48px; border-radius:10px; font-size:1.05rem;
-  font-weight:700; cursor:pointer; transition:.2s; box-shadow:0 6px 20px rgba(46,125,50,.3);
-}
-.pf-submit:hover { background:linear-gradient(135deg,#1b5e20,#388e3c); transform:translateY(-2px); }
-.req { color:#e74c3c; margin-left:2px; }
-.photo-preview { width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #c8e6c9; margin-top:8px; }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="pf-wrap">
-
-  <div class="pf-hero">
-    <div class="pf-hero-icon">📋</div>
-    <div>
-      <h1>Farmer Profile Form</h1>
-      <p>
-        Fill in your details to build a complete profile. A higher score means faster government
-        scheme applications — your saved data is used automatically when you apply for any scheme.
-      </p>
-    </div>
-  </div>
-
-  <div class="score-ring-wrap">
-    {% with s=score %}
-    <div class="score-ring" style="background:{% if s >= 80 %}#27ae60{% elif s >= 50 %}#f39c12{% else %}#e74c3c{% endif %};">
-      {{ s }}%
-    </div>
-    <div class="score-bar-wrap">
-      <div class="score-bar" style="width:{{ s }}%; background:{% if s >= 80 %}#27ae60{% elif s >= 50 %}#f39c12{% else %}#e74c3c{% endif %};"></div>
-    </div>
-    <div class="score-label">Profile Completeness: {{ s }} / 100</div>
-    <div class="score-status">
-      {% if s >= 80 %}
-        ✅ Excellent — Your profile is complete. You can apply to all schemes directly.
-      {% elif s >= 50 %}
-        ⚠️ Good — Add a few more details to unlock faster scheme applications.
-      {% else %}
-        ❌ Incomplete — Please fill in the required fields to apply for government schemes.
-      {% endif %}
-    </div>
-    {% endwith %}
-  </div>
-
-  <div class="tip-box">
-    💡 <strong>Tip:</strong> A score of 80 or above enables one-click direct apply for all government schemes.
-    The three most important fields are <strong>Aadhaar Card</strong>, <strong>Bank Account</strong>,
-    and <strong>Land Record (7/12 Utara)</strong>.
-  </div>
-
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-
-    <!-- 1. Personal Documents -->
-    <div class="pf-section">
-      <div class="pf-section-head">
-        <span>🪪</span>
-        <h2>Personal Documents</h2>
-        <span class="pts">20 pts</span>
-      </div>
-      <div class="pf-section-body">
-        <div class="pf-grid">
-
-          <!-- Aadhaar -->
-          <div class="doc-card">
-            <label class="doc-card-check" onclick="toggleDoc('aadhar')">
-              <input type="checkbox" name="has_aadhar" id="chk_aadhar" {% if profile.has_aadhar %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('aadhar')">
-              <span>Aadhaar Card Available <span class="req">*</span></span>
-              <i class="fas fa-chevron-down arrow" id="arr_aadhar"></i>
-            </label>
-            <div class="doc-expand {% if profile.has_aadhar %}open{% endif %}" id="exp_aadhar">
-              <div>
-                <label>Aadhaar Number</label>
-                <input type="text" name="aadhar_number" value="{{ profile.aadhar_number }}" placeholder="12-digit Aadhaar number" maxlength="12">
-              </div>
-              <div class="or-divider">OR</div>
-              <div>
-                <label>Upload Aadhaar Photo / Scan</label>
-                <input type="file" name="aadhar_doc" accept="image/*,application/pdf">
-                {% if profile.aadhar_doc %}<img src="{{ profile.aadhar_doc.url }}" class="doc-thumb" alt="Aadhaar">{% endif %}
-              </div>
-            </div>
-          </div>
-
-          <!-- PAN -->
-          <div class="doc-card">
-            <label class="doc-card-check" onclick="toggleDoc('pan')">
-              <input type="checkbox" name="has_pan" id="chk_pan" {% if profile.has_pan %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('pan')">
-              <span>PAN Card Available</span>
-              <i class="fas fa-chevron-down arrow" id="arr_pan"></i>
-            </label>
-            <div class="doc-expand {% if profile.has_pan %}open{% endif %}" id="exp_pan">
-              <div>
-                <label>PAN Number</label>
-                <input type="text" name="pan_number" value="{{ profile.pan_number }}" placeholder="e.g. ABCDE1234F" maxlength="10" style="text-transform:uppercase;">
-              </div>
-              <div class="or-divider">OR</div>
-              <div>
-                <label>Upload PAN Photo / Scan</label>
-                <input type="file" name="pan_doc" accept="image/*,application/pdf">
-                {% if profile.pan_doc %}<img src="{{ profile.pan_doc.url }}" class="doc-thumb" alt="PAN">{% endif %}
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. Bank Account Details -->
-    <div class="pf-section">
-      <div class="pf-section-head">
-        <span>🏦</span>
-        <h2>Bank Account Details</h2>
-        <span class="pts">20 pts</span>
-      </div>
-      <div class="pf-section-body">
-        <div class="pf-grid">
-          <label class="pf-check">
-            <input type="checkbox" name="has_bank_account" {% if profile.has_bank_account %}checked{% endif %}>
-            <span>Bank Account Available <span class="req">*</span></span>
-          </label>
-          <div class="pf-field">
-            <label>Bank Name</label>
-            <input type="text" name="bank_name" value="{{ profile.bank_name }}"
-                   placeholder="e.g. State Bank of India">
-          </div>
-          <div class="pf-field">
-            <label>Account Number</label>
-            <input type="text" name="account_number" value="{{ profile.account_number }}"
-                   placeholder="Enter bank account number">
-          </div>
-          <div class="pf-field">
-            <label>IFSC Code</label>
-            <input type="text" name="ifsc_code" value="{{ profile.ifsc_code }}"
-                   placeholder="e.g. SBIN0001234" maxlength="11" style="text-transform:uppercase;">
-            <small>11-character bank branch code</small>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. Land Documents -->
-    <div class="pf-section">
-      <div class="pf-section-head">
-        <span>🗺️</span>
-        <h2>Land Documents</h2>
-        <span class="pts">20 pts</span>
-      </div>
-      <div class="pf-section-body">
-        <div class="pf-grid">
-
-          <!-- Land Record -->
-          <div class="doc-card">
-            <label class="doc-card-check" onclick="toggleDoc('land_record')">
-              <input type="checkbox" name="has_land_record" id="chk_land_record" {% if profile.has_land_record %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('land_record')">
-              <span>Land Record (7/12 Utara) <span class="req">*</span></span>
-              <i class="fas fa-chevron-down arrow" id="arr_land_record"></i>
-            </label>
-            <div class="doc-expand {% if profile.has_land_record %}open{% endif %}" id="exp_land_record">
-              <div>
-                <label>Land Record Number</label>
-                <input type="text" name="land_record_number" value="{{ profile.land_record_number }}" placeholder="e.g. 7/12/8 extract number">
-              </div>
-              <div class="or-divider">OR</div>
-              <div>
-                <label>Upload Land Record Photo / Scan</label>
-                <input type="file" name="land_record_doc" accept="image/*,application/pdf">
-                {% if profile.land_record_doc %}<img src="{{ profile.land_record_doc.url }}" class="doc-thumb" alt="Land Record">{% endif %}
-              </div>
-            </div>
-          </div>
-
-          <!-- Soil Health Card -->
-          <div class="doc-card">
-            <label class="doc-card-check" onclick="toggleDoc('soil_health_card')">
-              <input type="checkbox" name="has_soil_health_card" id="chk_soil_health_card" {% if profile.has_soil_health_card %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('soil_health_card')">
-              <span>Soil Health Card Available</span>
-              <i class="fas fa-chevron-down arrow" id="arr_soil_health_card"></i>
-            </label>
-            <div class="doc-expand {% if profile.has_soil_health_card %}open{% endif %}" id="exp_soil_health_card">
-              <div>
-                <label>Soil Health Card Number</label>
-                <input type="text" name="soil_health_card_number" value="{{ profile.soil_health_card_number }}" placeholder="Card number">
-              </div>
-              <div class="or-divider">OR</div>
-              <div>
-                <label>Upload Soil Health Card Photo</label>
-                <input type="file" name="soil_health_card_doc" accept="image/*,application/pdf">
-                {% if profile.soil_health_card_doc %}<img src="{{ profile.soil_health_card_doc.url }}" class="doc-thumb" alt="Soil Health Card">{% endif %}
-              </div>
-            </div>
-          </div>
-
-        </div>
-        <p style="margin:12px 0 0; font-size:.82rem; color:#888;">
-          Land records are required for most crop subsidy and irrigation schemes.
-        </p>
-      </div>
-    </div>
-
-    <!-- 4. Income & Social Category -->
-    <div class="pf-section">
-      <div class="pf-section-head">
-        <span>📊</span>
-        <h2>Income &amp; Social Category</h2>
-        <span class="pts">20 pts</span>
-      </div>
-      <div class="pf-section-body">
-        <div class="pf-grid">
-          <div class="pf-field">
-            <label>Annual Income (₹)</label>
-            <input type="number" name="annual_income" value="{{ profile.annual_income }}" placeholder="e.g. 150000" min="0">
-            <small>Total household income per year</small>
-          </div>
-
-          <!-- Income Certificate -->
-          <div class="doc-card">
-            <label class="doc-card-check" onclick="toggleDoc('income_cert')">
-              <input type="checkbox" name="has_income_cert" id="chk_income_cert" {% if profile.has_income_cert %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('income_cert')">
-              <span>Income Certificate Available</span>
-              <i class="fas fa-chevron-down arrow" id="arr_income_cert"></i>
-            </label>
-            <div class="doc-expand {% if profile.has_income_cert %}open{% endif %}" id="exp_income_cert">
-              <div>
-                <label>Certificate Number</label>
-                <input type="text" name="income_cert_number" value="{{ profile.income_cert_number }}" placeholder="Certificate number">
-              </div>
-              <div class="or-divider">OR</div>
-              <div>
-                <label>Upload Income Certificate Photo</label>
-                <input type="file" name="income_cert_doc" accept="image/*,application/pdf">
-                {% if profile.income_cert_doc %}<img src="{{ profile.income_cert_doc.url }}" class="doc-thumb" alt="Income Cert">{% endif %}
-              </div>
-            </div>
-          </div>
-
-          <div class="pf-field">
-            <label>Social / Caste Category</label>
-            <select name="caste_category">
-              <option value="">-- Select Category --</option>
-              <option value="General" {% if profile.caste_category == "General" %}selected{% endif %}>General</option>
-              <option value="OBC"     {% if profile.caste_category == "OBC"     %}selected{% endif %}>OBC (Other Backward Class)</option>
-              <option value="SC"      {% if profile.caste_category == "SC"      %}selected{% endif %}>SC (Scheduled Caste)</option>
-              <option value="ST"      {% if profile.caste_category == "ST"      %}selected{% endif %}>ST (Scheduled Tribe)</option>
-            </select>
-          </div>
-
-          <!-- Caste Certificate -->
-          <div class="doc-card">
-            <label class="doc-card-check" onclick="toggleDoc('caste_cert')">
-              <input type="checkbox" name="has_caste_cert" id="chk_caste_cert" {% if profile.has_caste_cert %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('caste_cert')">
-              <span>Caste / Category Certificate Available</span>
-              <i class="fas fa-chevron-down arrow" id="arr_caste_cert"></i>
-            </label>
-            <div class="doc-expand {% if profile.has_caste_cert %}open{% endif %}" id="exp_caste_cert">
-              <div>
-                <label>Certificate Number</label>
-                <input type="text" name="caste_cert_number" value="{{ profile.caste_cert_number }}" placeholder="Certificate number">
-              </div>
-              <div class="or-divider">OR</div>
-              <div>
-                <label>Upload Caste Certificate Photo</label>
-                <input type="file" name="caste_cert_doc" accept="image/*,application/pdf">
-                {% if profile.caste_cert_doc %}<img src="{{ profile.caste_cert_doc.url }}" class="doc-thumb" alt="Caste Cert">{% endif %}
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- 5. Other Details -->
-    <div class="pf-section">
-      <div class="pf-section-head">
-        <span>📎</span>
-        <h2>Other Details</h2>
-        <span class="pts">20 pts</span>
-      </div>
-      <div class="pf-section-body">
-        <div class="pf-grid">
-          <div class="pf-field">
-            <label>Email Address</label>
-            <input type="email" name="email" value="{{ profile.email }}" placeholder="e.g. farmer@gmail.com">
-            <small>Used for scheme notifications and updates</small>
-          </div>
-
-          <!-- Ration Card -->
-          <div class="doc-card">
-            <label class="doc-card-check" onclick="toggleDoc('ration_card')">
-              <input type="checkbox" name="has_ration_card" id="chk_ration_card" {% if profile.has_ration_card %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('ration_card')">
-              <span>Ration Card Available</span>
-              <i class="fas fa-chevron-down arrow" id="arr_ration_card"></i>
-            </label>
-            <div class="doc-expand {% if profile.has_ration_card %}open{% endif %}" id="exp_ration_card">
-              <div>
-                <label>Ration Card Number</label>
-                <input type="text" name="ration_card_number" value="{{ profile.ration_card_number }}" placeholder="Ration card number">
-              </div>
-              <div class="or-divider">OR</div>
-              <div>
-                <label>Upload Ration Card Photo</label>
-                <input type="file" name="ration_card_doc" accept="image/*,application/pdf">
-                {% if profile.ration_card_doc %}<img src="{{ profile.ration_card_doc.url }}" class="doc-thumb" alt="Ration Card">{% endif %}
-              </div>
-            </div>
-          </div>
-
-          <!-- Passport Photo -->
-          <div class="doc-card">
-            <label class="doc-card-check" onclick="toggleDoc('photo')">
-              <input type="checkbox" name="has_photo" id="chk_photo" {% if profile.has_photo %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('photo')">
-              <span>Passport Size Photo Available</span>
-              <i class="fas fa-chevron-down arrow" id="arr_photo"></i>
-            </label>
-            <div class="doc-expand {% if profile.has_photo %}open{% endif %}" id="exp_photo">
-              <div>
-                <label>Upload Passport Photo</label>
-                <input type="file" name="farmer_photo" accept="image/*" onchange="previewPhoto(this)">
-                {% if profile.farmer_photo %}
-                  <img src="{{ profile.farmer_photo.url }}" class="photo-preview" id="photoPreview" alt="Farmer photo">
-                {% else %}
-                  <img id="photoPreview" class="photo-preview" style="display:none;" alt="Preview">
-                {% endif %}
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <div style="text-align:center; margin-top:32px;">
-      <button type="submit" class="pf-submit">💾 Save Profile &amp; Update Score</button>
-    </div>
-  </form>
-
-  <div style="background:#f0f7ff; border-radius:10px; padding:16px 20px; margin-top:24px; font-size:.88rem; color:#1565c0; line-height:1.7;">
-    <strong>ℹ️ How this works:</strong><br>
-    When you click <em>Direct Apply</em> on any government scheme, your saved profile details
-    (Aadhaar, bank account, land record, etc.) are automatically used to fill the application.
-    You do not need to re-enter your information every time.
-    Keep your profile up to date for the best results.
-  </div>
-
-  <div style="text-align:center; margin-top:20px; padding-bottom:10px;">
-    <a href="{% url 'govt_schemes' %}" style="color:#2e7d32; font-weight:600; text-decoration:none;">
-      ← Back to Government Schemes
-    </a>
-  </div>
-
-</div>
-
-<script>
-function previewPhoto(input) {
-  const preview = document.getElementById('photoPreview');
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      preview.src = e.target.result;
-      preview.style.display = 'block';
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
-function toggleDoc(key) {
-  const chk = document.getElementById('chk_' + key);
-  const exp = document.getElementById('exp_' + key);
-  const arr = document.getElementById('arr_' + key);
-  if (!chk || !exp) return;
-  // toggle checkbox
-  chk.checked = !chk.checked;
-  if (chk.checked) {
-    exp.classList.add('open');
-    if (arr) arr.style.transform = 'rotate(180deg)';
-  } else {
-    exp.classList.remove('open');
-    if (arr) arr.style.transform = 'rotate(0deg)';
-  }
-}
-
-// Set initial arrow state on page load
-document.addEventListener('DOMContentLoaded', function() {
-  ['aadhar','pan','land_record','soil_health_card','income_cert','caste_cert','ration_card','photo'].forEach(function(key) {
-    const chk = document.getElementById('chk_' + key);
-    const arr = document.getElementById('arr_' + key);
-    if (chk && arr && chk.checked) arr.style.transform = 'rotate(180deg)';
-  });
-});
-</script>
-{% endblock %}
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Farmer Profile Form - Agrikon{% endblock %}
+
+{% block styles %}<style>
+:root { --green:#2e7d32; --light-green:#e8f5e9; }
+.pf-wrap { max-width:900px; margin:40px auto 80px; padding:0 20px; }
+.pf-hero {
+  background:linear-gradient(135deg,#1a6b3c,#2e9e5b);
+  border-radius:16px; padding:28px 32px; color:#fff;
+  margin-bottom:28px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+}
+.pf-hero-icon { font-size:3rem; flex-shrink:0; }
+.pf-hero h1 { margin:0 0 6px; font-size:1.6rem; font-weight:800; }
+.pf-hero p  { margin:0; opacity:.88; font-size:.95rem; line-height:1.5; }
+.score-ring-wrap { text-align:center; margin-bottom:28px; }
+.score-ring {
+  width:140px; height:140px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:2.2rem; font-weight:800; color:#fff; margin-bottom:10px;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);
+}
+.score-label  { font-size:1rem; color:#444; font-weight:600; margin-bottom:4px; }
+.score-status { font-size:.88rem; color:#666; margin-top:4px; }
+.score-bar-wrap { background:#e0e0e0; border-radius:20px; height:12px; margin:8px auto 4px; overflow:hidden; max-width:320px; }
+.score-bar { height:100%; border-radius:20px; transition:width 1.2s ease; }
+.tip-box {
+  background:#fff8e1; border-left:4px solid #f9a825;
+  border-radius:8px; padding:13px 18px; margin-bottom:24px;
+  font-size:.9rem; color:#5d4037; line-height:1.6;
+}
+.pf-section { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.08); margin-bottom:20px; overflow:hidden; }
+.pf-section-head {
+  background:var(--light-green); padding:14px 20px;
+  display:flex; align-items:center; gap:10px; border-bottom:1px solid #c8e6c9;
+}
+.pf-section-head h2 { margin:0; font-size:1rem; color:#1b5e20; font-weight:700; }
+.pf-section-head .pts { margin-left:auto; background:#2e7d32; color:#fff; border-radius:12px; padding:2px 10px; font-size:.78rem; font-weight:700; }
+.pf-section-body { padding:20px; }
+.pf-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+.pf-field { display:flex; flex-direction:column; gap:5px; }
+.pf-field label { font-size:.78rem; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+.pf-field input, .pf-field select {
+  border:1.5px solid #c8e6c9; border-radius:8px; padding:10px 12px;
+  font-size:.95rem; outline:none; transition:.15s; background:#fafff9; color:#222;
+}
+.pf-field input:focus, .pf-field select:focus { border-color:#2e7d32; box-shadow:0 0 0 3px rgba(46,125,50,.1); }
+.pf-field small { font-size:.78rem; color:#888; }
+
+/* -- Doc checkbox card -- */
+.doc-card { border:1.5px solid #c8e6c9; border-radius:10px; overflow:hidden; }
+.doc-card-check {
+  display:flex; align-items:center; gap:10px; padding:12px 16px;
+  background:#f4fef0; cursor:pointer; user-select:none; transition:.15s;
+}
+.doc-card-check:hover { background:#e8f5e9; border-color:#2e7d32; }
+.doc-card-check input[type=checkbox] { width:18px; height:18px; accent-color:#2e7d32; cursor:pointer; flex-shrink:0; }
+.doc-card-check span { font-size:.92rem; color:#333; font-weight:600; }
+.doc-card-check .arrow { margin-left:auto; color:#2e7d32; font-size:.8rem; transition:transform .2s; }
+.doc-expand {
+  display:none; padding:14px 16px; background:#fff;
+  border-top:1px solid #e8f5e9; gap:10px; flex-direction:column;
+}
+.doc-expand.open { display:flex; }
+.doc-expand label { font-size:.75rem; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:2px; }
+.doc-expand input[type=text], .doc-expand input[type=file] {
+  border:1.5px solid #c8e6c9; border-radius:7px; padding:9px 12px;
+  font-size:.92rem; outline:none; background:#fafff9; width:100%;
+}
+.doc-expand input[type=text]:focus { border-color:#2e7d32; box-shadow:0 0 0 3px rgba(46,125,50,.1); }
+.doc-expand .or-divider {
+  text-align:center; font-size:.78rem; color:#aaa; font-weight:600;
+  position:relative; margin:2px 0;
+}
+.doc-expand .or-divider::before, .doc-expand .or-divider::after {
+  content:''; position:absolute; top:50%; width:42%; height:1px; background:#e0e0e0;
+}
+.doc-expand .or-divider::before { left:0; }
+.doc-expand .or-divider::after  { right:0; }
+.doc-thumb { width:60px; height:60px; object-fit:cover; border-radius:6px; border:2px solid #c8e6c9; margin-top:4px; }
+
+/* pf-check kept for non-doc checkboxes */
+.pf-check {
+  display:flex; align-items:center; gap:10px; padding:11px 14px;
+  background:#f4fef0; border-radius:8px; border:1.5px solid #c8e6c9;
+  cursor:pointer; transition:.15s; user-select:none;
+}
+.pf-check:hover { border-color:#2e7d32; background:#e8f5e9; }
+.pf-check input[type=checkbox] { width:18px; height:18px; accent-color:#2e7d32; cursor:pointer; flex-shrink:0; }
+.pf-check span { font-size:.92rem; color:#333; font-weight:500; }
+
+.pf-submit {
+  background:linear-gradient(135deg,#2e7d32,#4caf50); color:#fff;
+  border:none; padding:14px 48px; border-radius:10px; font-size:1.05rem;
+  font-weight:700; cursor:pointer; transition:.2s; box-shadow:0 6px 20px rgba(46,125,50,.3);
+}
+.pf-submit:hover { background:linear-gradient(135deg,#1b5e20,#388e3c); transform:translateY(-2px); }
+.req { color:#e74c3c; margin-left:2px; }
+.photo-preview { width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid #c8e6c9; margin-top:8px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pf-wrap">
+
+  <div class="pf-hero">
+    <div class="pf-hero-icon">??</div>
+    <div>
+      <h1>Farmer Profile Form</h1>
+      <p>
+        Fill in your details to build a complete profile. A higher score means faster government
+        scheme applications  your saved data is used automatically when you apply for any scheme.
+      </p>
+    </div>
+  </div>
+
+  <div class="score-ring-wrap">
+    {% with s=score %}
+    <div class="score-ring" style="background:{% if s >= 80 %}#27ae60{% elif s >= 50 %}#f39c12{% else %}#e74c3c{% endif %};">
+      {{ s }}%
+    </div>
+    <div class="score-bar-wrap">
+      <div class="score-bar" style="width:{{ s }}%; background:{% if s >= 80 %}#27ae60{% elif s >= 50 %}#f39c12{% else %}#e74c3c{% endif %};"></div>
+    </div>
+    <div class="score-label">Profile Completeness: {{ s }} / 100</div>
+    <div class="score-status">
+      {% if s >= 80 %}
+        ? Excellent  Your profile is complete. You can apply to all schemes directly.
+      {% elif s >= 50 %}
+        ?? Good  Add a few more details to unlock faster scheme applications.
+      {% else %}
+        ? Incomplete  Please fill in the required fields to apply for government schemes.
+      {% endif %}
+    </div>
+    {% endwith %}
+  </div>
+
+  <div class="tip-box">
+    ?? <strong>Tip:</strong> A score of 80 or above enables one-click direct apply for all government schemes.
+    The three most important fields are <strong>Aadhaar Card</strong>, <strong>Bank Account</strong>,
+    and <strong>Land Record (7/12 Utara)</strong>.
+  </div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- 1. Personal Documents -->
+    <div class="pf-section">
+      <div class="pf-section-head">
+        <span>??</span>
+        <h2>Personal Documents</h2>
+        <span class="pts">20 pts</span>
+      </div>
+      <div class="pf-section-body">
+        <div class="pf-grid">
+
+          <!-- Aadhaar -->
+          <div class="doc-card">
+            <label class="doc-card-check" onclick="toggleDoc('aadhar')">
+              <input type="checkbox" name="has_aadhar" id="chk_aadhar" {% if profile.has_aadhar %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('aadhar')">
+              <span>Aadhaar Card Available <span class="req">*</span></span>
+              <i class="fas fa-chevron-down arrow" id="arr_aadhar"></i>
+            </label>
+            <div class="doc-expand {% if profile.has_aadhar %}open{% endif %}" id="exp_aadhar">
+              <div>
+                <label>Aadhaar Number</label>
+                <input type="text" name="aadhar_number" value="{{ profile.aadhar_number }}" placeholder="12-digit Aadhaar number" maxlength="12">
+              </div>
+              <div class="or-divider">OR</div>
+              <div>
+                <label>Upload Aadhaar Photo / Scan</label>
+                <input type="file" name="aadhar_doc" accept="image/*,application/pdf">
+                {% if profile.aadhar_doc %}<img src="{{ profile.aadhar_doc.url }}" class="doc-thumb" alt="Aadhaar">{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- PAN -->
+          <div class="doc-card">
+            <label class="doc-card-check" onclick="toggleDoc('pan')">
+              <input type="checkbox" name="has_pan" id="chk_pan" {% if profile.has_pan %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('pan')">
+              <span>PAN Card Available</span>
+              <i class="fas fa-chevron-down arrow" id="arr_pan"></i>
+            </label>
+            <div class="doc-expand {% if profile.has_pan %}open{% endif %}" id="exp_pan">
+              <div>
+                <label>PAN Number</label>
+                <input type="text" name="pan_number" value="{{ profile.pan_number }}" placeholder="e.g. ABCDE1234F" maxlength="10" style="text-transform:uppercase;">
+              </div>
+              <div class="or-divider">OR</div>
+              <div>
+                <label>Upload PAN Photo / Scan</label>
+                <input type="file" name="pan_doc" accept="image/*,application/pdf">
+                {% if profile.pan_doc %}<img src="{{ profile.pan_doc.url }}" class="doc-thumb" alt="PAN">{% endif %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Bank Account Details -->
+    <div class="pf-section">
+      <div class="pf-section-head">
+        <span>??</span>
+        <h2>Bank Account Details</h2>
+        <span class="pts">20 pts</span>
+      </div>
+      <div class="pf-section-body">
+        <div class="pf-grid">
+          <label class="pf-check">
+            <input type="checkbox" name="has_bank_account" {% if profile.has_bank_account %}checked{% endif %}>
+            <span>Bank Account Available <span class="req">*</span></span>
+          </label>
+          <div class="pf-field">
+            <label>Bank Name</label>
+            <input type="text" name="bank_name" value="{{ profile.bank_name }}"
+                   placeholder="e.g. State Bank of India">
+          </div>
+          <div class="pf-field">
+            <label>Account Number</label>
+            <input type="text" name="account_number" value="{{ profile.account_number }}"
+                   placeholder="Enter bank account number">
+          </div>
+          <div class="pf-field">
+            <label>IFSC Code</label>
+            <input type="text" name="ifsc_code" value="{{ profile.ifsc_code }}"
+                   placeholder="e.g. SBIN0001234" maxlength="11" style="text-transform:uppercase;">
+            <small>11-character bank branch code</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Land Documents -->
+    <div class="pf-section">
+      <div class="pf-section-head">
+        <span>???</span>
+        <h2>Land Documents</h2>
+        <span class="pts">20 pts</span>
+      </div>
+      <div class="pf-section-body">
+        <div class="pf-grid">
+
+          <!-- Land Record -->
+          <div class="doc-card">
+            <label class="doc-card-check" onclick="toggleDoc('land_record')">
+              <input type="checkbox" name="has_land_record" id="chk_land_record" {% if profile.has_land_record %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('land_record')">
+              <span>Land Record (7/12 Utara) <span class="req">*</span></span>
+              <i class="fas fa-chevron-down arrow" id="arr_land_record"></i>
+            </label>
+            <div class="doc-expand {% if profile.has_land_record %}open{% endif %}" id="exp_land_record">
+              <div>
+                <label>Land Record Number</label>
+                <input type="text" name="land_record_number" value="{{ profile.land_record_number }}" placeholder="e.g. 7/12/8 extract number">
+              </div>
+              <div class="or-divider">OR</div>
+              <div>
+                <label>Upload Land Record Photo / Scan</label>
+                <input type="file" name="land_record_doc" accept="image/*,application/pdf">
+                {% if profile.land_record_doc %}<img src="{{ profile.land_record_doc.url }}" class="doc-thumb" alt="Land Record">{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Soil Health Card -->
+          <div class="doc-card">
+            <label class="doc-card-check" onclick="toggleDoc('soil_health_card')">
+              <input type="checkbox" name="has_soil_health_card" id="chk_soil_health_card" {% if profile.has_soil_health_card %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('soil_health_card')">
+              <span>Soil Health Card Available</span>
+              <i class="fas fa-chevron-down arrow" id="arr_soil_health_card"></i>
+            </label>
+            <div class="doc-expand {% if profile.has_soil_health_card %}open{% endif %}" id="exp_soil_health_card">
+              <div>
+                <label>Soil Health Card Number</label>
+                <input type="text" name="soil_health_card_number" value="{{ profile.soil_health_card_number }}" placeholder="Card number">
+              </div>
+              <div class="or-divider">OR</div>
+              <div>
+                <label>Upload Soil Health Card Photo</label>
+                <input type="file" name="soil_health_card_doc" accept="image/*,application/pdf">
+                {% if profile.soil_health_card_doc %}<img src="{{ profile.soil_health_card_doc.url }}" class="doc-thumb" alt="Soil Health Card">{% endif %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <p style="margin:12px 0 0; font-size:.82rem; color:#888;">
+          Land records are required for most crop subsidy and irrigation schemes.
+        </p>
+      </div>
+    </div>
+
+    <!-- 4. Income & Social Category -->
+    <div class="pf-section">
+      <div class="pf-section-head">
+        <span>??</span>
+        <h2>Income &amp; Social Category</h2>
+        <span class="pts">20 pts</span>
+      </div>
+      <div class="pf-section-body">
+        <div class="pf-grid">
+          <div class="pf-field">
+            <label>Annual Income (?)</label>
+            <input type="number" name="annual_income" value="{{ profile.annual_income }}" placeholder="e.g. 150000" min="0">
+            <small>Total household income per year</small>
+          </div>
+
+          <!-- Income Certificate -->
+          <div class="doc-card">
+            <label class="doc-card-check" onclick="toggleDoc('income_cert')">
+              <input type="checkbox" name="has_income_cert" id="chk_income_cert" {% if profile.has_income_cert %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('income_cert')">
+              <span>Income Certificate Available</span>
+              <i class="fas fa-chevron-down arrow" id="arr_income_cert"></i>
+            </label>
+            <div class="doc-expand {% if profile.has_income_cert %}open{% endif %}" id="exp_income_cert">
+              <div>
+                <label>Certificate Number</label>
+                <input type="text" name="income_cert_number" value="{{ profile.income_cert_number }}" placeholder="Certificate number">
+              </div>
+              <div class="or-divider">OR</div>
+              <div>
+                <label>Upload Income Certificate Photo</label>
+                <input type="file" name="income_cert_doc" accept="image/*,application/pdf">
+                {% if profile.income_cert_doc %}<img src="{{ profile.income_cert_doc.url }}" class="doc-thumb" alt="Income Cert">{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="pf-field">
+            <label>Social / Caste Category</label>
+            <select name="caste_category">
+              <option value="">-- Select Category --</option>
+              <option value="General" {% if profile.caste_category == "General" %}selected{% endif %}>General</option>
+              <option value="OBC"     {% if profile.caste_category == "OBC"     %}selected{% endif %}>OBC (Other Backward Class)</option>
+              <option value="SC"      {% if profile.caste_category == "SC"      %}selected{% endif %}>SC (Scheduled Caste)</option>
+              <option value="ST"      {% if profile.caste_category == "ST"      %}selected{% endif %}>ST (Scheduled Tribe)</option>
+            </select>
+          </div>
+
+          <!-- Caste Certificate -->
+          <div class="doc-card">
+            <label class="doc-card-check" onclick="toggleDoc('caste_cert')">
+              <input type="checkbox" name="has_caste_cert" id="chk_caste_cert" {% if profile.has_caste_cert %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('caste_cert')">
+              <span>Caste / Category Certificate Available</span>
+              <i class="fas fa-chevron-down arrow" id="arr_caste_cert"></i>
+            </label>
+            <div class="doc-expand {% if profile.has_caste_cert %}open{% endif %}" id="exp_caste_cert">
+              <div>
+                <label>Certificate Number</label>
+                <input type="text" name="caste_cert_number" value="{{ profile.caste_cert_number }}" placeholder="Certificate number">
+              </div>
+              <div class="or-divider">OR</div>
+              <div>
+                <label>Upload Caste Certificate Photo</label>
+                <input type="file" name="caste_cert_doc" accept="image/*,application/pdf">
+                {% if profile.caste_cert_doc %}<img src="{{ profile.caste_cert_doc.url }}" class="doc-thumb" alt="Caste Cert">{% endif %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Other Details -->
+    <div class="pf-section">
+      <div class="pf-section-head">
+        <span>??</span>
+        <h2>Other Details</h2>
+        <span class="pts">20 pts</span>
+      </div>
+      <div class="pf-section-body">
+        <div class="pf-grid">
+          <div class="pf-field">
+            <label>Email Address</label>
+            <input type="email" name="email" value="{{ profile.email }}" placeholder="e.g. farmer@gmail.com">
+            <small>Used for scheme notifications and updates</small>
+          </div>
+
+          <!-- Ration Card -->
+          <div class="doc-card">
+            <label class="doc-card-check" onclick="toggleDoc('ration_card')">
+              <input type="checkbox" name="has_ration_card" id="chk_ration_card" {% if profile.has_ration_card %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('ration_card')">
+              <span>Ration Card Available</span>
+              <i class="fas fa-chevron-down arrow" id="arr_ration_card"></i>
+            </label>
+            <div class="doc-expand {% if profile.has_ration_card %}open{% endif %}" id="exp_ration_card">
+              <div>
+                <label>Ration Card Number</label>
+                <input type="text" name="ration_card_number" value="{{ profile.ration_card_number }}" placeholder="Ration card number">
+              </div>
+              <div class="or-divider">OR</div>
+              <div>
+                <label>Upload Ration Card Photo</label>
+                <input type="file" name="ration_card_doc" accept="image/*,application/pdf">
+                {% if profile.ration_card_doc %}<img src="{{ profile.ration_card_doc.url }}" class="doc-thumb" alt="Ration Card">{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Passport Photo -->
+          <div class="doc-card">
+            <label class="doc-card-check" onclick="toggleDoc('photo')">
+              <input type="checkbox" name="has_photo" id="chk_photo" {% if profile.has_photo %}checked{% endif %} onclick="event.stopPropagation();toggleDoc('photo')">
+              <span>Passport Size Photo Available</span>
+              <i class="fas fa-chevron-down arrow" id="arr_photo"></i>
+            </label>
+            <div class="doc-expand {% if profile.has_photo %}open{% endif %}" id="exp_photo">
+              <div>
+                <label>Upload Passport Photo</label>
+                <input type="file" name="farmer_photo" accept="image/*" onchange="previewPhoto(this)">
+                {% if profile.farmer_photo %}
+                  <img src="{{ profile.farmer_photo.url }}" class="photo-preview" id="photoPreview" alt="Farmer photo">
+                {% else %}
+                  <img id="photoPreview" class="photo-preview" style="display:none;" alt="Preview">
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:32px;">
+      <button type="submit" class="pf-submit">?? Save Profile &amp; Update Score</button>
+    </div>
+  </form>
+
+  <div style="background:#f0f7ff; border-radius:10px; padding:16px 20px; margin-top:24px; font-size:.88rem; color:#1565c0; line-height:1.7;">
+    <strong>?? How this works:</strong><br>
+    When you click <em>Direct Apply</em> on any government scheme, your saved profile details
+    (Aadhaar, bank account, land record, etc.) are automatically used to fill the application.
+    You do not need to re-enter your information every time.
+    Keep your profile up to date for the best results.
+  </div>
+
+  <div style="text-align:center; margin-top:20px; padding-bottom:10px;">
+    <a href="{% url 'govt_schemes' %}" style="color:#2e7d32; font-weight:600; text-decoration:none;">
+      ? Back to Government Schemes
+    </a>
+  </div>
+
+</div>
+
+<script>
+function previewPhoto(input) {
+  const preview = document.getElementById('photoPreview');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function toggleDoc(key) {
+  const chk = document.getElementById('chk_' + key);
+  const exp = document.getElementById('exp_' + key);
+  const arr = document.getElementById('arr_' + key);
+  if (!chk || !exp) return;
+  // toggle checkbox
+  chk.checked = !chk.checked;
+  if (chk.checked) {
+    exp.classList.add('open');
+    if (arr) arr.style.transform = 'rotate(180deg)';
+  } else {
+    exp.classList.remove('open');
+    if (arr) arr.style.transform = 'rotate(0deg)';
+  }
+}
+
+// Set initial arrow state on page load
+document.addEventListener('DOMContentLoaded', function() {
+  ['aadhar','pan','land_record','soil_health_card','income_cert','caste_cert','ration_card','photo'].forEach(function(key) {
+    const chk = document.getElementById('chk_' + key);
+    const arr = document.getElementById('arr_' + key);
+    if (chk && arr && chk.checked) arr.style.transform = 'rotate(180deg)';
+  });
+});
+</script>
+{% endblock %}

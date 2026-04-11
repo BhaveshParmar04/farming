@@ -1,499 +1,998 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
+
 {% load static %}
+
 {% block title %}Farming Guide - Agrikon{% endblock %}
 
-{% block styles %}{{ block.super }}
+
+
+{% block styles %}
+{{ block.super }}
 <style>
+
 :root { --green:#2e7d32; --light-green:#e8f5e9; }
+
 .fg-wrap { max-width:1000px; margin:40px auto 80px; padding:0 20px; }
+
 .fg-hero { background:linear-gradient(135deg,#1a6b3c,#2e9e5b); border-radius:16px; padding:28px 32px; color:#fff; margin-bottom:28px; display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+
 .fg-hero-icon { font-size:3rem; flex-shrink:0; }
+
 .fg-hero h1 { margin:0 0 6px; font-size:1.6rem; font-weight:800; }
+
 .fg-hero p  { margin:0; opacity:.88; font-size:.95rem; line-height:1.5; }
+
 .fg-section { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.08); margin-bottom:20px; overflow:hidden; }
+
 .fg-section-head { background:var(--light-green); padding:14px 20px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #c8e6c9; }
+
 .fg-section-head h2 { margin:0; font-size:1rem; color:#1b5e20; font-weight:700; }
+
 .fg-section-body { padding:24px; }
+
 .fg-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
+
 .fg-field { display:flex; flex-direction:column; gap:6px; }
+
 .fg-field label { font-size:.78rem; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+
 .fg-field select { border:1.5px solid #c8e6c9; border-radius:8px; padding:11px 12px; font-size:.95rem; outline:none; transition:.15s; background:#fafff9; color:#222; }
+
 .fg-field select:focus { border-color:#2e7d32; box-shadow:0 0 0 3px rgba(46,125,50,.1); }
+
 .season-pills { display:flex; flex-wrap:wrap; gap:10px; }
+
 .season-radio { display:none; }
+
 .season-label { display:inline-block; background:#fff; border:1.5px solid #c8e6c9; border-radius:30px; padding:8px 20px; font-size:.9rem; font-weight:600; color:#555; cursor:pointer; transition:.15s; text-transform:none; }
+
 .season-radio:checked + .season-label { background:#2e7d32; border-color:#2e7d32; color:#fff; }
+
 .season-label:hover { border-color:#2e7d32; color:#2e7d32; }
+
 .land-info-box { background:#f4fef0; border:1.5px solid #c8e6c9; border-radius:10px; padding:14px 18px; font-size:.88rem; color:#333; display:none; margin-top:16px; }
+
 .land-info-grid { display:grid; grid-template-columns:auto 1fr; gap:4px 14px; margin-top:8px; }
+
 .fg-submit { background:linear-gradient(135deg,#2e7d32,#4caf50); color:#fff; border:none; padding:14px 48px; border-radius:10px; font-size:1.05rem; font-weight:700; cursor:pointer; transition:.2s; box-shadow:0 6px 20px rgba(46,125,50,.3); display:inline-flex; align-items:center; gap:10px; }
+
 .fg-submit:hover { background:linear-gradient(135deg,#1b5e20,#388e3c); transform:translateY(-2px); }
+
 .fg-result-header { background:linear-gradient(135deg,#e8f5e9,#c8e6c9); border-left:6px solid #2e7d32; border-radius:12px; padding:18px 24px; margin-bottom:20px; }
+
 .fg-result-header h3 { margin:0 0 4px; color:#1b5e20; font-size:1.2rem; font-weight:800; }
+
 .fg-result-header p  { margin:0; color:#555; font-size:.88rem; }
+
 .crop-cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:12px; }
+
 .crop-card { background:#fff; border:2px solid #e8e8e8; border-radius:12px; padding:16px 10px; text-align:center; cursor:pointer; transition:all .2s; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+
 .crop-card:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,.1); border-color:#c8e6c9; }
+
 .crop-card.selected { border-color:#2e7d32 !important; background:#e8f5e9; transform:scale(1.04); }
+
 .crop-card .crop-icon { font-size:2rem; margin-bottom:6px; }
+
 .crop-card h5 { margin:0 0 6px; font-size:.82rem; font-weight:700; color:#333; }
+
 .soil-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:.72rem; font-weight:700; }
+
 .match-high { background:#c8e6c9; color:#1b5e20; }
+
 .match-med  { background:#fff9c4; color:#f57f17; }
+
 .match-low  { background:#ffcdd2; color:#b71c1c; }
+
 .selection-counter { background:#e8f5e9; color:#2e7d32; border-radius:20px; padding:5px 16px; font-size:.85rem; font-weight:700; display:inline-block; margin-left:auto; }
+
 .guidance-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; margin-top:16px; }
+
 .guidance-card { background:#fff; border-left:4px solid #2e7d32; border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,.07); animation:fadeSlide .35s ease-out; }
+
 @keyframes fadeSlide { from{opacity:0;transform:translateX(10px)} to{opacity:1;transform:translateX(0)} }
+
 .guidance-card-title { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+
 .guidance-card-title span { font-size:1.8rem; }
+
 .guidance-card-title h4 { margin:0; font-size:1rem; font-weight:800; color:#1b5e20; }
+
 .guidance-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+
 .guidance-list li { display:flex; gap:8px; font-size:.87rem; color:#444; line-height:1.5; }
+
 .guidance-list li i { color:#2e7d32; width:16px; flex-shrink:0; margin-top:2px; }
+
 .save-plan-btn { background:linear-gradient(135deg,#1565c0,#1976d2); color:#fff; border:none; padding:12px 36px; border-radius:10px; font-size:.95rem; font-weight:700; cursor:pointer; transition:.2s; box-shadow:0 4px 16px rgba(21,101,192,.3); display:inline-flex; align-items:center; gap:8px; }
+
 .save-plan-btn:hover { background:linear-gradient(135deg,#0d47a1,#1565c0); transform:translateY(-1px); }
+
 .save-plan-btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
 .fg-empty { background:#fff; border-radius:14px; box-shadow:0 2px 12px rgba(0,0,0,.08); padding:50px 20px; text-align:center; }
+
 .fg-empty i { font-size:3.5rem; color:#c8e6c9; display:block; margin-bottom:16px; }
+
 .fg-empty h3 { color:#555; font-size:1.3rem; margin:0 0 8px; }
+
 .fg-empty p  { color:#888; margin:0 0 20px; }
+
 .fg-empty-btn { background:linear-gradient(135deg,#2e7d32,#4caf50); color:#fff; border:none; padding:12px 32px; border-radius:10px; font-size:.95rem; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; box-shadow:0 4px 14px rgba(46,125,50,.3); }
+
 .tip-box { background:#fff8e1; border-left:4px solid #f9a825; border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:.88rem; color:#5d4037; line-height:1.6; }
+
 .no-selection-msg { text-align:center; padding:30px; color:#aaa; }
+
 .no-selection-msg i { font-size:2.5rem; color:#c8e6c9; display:block; margin-bottom:10px; }
+
 .slide-up { animation:slideUp .45s ease forwards; }
+
 @keyframes slideUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
 </style>
+
 {% endblock %}
 
+
+
 {% block content %}
+
 <div class="fg-wrap">
 
+
+
   <!-- Hero -->
+
   <div class="fg-hero">
-    <div class="fg-hero-icon">🌾</div>
+
+    <div class="fg-hero-icon">??</div>
+
     <div>
+
       <h1>Smart Crop Recommendation System</h1>
+
       <p>Select your land and season to get data-driven crop suggestions based on your soil data, water source, and location.</p>
+
     </div>
+
   </div>
+
+
 
   {% if not farmer %}
+
   <div class="fg-empty">
+
     <i class="fas fa-user-lock"></i>
+
     <h3>Login Required</h3>
+
     <p>Please login to get personalized crop recommendations based on your land data.</p>
+
     <a href="{% url 'login' %}" class="fg-empty-btn"><i class="fas fa-sign-in-alt" style="margin-right:6px;"></i>Login Now</a>
+
   </div>
 
+
+
   {% elif not lands %}
+
   <div class="fg-empty">
+
     <i class="fas fa-map-marked-alt"></i>
+
     <h3>No Lands Added Yet</h3>
+
     <p>Add your land details first to get crop recommendations based on your soil data.</p>
+
     <a href="{% url 'add_land' %}" class="fg-empty-btn"><i class="fas fa-plus" style="margin-right:6px;"></i>Add Land</a>
+
   </div>
+
+
 
   {% else %}
 
+
+
   <!-- Step 1: Form -->
+
   <div class="fg-section slide-up">
+
     <div class="fg-section-head">
-      <span>⚙️</span>
-      <h2>Step 1 — Select Land &amp; Season</h2>
+
+      <span>??</span>
+
+      <h2>Step 1 ââ Select Land &amp; Season</h2>
+
     </div>
+
     <div class="fg-section-body">
+
       <form id="recommendationForm">
+
         <div class="fg-grid" style="margin-bottom:20px;">
+
           <div class="fg-field">
+
             <label><i class="fas fa-map-marked-alt" style="margin-right:4px;color:#2e7d32;"></i> Select Land</label>
+
             <select id="landSelect" required>
-              <option value="" disabled selected>— Choose your land —</option>
+
+              <option value="" disabled selected>ââ Choose your land ââ</option>
+
               {% for land in lands %}
+
               <option value="{{ land.id }}"
+
                 data-name="{{ land.land_name|escapejs }}"
+
                 data-area="{{ land.land_area|escapejs }}"
+
                 data-water="{{ land.water_supply|escapejs }}"
+
                 data-method="{{ land.soil_method|escapejs }}"
+
                 data-ph="{{ land.ph|default:''|escapejs }}"
+
                 data-ec="{{ land.ec|default:''|escapejs }}"
+
                 data-n="{{ land.nitrogen|default:''|escapejs }}"
+
                 data-p="{{ land.phosphorus|default:''|escapejs }}"
+
                 data-k="{{ land.potassium|default:''|escapejs }}"
+
                 data-oc="{{ land.organic_carbon|default:''|escapejs }}"
+
                 data-state="{{ farmer.state|escapejs }}"
-              >🌾 {{ land.land_name }} ({{ land.land_area }})</option>
+
+              >?? {{ land.land_name }} ({{ land.land_area }})</option>
+
               {% endfor %}
+
             </select>
+
           </div>
+
           <div class="fg-field">
+
             <label><i class="fas fa-list-ol" style="margin-right:4px;color:#2e7d32;"></i> Number of Crops</label>
+
             <select id="cropCount">
+
               <option value="1">1 Crop</option>
+
               <option value="2" selected>2 Crops</option>
+
               <option value="3">3 Crops</option>
+
             </select>
+
           </div>
+
         </div>
+
+
 
         <div class="fg-field" style="margin-bottom:20px;">
+
           <label><i class="fas fa-calendar-alt" style="margin-right:4px;color:#2e7d32;"></i> Growing Season</label>
+
           <div class="season-pills" style="margin-top:6px;">
-            <div><input type="radio" name="season" id="sKharif" value="Kharif" class="season-radio"><label for="sKharif" class="season-label">🌧️ Kharif (Jun–Oct)</label></div>
-            <div><input type="radio" name="season" id="sRabi"   value="Rabi"   class="season-radio"><label for="sRabi"   class="season-label">❄️ Rabi (Nov–Mar)</label></div>
-            <div><input type="radio" name="season" id="sZaid"   value="Zaid"   class="season-radio"><label for="sZaid"   class="season-label">☀️ Zaid (Mar–Jun)</label></div>
+
+            <div><input type="radio" name="season" id="sKharif" value="Kharif" class="season-radio"><label for="sKharif" class="season-label">??? Kharif (JunââOct)</label></div>
+
+            <div><input type="radio" name="season" id="sRabi"   value="Rabi"   class="season-radio"><label for="sRabi"   class="season-label">?? Rabi (NovââMar)</label></div>
+
+            <div><input type="radio" name="season" id="sZaid"   value="Zaid"   class="season-radio"><label for="sZaid"   class="season-label">?? Zaid (MarââJun)</label></div>
+
           </div>
+
           <small id="seasonHint" style="color:#888;margin-top:6px;font-size:.78rem;display:block;"></small>
+
         </div>
+
+
 
         <div class="land-info-box" id="landInfoBox">
+
           <strong><i class="fas fa-info-circle" style="margin-right:6px;"></i>Land Details</strong>
+
           <div class="land-info-grid" id="landInfoContent"></div>
+
         </div>
+
+
 
         <div style="text-align:center;margin-top:24px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+
           <button type="submit" class="fg-submit">
+
             <i class="fas fa-magic"></i> Get Crop Suggestions
+
           </button>
+
           <button type="button" id="aiSuggestBtn" class="fg-submit" style="background:linear-gradient(135deg,#6a1b9a,#8e24aa);box-shadow:0 6px 20px rgba(106,27,154,.35);">
+
             <i class="fas fa-robot"></i> AI Smart Suggest
+
           </button>
+
         </div>
+
       </form>
 
+
+
       <!-- AI Result Box -->
+
       <div id="aiResultBox" style="display:none;margin-top:24px;background:#f3e5f5;border:1.5px solid #ce93d8;border-radius:14px;padding:22px 24px;">
+
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-          <span style="font-size:1.8rem;">🤖</span>
+
+          <span style="font-size:1.8rem;">??</span>
+
           <div>
+
             <div style="font-weight:800;color:#6a1b9a;font-size:1rem;">Gemini AI Analysis</div>
+
             <div id="aiLandName" style="font-size:.82rem;color:#888;"></div>
+
           </div>
+
           <span id="aiLoadingSpinner" style="margin-left:auto;display:none;"><i class="fas fa-spinner fa-spin" style="color:#8e24aa;font-size:1.3rem;"></i></span>
+
         </div>
+
         <div id="aiResultContent"></div>
+
       </div>
+
     </div>
+
   </div>
+
+
 
   <!-- Step 2: Results -->
+
   <div id="resultsSection" style="display:none;">
 
+
+
     <div class="fg-result-header slide-up">
+
       <h3 id="resultTitle">Recommendations</h3>
+
       <p id="resultSubtitle"></p>
+
     </div>
 
+
+
     <div class="fg-section">
+
       <div class="fg-section-head">
-        <span>🌱</span>
+
+        <span>??</span>
+
         <h2>Recommended Crops</h2>
+
         <span id="selectionCounter" class="selection-counter">Select 2 more</span>
+
       </div>
+
       <div class="fg-section-body">
-        <div class="tip-box">💡 Click on a crop card to see detailed farming guidance. Select up to the number of crops you chose.</div>
+
+        <div class="tip-box">?? Click on a crop card to see detailed farming guidance. Select up to the number of crops you chose.</div>
+
         <div class="crop-cards-grid" id="cropCardsContainer"></div>
+
       </div>
+
     </div>
 
+
+
     <div class="fg-section">
+
       <div class="fg-section-head">
-        <span>📋</span>
+
+        <span>??</span>
+
         <h2>Farming Guidance</h2>
+
       </div>
+
       <div class="fg-section-body">
+
         <div id="noSelectionMsg" class="no-selection-msg">
+
           <i class="fas fa-seedling"></i>
+
           <p>Click on crop cards above to see detailed farming guidance.</p>
+
         </div>
+
         <div class="guidance-grid" id="guidanceContainer"></div>
+
         <div id="savePlanWrap" style="display:none;text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid #e8f5e9;">
+
           <button id="savePlanBtn" class="save-plan-btn">
+
             <i class="fas fa-bell"></i> Save Plan &amp; Get Notifications
+
           </button>
+
           <div id="savePlanMsg" style="margin-top:10px;font-size:.88rem;font-weight:600;display:none;"></div>
+
         </div>
+
       </div>
+
     </div>
+
+
 
   </div>
+
   {% endif %}
 
+
+
   <div style="text-align:center;font-size:.8rem;color:#bbb;margin-top:20px;padding-top:16px;border-top:1px solid #f0f0f0;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;">
+
     <span><i class="fas fa-tractor"></i> Smart Irrigation</span>
+
     <span><i class="fas fa-leaf"></i> Soil Sensors</span>
+
     <span><i class="fas fa-cloud-sun"></i> Real-time Weather</span>
+
   </div>
+
+
 
 </div>
 
+
+
 <script>
+
 (function(){
+
   const CROPS = [
-    { name:'Wheat', icon:'🌾', color:'#f59e0b', seasons:['Rabi'], ph:[6.0,7.5], water:['Borewell','Canal','River','Drip Irrigation'], n:'med', p:'med', k:'low', fertilizer:'NPK 10:26:26 (100 kg/ha) + Urea 50 kg/ha', waterReq:'4–5 irrigations (critical at crown root, jointing, flowering)', sowing:'Nov–Dec', yield:'26–30 qt/ha', pest:'Aphid – imidacloprid spray; Yellow rust – propiconazole', states:['Punjab','Haryana','Uttar Pradesh','Madhya Pradesh','Rajasthan','Gujarat','Bihar'] },
-    { name:'Cotton', icon:'🌿', color:'#10b981', seasons:['Kharif'], ph:[6.0,8.0], water:['Borewell','Canal','Drip Irrigation'], n:'high', p:'med', k:'med', fertilizer:'DAP 100 kg + Urea 50 kg/ha + Potash 50 kg/ha', waterReq:'6–8 irrigations (critical at flowering & boll formation)', sowing:'May–Jun', yield:'10–15 qt/ha', pest:'Pink bollworm – pheromone traps; Whitefly – neem oil spray', states:['Gujarat','Maharashtra','Telangana','Andhra Pradesh','Karnataka','Rajasthan','Madhya Pradesh'] },
-    { name:'Groundnut', icon:'🥜', color:'#d97706', seasons:['Kharif','Zaid'], ph:[6.0,7.0], water:['Borewell','Canal','Rain Water','Drip Irrigation'], n:'low', p:'high', k:'med', fertilizer:'Gypsum 200 kg/ha + DAP 100 kg/ha', waterReq:'4–5 irrigations (critical at pegging & pod filling)', sowing:'Jun–Jul (Kharif), Feb–Mar (Zaid)', yield:'20–25 qt/ha', pest:'Leaf miner – neem spray; Tikka disease – mancozeb', states:['Gujarat','Andhra Pradesh','Tamil Nadu','Karnataka','Rajasthan','Maharashtra'] },
-    { name:'Rice', icon:'🍚', color:'#84cc16', seasons:['Kharif'], ph:[5.5,7.0], water:['Canal','River','Rain Water'], n:'high', p:'med', k:'med', fertilizer:'Urea 120 kg + DAP 60 kg + MOP 40 kg/ha', waterReq:'Continuous flooding or alternate wetting & drying', sowing:'Jun–Jul (transplanting)', yield:'40–50 qt/ha', pest:'Brown planthopper – imidacloprid; Blast – tricyclazole', states:['West Bengal','Uttar Pradesh','Punjab','Andhra Pradesh','Telangana','Odisha','Bihar','Assam'] },
-    { name:'Maize', icon:'🌽', color:'#f97316', seasons:['Kharif','Rabi','Zaid'], ph:[5.8,7.5], water:['Borewell','Canal','River','Drip Irrigation'], n:'high', p:'med', k:'med', fertilizer:'DAP 120 kg + Urea 100 kg + Zinc 25 kg/ha', waterReq:'5–6 irrigations (critical at tasseling & grain filling)', sowing:'Jun (Kharif), Oct–Nov (Rabi)', yield:'35–45 qt/ha', pest:'Fall armyworm – chlorantraniliprole; Stem borer – carbofuran', states:['Karnataka','Andhra Pradesh','Telangana','Rajasthan','Madhya Pradesh','Bihar','Uttar Pradesh','Gujarat'] },
-    { name:'Bajra (Millet)', icon:'🌱', color:'#6366f1', seasons:['Kharif'], ph:[6.0,8.0], water:['Borewell','Rain Water','Canal'], n:'med', p:'low', k:'low', fertilizer:'Farm yard manure 10t/ha + Urea 60 kg/ha', waterReq:'Low – 2–3 irrigations only', sowing:'Jul–Aug', yield:'15–20 qt/ha', pest:'Shoot fly – seed treatment with imidacloprid; Downy mildew – metalaxyl', states:['Rajasthan','Gujarat','Haryana','Uttar Pradesh','Maharashtra'] },
-    { name:'Soybean', icon:'🫘', color:'#22c55e', seasons:['Kharif'], ph:[6.0,7.5], water:['Borewell','Canal','Rain Water'], n:'low', p:'high', k:'med', fertilizer:'DAP 100 kg/ha + Rhizobium seed treatment', waterReq:'3–4 irrigations (critical at flowering & pod filling)', sowing:'Jun–Jul', yield:'20–25 qt/ha', pest:'Girdle beetle – chlorpyrifos; Yellow mosaic – whitefly control', states:['Madhya Pradesh','Maharashtra','Rajasthan','Karnataka','Chhattisgarh'] },
-    { name:'Mustard', icon:'🌼', color:'#eab308', seasons:['Rabi'], ph:[6.0,7.5], water:['Borewell','Canal','Rain Water'], n:'med', p:'med', k:'low', fertilizer:'DAP 100 kg + Urea 60 kg + Sulphur 20 kg/ha', waterReq:'2–3 irrigations (critical at branching & pod formation)', sowing:'Oct–Nov', yield:'12–18 qt/ha', pest:'Aphid – dimethoate spray; Alternaria blight – mancozeb', states:['Rajasthan','Haryana','Uttar Pradesh','Madhya Pradesh','Gujarat','West Bengal'] },
-    { name:'Sugarcane', icon:'🎋', color:'#14b8a6', seasons:['Zaid','Kharif'], ph:[6.0,7.5], water:['Canal','River','Drip Irrigation','Borewell'], n:'high', p:'med', k:'high', fertilizer:'Urea 200 kg + DAP 100 kg + MOP 100 kg/ha', waterReq:'Frequent – 8–10 irrigations (drip preferred)', sowing:'Feb–Mar (spring), Oct–Nov (autumn)', yield:'600–800 qt/ha', pest:'Top borer – carbofuran; Pyrilla – neem spray', states:['Uttar Pradesh','Maharashtra','Karnataka','Tamil Nadu','Gujarat','Andhra Pradesh'] },
-    { name:'Tomato', icon:'🍅', color:'#ef4444', seasons:['Rabi','Zaid'], ph:[6.0,7.0], water:['Borewell','Drip Irrigation','Canal'], n:'high', p:'high', k:'high', fertilizer:'NPK 19:19:19 (200 kg/ha) + Calcium nitrate', waterReq:'Drip irrigation preferred – 5–6 times/week', sowing:'Oct–Nov (Rabi), Jan–Feb (Zaid)', yield:'200–300 qt/ha', pest:'Fruit borer – spinosad; Early blight – mancozeb', states:['All states'] },
+
+    { name:'Wheat', icon:'??', color:'#f59e0b', seasons:['Rabi'], ph:[6.0,7.5], water:['Borewell','Canal','River','Drip Irrigation'], n:'med', p:'med', k:'low', fertilizer:'NPK 10:26:26 (100 kg/ha) + Urea 50 kg/ha', waterReq:'4ââ5 irrigations (critical at crown root, jointing, flowering)', sowing:'NovââDec', yield:'26ââ30 qt/ha', pest:'Aphid ââ imidacloprid spray; Yellow rust ââ propiconazole', states:['Punjab','Haryana','Uttar Pradesh','Madhya Pradesh','Rajasthan','Gujarat','Bihar'] },
+
+    { name:'Cotton', icon:'??', color:'#10b981', seasons:['Kharif'], ph:[6.0,8.0], water:['Borewell','Canal','Drip Irrigation'], n:'high', p:'med', k:'med', fertilizer:'DAP 100 kg + Urea 50 kg/ha + Potash 50 kg/ha', waterReq:'6ââ8 irrigations (critical at flowering & boll formation)', sowing:'MayââJun', yield:'10ââ15 qt/ha', pest:'Pink bollworm ââ pheromone traps; Whitefly ââ neem oil spray', states:['Gujarat','Maharashtra','Telangana','Andhra Pradesh','Karnataka','Rajasthan','Madhya Pradesh'] },
+
+    { name:'Groundnut', icon:'??', color:'#d97706', seasons:['Kharif','Zaid'], ph:[6.0,7.0], water:['Borewell','Canal','Rain Water','Drip Irrigation'], n:'low', p:'high', k:'med', fertilizer:'Gypsum 200 kg/ha + DAP 100 kg/ha', waterReq:'4ââ5 irrigations (critical at pegging & pod filling)', sowing:'JunââJul (Kharif), FebââMar (Zaid)', yield:'20ââ25 qt/ha', pest:'Leaf miner ââ neem spray; Tikka disease ââ mancozeb', states:['Gujarat','Andhra Pradesh','Tamil Nadu','Karnataka','Rajasthan','Maharashtra'] },
+
+    { name:'Rice', icon:'??', color:'#84cc16', seasons:['Kharif'], ph:[5.5,7.0], water:['Canal','River','Rain Water'], n:'high', p:'med', k:'med', fertilizer:'Urea 120 kg + DAP 60 kg + MOP 40 kg/ha', waterReq:'Continuous flooding or alternate wetting & drying', sowing:'JunââJul (transplanting)', yield:'40ââ50 qt/ha', pest:'Brown planthopper ââ imidacloprid; Blast ââ tricyclazole', states:['West Bengal','Uttar Pradesh','Punjab','Andhra Pradesh','Telangana','Odisha','Bihar','Assam'] },
+
+    { name:'Maize', icon:'??', color:'#f97316', seasons:['Kharif','Rabi','Zaid'], ph:[5.8,7.5], water:['Borewell','Canal','River','Drip Irrigation'], n:'high', p:'med', k:'med', fertilizer:'DAP 120 kg + Urea 100 kg + Zinc 25 kg/ha', waterReq:'5ââ6 irrigations (critical at tasseling & grain filling)', sowing:'Jun (Kharif), OctââNov (Rabi)', yield:'35ââ45 qt/ha', pest:'Fall armyworm ââ chlorantraniliprole; Stem borer ââ carbofuran', states:['Karnataka','Andhra Pradesh','Telangana','Rajasthan','Madhya Pradesh','Bihar','Uttar Pradesh','Gujarat'] },
+
+    { name:'Bajra (Millet)', icon:'??', color:'#6366f1', seasons:['Kharif'], ph:[6.0,8.0], water:['Borewell','Rain Water','Canal'], n:'med', p:'low', k:'low', fertilizer:'Farm yard manure 10t/ha + Urea 60 kg/ha', waterReq:'Low ââ 2ââ3 irrigations only', sowing:'JulââAug', yield:'15ââ20 qt/ha', pest:'Shoot fly ââ seed treatment with imidacloprid; Downy mildew ââ metalaxyl', states:['Rajasthan','Gujarat','Haryana','Uttar Pradesh','Maharashtra'] },
+
+    { name:'Soybean', icon:'??', color:'#22c55e', seasons:['Kharif'], ph:[6.0,7.5], water:['Borewell','Canal','Rain Water'], n:'low', p:'high', k:'med', fertilizer:'DAP 100 kg/ha + Rhizobium seed treatment', waterReq:'3ââ4 irrigations (critical at flowering & pod filling)', sowing:'JunââJul', yield:'20ââ25 qt/ha', pest:'Girdle beetle ââ chlorpyrifos; Yellow mosaic ââ whitefly control', states:['Madhya Pradesh','Maharashtra','Rajasthan','Karnataka','Chhattisgarh'] },
+
+    { name:'Mustard', icon:'??', color:'#eab308', seasons:['Rabi'], ph:[6.0,7.5], water:['Borewell','Canal','Rain Water'], n:'med', p:'med', k:'low', fertilizer:'DAP 100 kg + Urea 60 kg + Sulphur 20 kg/ha', waterReq:'2ââ3 irrigations (critical at branching & pod formation)', sowing:'OctââNov', yield:'12ââ18 qt/ha', pest:'Aphid ââ dimethoate spray; Alternaria blight ââ mancozeb', states:['Rajasthan','Haryana','Uttar Pradesh','Madhya Pradesh','Gujarat','West Bengal'] },
+
+    { name:'Sugarcane', icon:'??', color:'#14b8a6', seasons:['Zaid','Kharif'], ph:[6.0,7.5], water:['Canal','River','Drip Irrigation','Borewell'], n:'high', p:'med', k:'high', fertilizer:'Urea 200 kg + DAP 100 kg + MOP 100 kg/ha', waterReq:'Frequent ââ 8ââ10 irrigations (drip preferred)', sowing:'FebââMar (spring), OctââNov (autumn)', yield:'600ââ800 qt/ha', pest:'Top borer ââ carbofuran; Pyrilla ââ neem spray', states:['Uttar Pradesh','Maharashtra','Karnataka','Tamil Nadu','Gujarat','Andhra Pradesh'] },
+
+    { name:'Tomato', icon:'??', color:'#ef4444', seasons:['Rabi','Zaid'], ph:[6.0,7.0], water:['Borewell','Drip Irrigation','Canal'], n:'high', p:'high', k:'high', fertilizer:'NPK 19:19:19 (200 kg/ha) + Calcium nitrate', waterReq:'Drip irrigation preferred ââ 5ââ6 times/week', sowing:'OctââNov (Rabi), JanââFeb (Zaid)', yield:'200ââ300 qt/ha', pest:'Fruit borer ââ spinosad; Early blight ââ mancozeb', states:['All states'] },
+
   ];
 
+
+
   const month = new Date().getMonth() + 1;
+
   let autoSeason = month >= 6 && month <= 10 ? 'Kharif' : month >= 3 && month <= 5 ? 'Zaid' : 'Rabi';
+
   const seasonMap = { Kharif:'sKharif', Rabi:'sRabi', Zaid:'sZaid' };
+
   const defaultRadio = document.getElementById(seasonMap[autoSeason]);
+
   if (defaultRadio) defaultRadio.checked = true;
+
   const hintEl = document.getElementById('seasonHint');
+
   if (hintEl) hintEl.textContent = `Auto-detected: ${autoSeason} season based on current month`;
 
+
+
   const landSelect = document.getElementById('landSelect');
+
   if (landSelect) {
+
     landSelect.addEventListener('change', function(){
+
       const opt = this.options[this.selectedIndex];
+
       const method = opt.dataset.method;
-      let html = `<span>📍 Area:</span><span><b>${opt.dataset.area}</b></span>
-        <span>💧 Water:</span><span><b>${opt.dataset.water}</b></span>
-        <span>🧪 Soil:</span><span><b>${method === 'manual' ? 'Manual Entry' : 'Report Uploaded'}</b></span>`;
+
+      let html = `<span>?? Area:</span><span><b>${opt.dataset.area}</b></span>
+
+        <span>?? Water:</span><span><b>${opt.dataset.water}</b></span>
+
+        <span>?? Soil:</span><span><b>${method === 'manual' ? 'Manual Entry' : 'Report Uploaded'}</b></span>`;
+
       if (method === 'manual') {
+
         if (opt.dataset.ph) html += `<span>pH:</span><span><b>${opt.dataset.ph}</b></span>`;
+
         if (opt.dataset.n)  html += `<span>Nitrogen:</span><span><b>${opt.dataset.n} kg/ha</b></span>`;
+
         if (opt.dataset.p)  html += `<span>Phosphorus:</span><span><b>${opt.dataset.p} kg/ha</b></span>`;
+
         if (opt.dataset.k)  html += `<span>Potassium:</span><span><b>${opt.dataset.k} kg/ha</b></span>`;
+
       }
+
       document.getElementById('landInfoContent').innerHTML = html;
+
       document.getElementById('landInfoBox').style.display = 'block';
+
     });
+
   }
+
+
 
   function getSelectedSeason() {
+
     const radios = document.getElementsByName('season');
+
     for (let r of radios) if (r.checked) return r.value;
+
     return autoSeason;
+
   }
+
+
 
   function scoreCrop(crop, opt, season) {
+
     let score = 0;
+
     const ph = parseFloat(opt.dataset.ph)||0, n = parseFloat(opt.dataset.n)||0;
+
     const p = parseFloat(opt.dataset.p)||0, k = parseFloat(opt.dataset.k)||0;
+
     const water = opt.dataset.water, state = opt.dataset.state, method = opt.dataset.method;
+
     if (crop.seasons.includes(season)) score += 40;
+
     if (crop.states.includes('All states') || crop.states.includes(state)) score += 20;
+
     if (crop.water.includes(water)) score += 15;
+
     if (method === 'manual' && ph > 0) {
+
       if (ph >= crop.ph[0] && ph <= crop.ph[1]) score += 15;
+
       else if (ph >= crop.ph[0]-0.5 && ph <= crop.ph[1]+0.5) score += 7;
+
     } else { score += 10; }
+
     if (method === 'manual') {
+
       if ((crop.n==='high'&&n>100)||(crop.n==='med'&&n>=50&&n<=100)||(crop.n==='low'&&n<50)) score += 5;
+
       if ((crop.p==='high'&&p>50)||(crop.p==='med'&&p>=20&&p<=50)||(crop.p==='low'&&p<20)) score += 3;
+
       if ((crop.k==='high'&&k>100)||(crop.k==='med'&&k>=50&&k<=100)||(crop.k==='low'&&k<50)) score += 2;
+
     }
+
     return score;
+
   }
 
+
+
   function getMatchLabel(score) {
-    if (score >= 70) return '<span class="soil-badge match-high">✅ High Match</span>';
-    if (score >= 45) return '<span class="soil-badge match-med">⚠️ Medium Match</span>';
-    return '<span class="soil-badge match-low">❌ Low Match</span>';
+
+    if (score >= 70) return '<span class="soil-badge match-high">? High Match</span>';
+
+    if (score >= 45) return '<span class="soil-badge match-med">?? Medium Match</span>';
+
+    return '<span class="soil-badge match-low">? Low Match</span>';
+
   }
+
+
 
   let selectedCrops = [], currentMax = 2, currentLandId = null;
 
+
+
   function renderCropCards(scoredCrops) {
+
     const container = document.getElementById('cropCardsContainer');
+
     container.innerHTML = scoredCrops.map(({crop, score}) => `
+
       <div class="crop-card ${selectedCrops.includes(crop.name)?'selected':''}" data-crop="${crop.name}">
+
         <div class="crop-icon">${crop.icon}</div>
+
         <h5>${crop.name}</h5>
+
         <div>${getMatchLabel(score)}</div>
+
       </div>`).join('');
+
     container.querySelectorAll('.crop-card').forEach(card => {
+
       card.addEventListener('click', () => handleCropSelect(card.dataset.crop, card, scoredCrops));
+
     });
+
   }
+
+
 
   function handleCropSelect(cropName, card, scoredCrops) {
+
     const idx = selectedCrops.indexOf(cropName);
+
     if (idx !== -1) { selectedCrops.splice(idx,1); card.classList.remove('selected'); }
+
     else {
+
       if (selectedCrops.length >= currentMax) { alert(`Max ${currentMax} crop(s) allowed. Deselect one first.`); return; }
+
       selectedCrops.push(cropName); card.classList.add('selected');
+
     }
+
     const rem = currentMax - selectedCrops.length;
-    document.getElementById('selectionCounter').textContent = rem > 0 ? `Select ${rem} more` : `✅ ${currentMax} selected`;
+
+    document.getElementById('selectionCounter').textContent = rem > 0 ? `Select ${rem} more` : `? ${currentMax} selected`;
+
     const wrap = document.getElementById('savePlanWrap');
+
     if (wrap) wrap.style.display = selectedCrops.length > 0 ? 'block' : 'none';
+
     if (selectedCrops.length > 0) showGuidance(scoredCrops);
+
     else { document.getElementById('guidanceContainer').innerHTML=''; document.getElementById('noSelectionMsg').style.display='block'; }
+
   }
+
+
 
   function showGuidance(scoredCrops) {
+
     document.getElementById('noSelectionMsg').style.display = 'none';
+
     document.getElementById('guidanceContainer').innerHTML = selectedCrops.map(name => {
+
       const found = scoredCrops.find(s => s.crop.name === name);
+
       if (!found) return '';
+
       const c = found.crop;
+
       return `<div class="guidance-card">
+
         <div class="guidance-card-title"><span>${c.icon}</span><h4>${c.name}</h4>${getMatchLabel(found.score)}</div>
+
         <ul class="guidance-list">
+
           <li><i class="fas fa-flask"></i><span><strong>Fertilizer:</strong> ${c.fertilizer}</span></li>
+
           <li><i class="fas fa-water"></i><span><strong>Water:</strong> ${c.waterReq}</span></li>
+
           <li><i class="fas fa-calendar-plus"></i><span><strong>Sowing:</strong> ${c.sowing}</span></li>
+
           <li><i class="fas fa-tractor"></i><span><strong>Expected Yield:</strong> ${c.yield}</span></li>
+
           <li><i class="fas fa-bug"></i><span><strong>Pest Control:</strong> ${c.pest}</span></li>
+
           <li><i class="fas fa-tint"></i><span><strong>Best Water Source:</strong> ${c.water.join(', ')}</span></li>
+
         </ul>
+
       </div>`;
+
     }).join('');
+
   }
+
+
 
   const savePlanBtn = document.getElementById('savePlanBtn');
+
   if (savePlanBtn) {
+
     savePlanBtn.addEventListener('click', function() {
+
       if (!currentLandId || selectedCrops.length === 0) {
+
         alert('Please select a land and at least one crop first.');
+
         return;
+
       }
+
       savePlanBtn.disabled = true;
+
       savePlanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
       const fd = new FormData();
+
       fd.append('land_id', currentLandId);
+
       selectedCrops.forEach(c => fd.append('crops', c));
+
       fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
       fetch('/save-crop-plan/', { method:'POST', body:fd })
+
         .then(r => r.json())
+
         .then(data => {
+
           const msg = document.getElementById('savePlanMsg');
+
           msg.style.display = 'block';
+
           msg.style.color = data.success ? '#2e7d32' : '#c62828';
+
           msg.textContent = data.message;
+
           savePlanBtn.disabled = false;
+
           savePlanBtn.innerHTML = '<i class="fas fa-bell"></i> Save Plan & Get Notifications';
+
         });
+
     });
+
   }
+
+
 
   const form = document.getElementById('recommendationForm');
+
   if (form) {
+
     form.addEventListener('submit', function(e) {
+
       e.preventDefault();
+
       const opt = landSelect.options[landSelect.selectedIndex];
+
       if (!opt || !opt.value) { alert('Please select a land.'); return; }
+
       currentMax = parseInt(document.getElementById('cropCount').value, 10);
+
       const season = getSelectedSeason();
+
       currentLandId = opt.value;
+
       const scored = CROPS.map(crop => ({ crop, score: scoreCrop(crop, opt, season) })).sort((a,b) => b.score - a.score);
-      document.getElementById('resultTitle').textContent = `${opt.dataset.name} — ${season} Season`;
+
+      document.getElementById('resultTitle').textContent = `${opt.dataset.name} ââ ${season} Season`;
+
       document.getElementById('resultSubtitle').textContent = `Water: ${opt.dataset.water} | Area: ${opt.dataset.area} | Soil: ${opt.dataset.method === 'manual' ? 'Manual data used' : 'No soil data (general recommendations)'}`;
+
       selectedCrops = [];
+
       document.getElementById('selectionCounter').textContent = `Select ${currentMax} more`;
+
       document.getElementById('guidanceContainer').innerHTML = '';
+
       document.getElementById('noSelectionMsg').style.display = 'block';
+
       renderCropCards(scored);
+
       const rs = document.getElementById('resultsSection');
+
       rs.style.display = 'block';
+
       rs.scrollIntoView({ behavior:'smooth', block:'start' });
+
     });
+
   }
+
+
 
   const cropCountEl = document.getElementById('cropCount');
+
   if (cropCountEl) {
+
     cropCountEl.addEventListener('change', function() {
+
       currentMax = parseInt(this.value, 10);
+
       selectedCrops = [];
+
       document.getElementById('selectionCounter').textContent = `Select ${currentMax} more`;
+
       document.getElementById('guidanceContainer').innerHTML = '';
+
       document.getElementById('noSelectionMsg').style.display = 'block';
+
       document.querySelectorAll('.crop-card').forEach(c => c.classList.remove('selected'));
+
     });
+
   }
 
-  // ── AI Smart Suggest ──────────────────────────────────────────────────────
+
+
+  // -- AI Smart Suggest ------------------------------------------------------
+
   const aiBtn = document.getElementById('aiSuggestBtn');
+
   if (aiBtn) {
+
     aiBtn.addEventListener('click', function() {
+
       const opt = landSelect && landSelect.options[landSelect.selectedIndex];
+
       if (!opt || !opt.value) { alert('Pehla land select karo.'); return; }
 
+
+
       const box = document.getElementById('aiResultBox');
+
       const content = document.getElementById('aiResultContent');
+
       const spinner = document.getElementById('aiLoadingSpinner');
+
       const landNameEl = document.getElementById('aiLandName');
 
+
+
       box.style.display = 'block';
+
       spinner.style.display = 'inline';
-      landNameEl.textContent = opt.dataset.name + ' — AI analyzing...';
+
+      landNameEl.textContent = opt.dataset.name + ' ââ AI analyzing...';
+
       content.innerHTML = '<p style="color:#888;font-size:.9rem;text-align:center;padding:20px 0;"><i class="fas fa-spinner fa-spin"></i> AI is analyzing your soil data...</p>';
+
       box.scrollIntoView({behavior:'smooth', block:'start'});
 
+
+
       const fd = new FormData();
+
       fd.append('land_id', opt.value);
+
       fd.append('csrfmiddlewaretoken', '{{ csrf_token }}');
 
+
+
       fetch('/soil-ai-suggest/', {method:'POST', body:fd})
+
         .then(r => r.json())
+
         .then(res => {
+
           spinner.style.display = 'none';
+
           if (!res.success) {
+
             content.innerHTML = `<div style="color:#c62828;font-weight:600;padding:12px;background:#ffebee;border-radius:8px;"><i class="fas fa-exclamation-circle"></i> ${res.message}</div>`;
+
             return;
+
           }
+
           const d = res.data;
-          landNameEl.textContent = res.land_name + ' — AI Analysis Complete';
+
+          landNameEl.textContent = res.land_name + ' ââ AI Analysis Complete';
+
+
 
           // Crops
+
           let html = '<div style="margin-bottom:18px;">';
-          html += '<div style="font-weight:800;color:#6a1b9a;margin-bottom:10px;font-size:.95rem;">🌱 Recommended Crops</div>';
+
+          html += '<div style="font-weight:800;color:#6a1b9a;margin-bottom:10px;font-size:.95rem;">?? Recommended Crops</div>';
+
           html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;">';
+
           (d.crops||[]).forEach(c => {
+
             const mc = c.match==='high'?'#27ae60':c.match==='medium'?'#f39c12':'#e74c3c';
+
             html += `<div style="background:#fff;border-radius:10px;padding:14px;border-left:4px solid ${mc};box-shadow:0 2px 8px rgba(0,0,0,.07);">
+
               <div style="font-weight:800;color:#333;margin-bottom:4px;">${c.name}</div>
+
               <div style="font-size:.78rem;color:#555;line-height:1.5;">${c.reason}</div>
+
               <span style="display:inline-block;margin-top:6px;padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:700;background:${mc};color:#fff;">${c.match} match</span>
+
             </div>`;
+
           });
+
           html += '</div></div>';
 
+
+
           // Soil Health
+
           if (d.soil_health) {
+
             const sc = d.soil_health.overall==='Good'?'#27ae60':d.soil_health.overall==='Moderate'?'#f39c12':'#e74c3c';
+
             html += `<div style="background:#fff;border-radius:10px;padding:14px;margin-bottom:14px;border-left:4px solid ${sc};">
-              <div style="font-weight:800;color:#333;margin-bottom:4px;">🧪 Soil Health: <span style="color:${sc}">${d.soil_health.overall}</span></div>
+
+              <div style="font-weight:800;color:#333;margin-bottom:4px;">?? Soil Health: <span style="color:${sc}">${d.soil_health.overall}</span></div>
+
               <div style="font-size:.85rem;color:#555;">${d.soil_health.summary}</div>
+
             </div>`;
+
           }
+
+
 
           // Deficiencies
+
           if (d.deficiencies && d.deficiencies.length) {
-            html += '<div style="margin-bottom:14px;"><div style="font-weight:800;color:#6a1b9a;margin-bottom:8px;font-size:.9rem;">⚠️ Deficiencies & Fixes</div>';
+
+            html += '<div style="margin-bottom:14px;"><div style="font-weight:800;color:#6a1b9a;margin-bottom:8px;font-size:.9rem;">?? Deficiencies & Fixes</div>';
+
             html += '<div style="display:flex;flex-direction:column;gap:8px;">';
+
             d.deficiencies.forEach(def => {
+
               html += `<div style="background:#fff;border-radius:8px;padding:10px 14px;font-size:.84rem;border:1px solid #e0e0e0;">
-                <b style="color:#c62828;">${def.nutrient}</b> — ${def.level}
-                <div style="color:#555;margin-top:3px;">💊 ${def.fix}</div>
+
+                <b style="color:#c62828;">${def.nutrient}</b> ââ ${def.level}
+
+                <div style="color:#555;margin-top:3px;">?? ${def.fix}</div>
+
               </div>`;
+
             });
+
             html += '</div></div>';
+
           }
 
+
+
           // Season + Tips
-          if (d.season) html += `<div style="background:#e8f5e9;border-radius:8px;padding:10px 14px;font-size:.85rem;margin-bottom:10px;"><b style="color:#2e7d32;">📅 Best Season:</b> ${d.season}</div>`;
-          if (d.tips)   html += `<div style="background:#fff8e1;border-left:4px solid #f9a825;border-radius:8px;padding:10px 14px;font-size:.84rem;color:#5d4037;"><b>💡 Tips:</b> ${d.tips}</div>`;
+
+          if (d.season) html += `<div style="background:#e8f5e9;border-radius:8px;padding:10px 14px;font-size:.85rem;margin-bottom:10px;"><b style="color:#2e7d32;">?? Best Season:</b> ${d.season}</div>`;
+
+          if (d.tips)   html += `<div style="background:#fff8e1;border-left:4px solid #f9a825;border-radius:8px;padding:10px 14px;font-size:.84rem;color:#5d4037;"><b>?? Tips:</b> ${d.tips}</div>`;
+
+
 
           content.innerHTML = html;
+
         })
+
         .catch(() => {
+
           spinner.style.display = 'none';
+
           content.innerHTML = '<div style="color:#c62828;font-weight:600;">Network error. Server restart karo ane try karo.</div>';
+
         });
+
     });
+
   }
+
 })();
+
 </script>
+
 {% endblock %}
+

@@ -3,6 +3,8 @@ from .models import FarmerRegistration
 
 
 class FarmerRegistrationForm(forms.ModelForm):
+    email = forms.EmailField(required=True)
+
     class Meta:
         model = FarmerRegistration
         fields = [

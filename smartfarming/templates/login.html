@@ -1,299 +1,281 @@
-{% extends "base.html" %}
-{% load static %}
-{% block title %}Farmer Login - Kisan Acharya{% endblock %}
-
-{% block content %}
-{% block styles %}
-{{ block.super }}
+{% extends "base.html" %} {% load static %} {% block title %}Farmer Login -
+Kisan Acharya{% endblock %} {% block content %} {% block styles %} 
+{{block.super }}
 <style>
+  .login-wrapper {
+    max-width: 450px;
+    margin: auto;
+    margin-top: 80px;
+    margin-bottom: 80px;
+    min-height: 450px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px 40px 80px 40px;
+    border-radius: 15px;
+    box-shadow: 0 25px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid #cfe7c0;
+  }
 
-.login-wrapper{
-max-width:450px;
-margin:auto;
-margin-top:80px;
-margin-bottom:80px;
-min-height:450px;
-background:rgba(255,255,255,0.95);
-padding:40px 40px 80px 40px;
-border-radius:15px;
-box-shadow:0 25px 40px rgba(0,0,0,0.25);
-border:1px solid #cfe7c0;
-}
+  .login-title {
+    font-size: 2rem;
+    color: #1e4f1e;
+    margin-bottom: 25px;
+    font-weight: 700;
+    border-left: 8px solid #4caf50;
+    padding-left: 15px;
+    margin-bottom: 60px;
+  }
 
-.login-title{
-font-size:2rem;
-color:#1e4f1e;
-margin-bottom:25px;
-font-weight:700;
-border-left:8px solid #4caf50;
-padding-left:15px;
-margin-bottom:60px;
-}
+  .input-group-custom {
+    display: flex;
+    align-items: center;
+    background: #f4fef0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1.5px solid #b2dba0;
+  }
 
-.input-group-custom{
-display:flex;
-align-items:center;
-background:#f4fef0;
-border-radius:10px;
-margin-bottom:20px;
-border:1.5px solid #b2dba0;
-}
+  .input-group-custom i {
+    width: 50px;
+    text-align: center;
+    font-size: 1.4rem;
+    color: #2d6e2d;
+  }
 
-.input-group-custom i{
-width:50px;
-text-align:center;
-font-size:1.4rem;
-color:#2d6e2d;
-}
+  .input-group-custom input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 14px;
+    outline: none;
+    font-size: 1rem;
+  }
 
-.input-group-custom input{
-flex:1;
-border:none;
-background:transparent;
-padding:14px;
-outline:none;
-font-size:1rem;
-}
+  .btn-login {
+    background: linear-gradient(145deg, #2e7d32, #4caf50);
+    color: white;
+    border: none;
+    padding: 14px;
+    width: 100%;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    transition: 0.2s;
+    cursor: pointer;
+  }
 
-.btn-login{
-background:linear-gradient(145deg,#2e7d32,#4caf50);
-color:white;
-border:none;
-padding:14px;
-width:100%;
-border-radius:10px;
-font-weight:700;
-font-size:1.2rem;
-margin-top:10px;
-transition:0.2s;
-cursor:pointer;
-}
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  }
 
-.btn-login:hover{
-transform:translateY(-2px);
-box-shadow:0 10px 20px rgba(0,0,0,0.3);
-}
+  .register-link {
+    text-align: center;
+    margin-top: 20px;
+  }
 
-.register-link{
-text-align:center;
-margin-top:20px;
-}
+  .register-link a {
+    color: #2e7d32;
+    font-weight: 600;
+    text-decoration: none;
+  }
 
-.register-link a{
-color:#2e7d32;
-font-weight:600;
-text-decoration:none;
-}
+  .register-link a:hover {
+    text-decoration: underline;
+  }
 
-.register-link a:hover{
-text-decoration:underline;
-}
+  .otp-box {
+    display: none;
+  }
 
-.otp-box{
-display:none;
-}
+  .login-error {
+    margin-top: -10px;
+    margin-bottom: 15px;
+    color: #d32f2f;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
 
-.login-error{
-margin-top:-10px;
-margin-bottom:15px;
-color:#d32f2f;
-font-size:0.9rem;
-font-weight:500;
-}
+  .login-success {
+    margin-top: -10px;
+    margin-bottom: 15px;
+    color: #2e7d32;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
 
-.login-success{
-margin-top:-10px;
-margin-bottom:15px;
-color:#2e7d32;
-font-size:0.9rem;
-font-weight:500;
-}
-
-.otp-timer{
-margin-top:10px;
-margin-bottom:10px;
-font-size:0.9rem;
-color:#2d6e2d;
-font-weight:500;
-}
-
+  .otp-timer {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: #2d6e2d;
+    font-weight: 500;
+  }
 </style>
 {% endblock %}
 
-
 <div class="login-wrapper">
+  <h2 class="login-title"><i class="fas fa-tractor"></i> Smart Farm Login</h2>
 
-<h2 class="login-title">
-<i class="fas fa-tractor"></i> Smart Farm Login
-</h2>
+  <form id="loginForm" onsubmit="return false;">
+    <div class="input-group-custom">
+      <i class="fas fa-envelope"></i>
+      <input
+        type="email"
+        id="email"
+        placeholder="Enter your email address"
+        required
+      />
+    </div>
+    <div
+      style="font-size: 0.8rem; color: #888; margin: -12px 0 14px 14px"
+      id="emailHint"
+    >
+      OTP will be sent to this email
+    </div>
 
-<form id="loginForm" onsubmit="return false;">
+    <div id="emailError" class="login-error"></div>
+    <div id="loginSuccess" class="login-success"></div>
 
-<div class="input-group-custom">
-<i class="fas fa-mobile-alt"></i>
-<input type="tel"
-id="mobile"
-placeholder="Enter mobile number"
-pattern="[0-9]{10}"
-maxlength="10"
-required>
-</div>
+    <button type="button" class="btn-login" id="sendOtpBtn" onclick="sendOTP()">
+      Get OTP on Email
+    </button>
 
-<div id="mobileError" class="login-error"></div>
-<div id="loginSuccess" class="login-success"></div>
+    <div class="otp-box" id="otpBox">
+      <div class="input-group-custom mt-3">
+        <i class="fas fa-key"></i>
+        <input
+          type="text"
+          id="otp"
+          placeholder="Enter 6-digit OTP"
+          maxlength="6"
+        />
+      </div>
 
-<button type="button" class="btn-login" id="sendOtpBtn" onclick="sendOTP()">
-Send OTP
-</button>
+      <div id="otpError" class="login-error"></div>
+      <div id="otpTimer" class="otp-timer"></div>
 
-<div class="otp-box" id="otpBox">
+      <button type="button" class="btn-login" onclick="verifyOTP()">
+        Verify &amp; Login
+      </button>
+    </div>
+  </form>
 
-<div class="input-group-custom mt-3">
-<i class="fas fa-key"></i>
-<input type="text"
-id="otp"
-placeholder="Enter OTP"
-maxlength="6">
-</div>
-
-<div id="otpError" class="login-error"></div>
-<div id="otpTimer" class="otp-timer"></div>
-
-<button type="button" class="btn-login" onclick="verifyOTP()">
-Verify OTP
-</button>
-
-</div>
-
-</form>
-
-<div class="register-link">
-Don't have an account?
-<a href="{% url 'register' %}">Register Now</a>
-</div>
-<div class="register-link" style="margin-top:10px;padding-top:10px;border-top:1px solid #e0f0e0;">
-Are you a Buyer?
-<a href="{% url 'buyer_register' %}" style="color:#1565c0;">Register as Buyer</a>
-</div>
-
+  <div class="register-link">
+    Don't have an account?
+    <a href="{% url 'register' %}">Register Now</a>
+  </div>
+  <div
+    class="register-link"
+    style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0f0e0"
+  >
+    Are you a Buyer?
+    <a href="{% url 'buyer_register' %}" style="color: #1565c0"
+      >Register as Buyer</a
+    >
+  </div>
 </div>
 
 <script>
-function getCookie(name) {
+  function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== "") {
-        let cookies = document.cookie.split(";");
-        for (let i = 0; i < cookies.length; i++) {
-            let cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + "=")) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
+      let cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
         }
+      }
     }
     return cookieValue;
-}
+  }
 
-let timeLeft = 120;
-let timerInterval = null;
+  let timeLeft = 600;
+  let timerInterval = null;
 
-function sendOTP(){
-
-    let mobile = document.getElementById("mobile").value.trim();
-    let mobileError = document.getElementById("mobileError");
+  function sendOTP() {
+    let email = document.getElementById("email").value.trim();
+    let emailError = document.getElementById("emailError");
     let loginSuccess = document.getElementById("loginSuccess");
     let sendBtn = document.getElementById("sendOtpBtn");
 
-    mobileError.innerHTML = "";
+    emailError.innerHTML = "";
     loginSuccess.innerHTML = "";
 
-    if(mobile === ""){
-        mobileError.innerHTML = "Please enter mobile number";
-        return;
+    if (!email) {
+      emailError.innerHTML = "Please enter your email address";
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailError.innerHTML = "Enter a valid email address";
+      return;
     }
 
-    if(!/^[0-9]+$/.test(mobile)){
-        mobileError.innerHTML = "Mobile number must contain only digits";
-        return;
-    }
-
-    if(mobile.length != 10){
-        mobileError.innerHTML = "Enter valid 10 digit mobile number";
-        return;
-    }
+    sendBtn.disabled = true;
+    sendBtn.innerText = "Sending...";
 
     fetch("{% url 'send_login_otp' %}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        body: new URLSearchParams({
-            mobile: mobile
-        })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: new URLSearchParams({ email }),
     })
-    .then(response => {
-        if(!response.ok) {
-            return response.text().then(t => { throw new Error('Server error: ' + response.status + ' ' + t.substring(0,100)); });
+      .then((r) => {
+        if (!r.ok)
+          return r.text().then((t) => {
+            throw new Error("Server " + r.status + ": " + t.substring(0, 200));
+          });
+        return r.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          document.getElementById("otpBox").style.display = "block";
+          document.getElementById("emailHint").style.display = "none";
+          sendBtn.innerText = "✅ OTP Sent";
+          loginSuccess.innerHTML = data.message;
+          startTimer();
+        } else {
+          sendBtn.disabled = false;
+          sendBtn.innerText = "Get OTP on Email";
+          emailError.innerHTML = data.message;
         }
-        return response.json();
-    })
-    .then(data => {
-        if(data.success){
-            document.getElementById("otpBox").style.display = "block";
-            sendBtn.disabled = true;
-            sendBtn.innerText = "OTP Sent";
+      })
+      .catch((error) => {
+        sendBtn.disabled = false;
+        sendBtn.innerText = "Get OTP on Email";
+        emailError.innerHTML = "Error: " + error.message;
+        console.error(error);
+      });
+  }
 
-            // Show OTP on page for testing
-            if(data.demo_otp){
-                loginSuccess.innerHTML = data.message + ' <span style="background:#e8f5e9;color:#1b5e20;padding:4px 10px;border-radius:6px;font-weight:700;font-size:1rem;">OTP: ' + data.demo_otp + '</span>';
-            } else {
-                loginSuccess.innerHTML = data.message;
-            }
-
-            startTimer();
-        }else{
-            mobileError.innerHTML = data.message;
-        }
-    })
-    .catch(error => {
-        mobileError.innerHTML = "Error: " + error.message;
-        console.log(error);
-    });
-}
-
-function startTimer(){
+  function startTimer() {
     let timerDiv = document.getElementById("otpTimer");
-
-    if(timerInterval){
+    if (timerInterval) clearInterval(timerInterval);
+    timeLeft = 600;
+    timerInterval = setInterval(function () {
+      let minutes = Math.floor(timeLeft / 60);
+      let seconds = timeLeft % 60;
+      timerDiv.innerHTML =
+        "OTP expires in: " +
+        minutes +
+        ":" +
+        (seconds < 10 ? "0" + seconds : seconds);
+      timeLeft--;
+      if (timeLeft < 0) {
         clearInterval(timerInterval);
-    }
-
-    timeLeft = 120;
-
-    timerInterval = setInterval(function(){
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-
-        if(seconds < 10){
-            seconds = "0" + seconds;
-        }
-
-        timerDiv.innerHTML = "OTP expires in: " + minutes + ":" + seconds;
-        timeLeft--;
-
-        if(timeLeft < 0){
-            clearInterval(timerInterval);
-            timerDiv.innerHTML = "OTP expired";
-            document.getElementById("sendOtpBtn").disabled = false;
-            document.getElementById("sendOtpBtn").innerText = "Resend OTP";
-        }
+        timerDiv.innerHTML = "OTP expired — please resend";
+        document.getElementById("sendOtpBtn").disabled = false;
+        document.getElementById("sendOtpBtn").innerText = "Resend OTP";
+      }
     }, 1000);
-}
+  }
 
-function verifyOTP(){
-
-    let mobile = document.getElementById("mobile").value.trim();
+  function verifyOTP() {
+    let email = document.getElementById("email").value.trim();
     let otp = document.getElementById("otp").value.trim();
     let otpError = document.getElementById("otpError");
     let loginSuccess = document.getElementById("loginSuccess");
@@ -301,46 +283,32 @@ function verifyOTP(){
     otpError.innerHTML = "";
     loginSuccess.innerHTML = "";
 
-    if(otp === ""){
-        otpError.innerHTML = "Please enter OTP";
-        return;
-    }
-
-    if(!/^[0-9]+$/.test(otp)){
-        otpError.innerHTML = "OTP must contain only digits";
-        return;
-    }
-
-    if(otp.length != 6){
-        otpError.innerHTML = "OTP must be exactly 6 digits";
-        return;
+    if (!otp || otp.length !== 6) {
+      otpError.innerHTML = "Please enter the 6-digit OTP";
+      return;
     }
 
     fetch("{% url 'verify_login_otp' %}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": getCookie("csrftoken")
-        },
-        body: new URLSearchParams({
-            mobile: mobile,
-            otp: otp
-        })
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: new URLSearchParams({ email, otp }),
     })
-    .then(response => response.json())
-    .then(data => {
-        if(data.success){
-            loginSuccess.innerHTML = data.message;
-            window.location.href = data.redirect_url;
-        }else{
-            otpError.innerHTML = data.message;
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          loginSuccess.innerHTML = data.message;
+          window.location.href = data.redirect_url;
+        } else {
+          otpError.innerHTML = data.message;
         }
-    })
-    .catch(error => {
-        otpError.innerHTML = "Something went wrong while verifying OTP.";
-        console.log(error);
-    });
-}
+      })
+      .catch(() => {
+        otpError.innerHTML = "Something went wrong. Please try again.";
+      });
+  }
 </script>
 
 {% endblock %}

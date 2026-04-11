@@ -70,6 +70,26 @@ class MobileOTP(models.Model):
 
     def __str__(self):
         return f"{self.mobile} - {self.otp}"
+
+
+class EmailOTP(models.Model):
+    """OTP sent to email address for authentication."""
+    email = models.EmailField()
+    otp = models.CharField(max_length=6)
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(minutes=10)
+        super().save(*args, **kwargs)
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    def __str__(self):
+        return f"{self.email} - {self.otp}"
     
 
 class FarmerLand(models.Model):
@@ -454,6 +474,7 @@ class Buyer(models.Model):
     full_name   = models.CharField(max_length=150)
     mobile      = models.CharField(max_length=10, unique=True)
     mobile_verified = models.BooleanField(default=False)
+    email       = models.EmailField(blank=True, null=True)
     company     = models.CharField(max_length=150, blank=True, null=True)
     # Multiple locations stored as JSON: [{"state":"Gujarat","district":"Ahmedabad","taluka":"Daskroi"},...]
     locations   = models.JSONField(default=list, help_text="List of {state, district, taluka} dicts")

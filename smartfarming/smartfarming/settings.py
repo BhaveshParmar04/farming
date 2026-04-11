@@ -1,11 +1,13 @@
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
-SECRET_KEY = 'django-insecure-=&^@c9n)&vihiwptvx_wu9x(yvcb69)2m-=)rrn96ecn5=hw='
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -75,7 +77,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
@@ -89,20 +91,22 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-FAST2SMS_API_KEY = "API-KEY"
-NEWS_API_KEY = "35a02953ce624b1da111ed8db59cdf30"
-AGMARKNET_API_KEY = "579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b"
-OPENWEATHER_API_KEY = ""
-GEMINI_API_KEY = ""
-OPENAI_API_KEY = "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"
+FAST2SMS_API_KEY    = os.environ.get('FAST2SMS_API_KEY', '')
+NEWS_API_KEY        = os.environ.get('NEWS_API_KEY', '')
+AGMARKNET_API_KEY   = os.environ.get('AGMARKNET_API_KEY', '')
+OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
+GEMINI_API_KEY      = os.environ.get('GEMINI_API_KEY', '')
+OPENAI_API_KEY      = os.environ.get('OPENAI_API_KEY', '')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Email config (Gmail SMTP)
+# IMPORTANT: EMAIL_HOST_PASSWORD must be a Gmail App Password (not your regular Gmail password)
+# Steps to generate: Google Account → Security → 2-Step Verification → App Passwords
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'savajakhil12@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'pkdazopstyqbbkbx')
-DEFAULT_FROM_EMAIL = 'Kisan Acharya <savajakhil12@gmail.com>'
+EMAIL_HOST_USER     = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL  = os.environ.get('DEFAULT_FROM_EMAIL', f'Kisan Acharya <{os.environ.get("EMAIL_HOST_USER", "")}>')

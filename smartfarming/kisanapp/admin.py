@@ -169,10 +169,30 @@ class FarmerLandAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
 
 
-@admin.register(MobileOTP, site=farming_admin_site)
-class MobileOTPAdmin(admin.ModelAdmin):
-    list_display = ("mobile", "otp", "is_verified", "created_at", "expires_at")
-    search_fields = ("mobile",)
+@admin.register(EmailOTP, site=farming_admin_site)
+class EmailOTPAdmin(admin.ModelAdmin):
+    list_display = ("email", "otp", "is_verified", "created_at_ist", "expires_at_ist")
+    search_fields = ("email",)
+    list_filter = ("is_verified",)
+
+    def created_at_ist(self, obj):
+        from django.utils import timezone
+        import zoneinfo
+        ist = obj.created_at.astimezone(zoneinfo.ZoneInfo("Asia/Kolkata"))
+        return ist.strftime("%d %b %Y, %I:%M %p")
+    created_at_ist.short_description = "Created At (IST)"
+
+    def expires_at_ist(self, obj):
+        from django.utils import timezone
+        import zoneinfo
+        ist = obj.expires_at.astimezone(zoneinfo.ZoneInfo("Asia/Kolkata"))
+        return ist.strftime("%d %b %Y, %I:%M %p")
+    expires_at_ist.short_description = "Expires At (IST)"
+
+# MobileOTP kept for legacy data reference only
+# @admin.register(MobileOTP, site=farming_admin_site)
+# class MobileOTPAdmin(admin.ModelAdmin):
+#     list_display = ("mobile", "otp", "is_verified", "created_at", "expires_at")
 
 
 @admin.register(GovtScheme, site=farming_admin_site)

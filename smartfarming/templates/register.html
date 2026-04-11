@@ -1,100 +1,336 @@
-{% extends "base.html" %}
-{% load static %}
-{% block title %}Farmer Register - Kisan Acharya{% endblock %}
+{% extends "base.html" %} {% load static %} {% block title %}Farmer Register -
+Kisan Acharya{% endblock %} {% block styles %}<style>
+  .rg-page {
+    min-height: 100vh;
+    display: flex;
+    background: #f0f7f0;
+  }
 
-{% block styles %}{{ block.super }}
-<style>
-.rg-page{min-height:100vh;display:flex;background:#f0f7f0;}
+  /* ── Left panel ── */
+  .rg-left {
+    flex: 0 0 45%;
+    background: linear-gradient(
+      160deg,
+      #1b5e20 0%,
+      #2e7d32 40%,
+      #388e3c 70%,
+      #43a047 100%
+    );
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 48px 44px;
+  }
+  .rg-left-img {
+    position: absolute;
+    inset: 0;
+    background: url("https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=900&q=80")
+      center/cover no-repeat;
+    opacity: 0.25;
+  }
+  .rg-left-content {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+  }
+  .rg-left-logo {
+    height: 44px;
+    margin-bottom: 32px;
+    filter: brightness(0) invert(1);
+  }
+  .rg-left h2 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1.2;
+    margin: 0 0 14px;
+  }
+  .rg-left p {
+    font-size: 0.95rem;
+    opacity: 0.85;
+    line-height: 1.7;
+    margin: 0 0 28px;
+  }
+  .rg-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .rg-feat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .rg-feat-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .rg-feat-text {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.95;
+  }
 
-/* ── Left panel ── */
-.rg-left{
-  flex:0 0 45%;
-  background:linear-gradient(160deg,#1b5e20 0%,#2e7d32 40%,#388e3c 70%,#43a047 100%);
-  position:relative;overflow:hidden;display:flex;flex-direction:column;
-  justify-content:flex-end;padding:48px 44px;
-}
-.rg-left-img{
-  position:absolute;inset:0;
-  background:url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=900&q=80') center/cover no-repeat;
-  opacity:.25;
-}
-.rg-left-content{position:relative;z-index:2;color:#fff;}
-.rg-left-logo{height:44px;margin-bottom:32px;filter:brightness(0) invert(1);}
-.rg-left h2{font-size:2.2rem;font-weight:900;line-height:1.2;margin:0 0 14px;}
-.rg-left p{font-size:.95rem;opacity:.85;line-height:1.7;margin:0 0 28px;}
-.rg-features{display:flex;flex-direction:column;gap:12px;}
-.rg-feat{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.12);border-radius:12px;padding:12px 16px;border:1px solid rgba(255,255,255,.15);}
-.rg-feat-icon{font-size:1.4rem;flex-shrink:0;}
-.rg-feat-text{font-size:.85rem;font-weight:600;opacity:.95;}
+  /* ── Right panel ── */
+  .rg-right {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 48px 32px;
+  }
+  .rg-wrap {
+    width: 100%;
+    max-width: 480px;
+  }
+  .rg-header {
+    margin-bottom: 28px;
+  }
+  .rg-header h1 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #1b5e20;
+    margin: 0 0 4px;
+  }
+  .rg-header p {
+    color: #888;
+    font-size: 0.88rem;
+  }
 
-/* ── Right panel ── */
-.rg-right{
-  flex:1;overflow-y:auto;display:flex;align-items:flex-start;
-  justify-content:center;padding:48px 32px;
-}
-.rg-wrap{width:100%;max-width:480px;}
-.rg-header{margin-bottom:28px;}
-.rg-header h1{font-size:1.7rem;font-weight:800;color:#1b5e20;margin:0 0 4px;}
-.rg-header p{color:#888;font-size:.88rem;}
+  /* ── Form ── */
+  .rg-section {
+    margin-bottom: 22px;
+  }
+  .rg-section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #2e7d32;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rg-section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e8f5e9;
+  }
+  .rg-field {
+    margin-bottom: 12px;
+  }
+  .rg-field label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #555;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .rg-input {
+    width: 100%;
+    border: 1.5px solid #c8e6c9;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 0.92rem;
+    outline: none;
+    transition: 0.2s;
+    background: #fafff9;
+    color: #1b3a1b;
+    font-family: inherit;
+  }
+  .rg-input:focus {
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    background: #fff;
+  }
+  .rg-input:disabled {
+    background: #f5f5f5;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+  .rg-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .rg-otp-row {
+    display: flex;
+    gap: 8px;
+  }
+  .rg-otp-row .rg-input {
+    flex: 1;
+  }
+  .rg-btn-otp {
+    background: linear-gradient(135deg, #2e7d32, #4caf50);
+    color: #fff;
+    border: none;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: 0.2s;
+    font-family: inherit;
+  }
+  .rg-btn-otp:hover {
+    background: #1b5e20;
+  }
+  .rg-btn-otp:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .rg-verify-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .rg-verify-row .rg-input {
+    flex: 1;
+  }
+  .rg-btn-verify {
+    background: #1565c0;
+    color: #fff;
+    border: none;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .rg-btn-verify:hover {
+    background: #0d47a1;
+  }
+  .rg-btn-verify:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .rg-timer {
+    font-size: 0.76rem;
+    color: #2e7d32;
+    font-weight: 600;
+    margin-top: 5px;
+  }
+  .rg-error {
+    font-size: 0.76rem;
+    color: #c62828;
+    margin-top: 3px;
+    font-weight: 500;
+  }
+  .rg-hint {
+    font-size: 0.72rem;
+    color: #aaa;
+    margin-top: 3px;
+  }
+  .rg-success-icon {
+    color: #27ae60;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .rg-submit {
+    width: 100%;
+    background: linear-gradient(135deg, #1b5e20, #2e7d32, #43a047);
+    color: #fff;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 6px 20px rgba(46, 125, 50, 0.3);
+    margin-top: 6px;
+    font-family: inherit;
+  }
+  .rg-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(46, 125, 50, 0.4);
+  }
+  .rg-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .rg-footer {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 0.85rem;
+    color: #888;
+  }
+  .rg-footer a {
+    color: #2e7d32;
+    font-weight: 600;
+    text-decoration: none;
+  }
 
-/* ── Form ── */
-.rg-section{margin-bottom:22px;}
-.rg-section-title{font-size:.72rem;font-weight:700;color:#2e7d32;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.rg-section-title::after{content:'';flex:1;height:1px;background:#e8f5e9;}
-.rg-field{margin-bottom:12px;}
-.rg-field label{font-size:.78rem;font-weight:600;color:#555;display:block;margin-bottom:4px;}
-.rg-input{width:100%;border:1.5px solid #c8e6c9;border-radius:10px;padding:11px 14px;font-size:.92rem;outline:none;transition:.2s;background:#fafff9;color:#1b3a1b;font-family:inherit;}
-.rg-input:focus{border-color:#2e7d32;box-shadow:0 0 0 3px rgba(46,125,50,.1);background:#fff;}
-.rg-input:disabled{background:#f5f5f5;color:#aaa;cursor:not-allowed;}
-.rg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.rg-otp-row{display:flex;gap:8px;}
-.rg-otp-row .rg-input{flex:1;}
-.rg-btn-otp{background:linear-gradient(135deg,#2e7d32,#4caf50);color:#fff;border:none;padding:11px 14px;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap;transition:.2s;font-family:inherit;}
-.rg-btn-otp:hover{background:#1b5e20;}
-.rg-btn-otp:disabled{opacity:.6;cursor:not-allowed;}
-.rg-verify-row{display:flex;gap:8px;align-items:center;}
-.rg-verify-row .rg-input{flex:1;}
-.rg-btn-verify{background:#1565c0;color:#fff;border:none;padding:11px 14px;border-radius:10px;font-weight:700;font-size:.82rem;cursor:pointer;transition:.2s;font-family:inherit;white-space:nowrap;}
-.rg-btn-verify:hover{background:#0d47a1;}
-.rg-btn-verify:disabled{opacity:.6;cursor:not-allowed;}
-.rg-timer{font-size:.76rem;color:#2e7d32;font-weight:600;margin-top:5px;}
-.rg-error{font-size:.76rem;color:#c62828;margin-top:3px;font-weight:500;}
-.rg-hint{font-size:.72rem;color:#aaa;margin-top:3px;}
-.rg-success-icon{color:#27ae60;font-size:1.3rem;flex-shrink:0;}
-.rg-submit{width:100%;background:linear-gradient(135deg,#1b5e20,#2e7d32,#43a047);color:#fff;border:none;padding:15px;border-radius:12px;font-size:1rem;font-weight:800;cursor:pointer;transition:.2s;box-shadow:0 6px 20px rgba(46,125,50,.3);margin-top:6px;font-family:inherit;}
-.rg-submit:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(46,125,50,.4);}
-.rg-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-.rg-footer{text-align:center;margin-top:18px;font-size:.85rem;color:#888;}
-.rg-footer a{color:#2e7d32;font-weight:600;text-decoration:none;}
-
-@media(max-width:900px){
-  .rg-page{flex-direction:column;}
-  .rg-left{flex:0 0 220px;padding:28px 24px;}
-  .rg-left h2{font-size:1.5rem;}
-  .rg-features{display:none;}
-  .rg-right{padding:28px 20px;}
-}
-@media(max-width:480px){
-  .rg-row{grid-template-columns:1fr;}
-}
+  @media (max-width: 900px) {
+    .rg-page {
+      flex-direction: column;
+    }
+    .rg-left {
+      flex: 0 0 220px;
+      padding: 28px 24px;
+    }
+    .rg-left h2 {
+      font-size: 1.5rem;
+    }
+    .rg-features {
+      display: none;
+    }
+    .rg-right {
+      padding: 28px 20px;
+    }
+  }
+  @media (max-width: 480px) {
+    .rg-row {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>
-{% endblock %}
-
-{% block content %}
+{% endblock %} {% block content %}
 <div class="rg-page">
-
   <!-- Left: Image + Features -->
   <div class="rg-left">
     <div class="rg-left-img"></div>
     <div class="rg-left-content">
-      <img src="{% static 'assets/images/logo-light.png' %}" class="rg-left-logo" alt="Kisan Acharya">
-      <h2>Smart Farming<br>Starts Here 🌾</h2>
-      <p>Join thousands of farmers using Kisan Acharya to manage lands, get AI crop suggestions, and access government schemes.</p>
+      <img
+        src="{% static 'assets/images/logo-light.png' %}"
+        class="rg-left-logo"
+        alt="Kisan Acharya"
+      />
+      <h2>Smart Farming<br />Starts Here 🌾</h2>
+      <p>
+        Join thousands of farmers using Kisan Acharya to manage lands, get AI
+        crop suggestions, and access government schemes.
+      </p>
       <div class="rg-features">
-        <div class="rg-feat"><span class="rg-feat-icon">🤖</span><span class="rg-feat-text">AI-powered crop recommendations</span></div>
-        <div class="rg-feat"><span class="rg-feat-icon">🏛️</span><span class="rg-feat-text">Government scheme finder</span></div>
-        <div class="rg-feat"><span class="rg-feat-icon">📈</span><span class="rg-feat-text">Live mandi market prices</span></div>
-        <div class="rg-feat"><span class="rg-feat-icon">🛒</span><span class="rg-feat-text">Sell crops directly to buyers</span></div>
+        <div class="rg-feat">
+          <span class="rg-feat-icon">🤖</span
+          ><span class="rg-feat-text">AI-powered crop recommendations</span>
+        </div>
+        <div class="rg-feat">
+          <span class="rg-feat-icon">🏛️</span
+          ><span class="rg-feat-text">Government scheme finder</span>
+        </div>
+        <div class="rg-feat">
+          <span class="rg-feat-icon">📈</span
+          ><span class="rg-feat-text">Live mandi market prices</span>
+        </div>
+        <div class="rg-feat">
+          <span class="rg-feat-icon">🛒</span
+          ><span class="rg-feat-text">Sell crops directly to buyers</span>
+        </div>
       </div>
     </div>
   </div>
@@ -102,19 +338,21 @@
   <!-- Right: Form -->
   <div class="rg-right">
     <div class="rg-wrap">
-
       <div class="rg-header">
         <h1>Create Account</h1>
         <p>Register as a farmer to get started</p>
       </div>
 
-      {% if messages %}
-        {% for msg in messages %}
-        <div style="background:{% if 'error' in msg.tags %}#ffebee;color:#c62828;border:1px solid #ef9a9a{% else %}#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9{% endif %};padding:10px 14px;border-radius:8px;margin-bottom:14px;font-weight:600;font-size:.84rem;">
-          <i class="fas fa-{% if 'error' in msg.tags %}exclamation-circle{% else %}check-circle{% endif %} me-2"></i>{{ msg }}
-        </div>
-        {% endfor %}
-      {% endif %}
+      {% if messages %} {% for msg in messages %}
+      <div
+        style="background:{% if 'error' in msg.tags %}#ffebee;color:#c62828;border:1px solid #ef9a9a{% else %}#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9{% endif %};padding:10px 14px;border-radius:8px;margin-bottom:14px;font-weight:600;font-size:.84rem;"
+      >
+        <i
+          class="fas fa-{% if 'error' in msg.tags %}exclamation-circle{% else %}check-circle{% endif %} me-2"
+        ></i
+        >{{ msg }}
+      </div>
+      {% endfor %} {% endif %}
 
       <form id="farmerForm" method="POST" action="">
         {% csrf_token %}
@@ -124,29 +362,72 @@
           <div class="rg-section-title">👤 Personal Info</div>
           <div class="rg-field">
             <label>Full Name *</label>
-            <input type="text" name="full_name" class="rg-input" placeholder="Your full name" required>
+            <input
+              type="text"
+              name="full_name"
+              class="rg-input"
+              placeholder="Your full name"
+              required
+            />
           </div>
           <div class="rg-field">
-            <label>Email Address <span style="color:#aaa;font-weight:400;">(optional — for welcome email)</span></label>
-            <input type="email" name="email" class="rg-input" placeholder="yourname@gmail.com">
+            <label
+              >Email Address *
+              <span style="color: #aaa; font-weight: 400"
+                >(OTP will be sent here)</span
+              ></label
+            >
+            <div class="rg-otp-row">
+              <input
+                type="email"
+                name="email"
+                id="emailInput"
+                class="rg-input"
+                placeholder="yourname@gmail.com"
+                required
+              />
+              <button type="button" class="rg-btn-otp" id="sendOtpBtn">
+                Get OTP on Email
+              </button>
+            </div>
+            <div id="emailError" class="rg-error"></div>
           </div>
           <div class="rg-field">
             <label>Mobile Number *</label>
-            <div class="rg-otp-row">
-              <input type="tel" name="mobile" id="mobileInput" class="rg-input"
-                     placeholder="10-digit mobile" pattern="[0-9]{10}" maxlength="10" required>
-              <button type="button" class="rg-btn-otp" id="sendOtpBtn">Send OTP</button>
-            </div>
+            <input
+              type="tel"
+              name="mobile"
+              id="mobileInput"
+              class="rg-input"
+              placeholder="10-digit mobile"
+              pattern="[0-9]{10}"
+              maxlength="10"
+              required
+            />
             <div id="mobileError" class="rg-error"></div>
           </div>
-          <div id="otpSection" style="display:none;">
+          <div id="otpSection" style="display: none">
             <div class="rg-field">
               <label>Enter OTP *</label>
               <div class="rg-verify-row">
-                <input type="text" name="otp" id="otpInput" class="rg-input"
-                       placeholder="6-digit OTP" maxlength="6" required>
-                <button type="button" id="verifyOtpBtn" class="rg-btn-verify">Verify</button>
-                <span id="otpStatus" style="display:none;" class="rg-success-icon">✅</span>
+                <input
+                  type="text"
+                  name="otp"
+                  id="otpInput"
+                  class="rg-input"
+                  placeholder="6-digit OTP"
+                  maxlength="6"
+                  required
+                />
+                <button type="button" id="verifyOtpBtn" class="rg-btn-verify">
+                  Verify
+                </button>
+                <span
+                  id="otpStatus"
+                  style="display: none"
+                  class="rg-success-icon"
+                  >✅</span
+                >
               </div>
               <div id="otpError" class="rg-error"></div>
               <div id="otpTimer" class="rg-timer"></div>
@@ -159,7 +440,13 @@
           <div class="rg-section-title">📄 Land Record</div>
           <div class="rg-field">
             <label>Land Record Number *</label>
-            <input type="text" name="land_record" class="rg-input" placeholder="e.g. 7/12/8" required>
+            <input
+              type="text"
+              name="land_record"
+              class="rg-input"
+              placeholder="e.g. 7/12/8"
+              required
+            />
             <div class="rg-hint">7/12 · 8A · 6 extract number</div>
           </div>
         </div>
@@ -170,13 +457,26 @@
           <div class="rg-row">
             <div class="rg-field">
               <label>State *</label>
-              <select name="state" id="stateSelect" class="rg-input" required onchange="onStateChange()">
+              <select
+                name="state"
+                id="stateSelect"
+                class="rg-input"
+                required
+                onchange="onStateChange()"
+              >
                 <option value="" disabled selected>— State —</option>
               </select>
             </div>
             <div class="rg-field">
               <label>District *</label>
-              <select name="district" id="districtSelect" class="rg-input" required onchange="onDistrictChange()" disabled>
+              <select
+                name="district"
+                id="districtSelect"
+                class="rg-input"
+                required
+                onchange="onDistrictChange()"
+                disabled
+              >
                 <option value="" disabled selected>— District —</option>
               </select>
             </div>
@@ -184,13 +484,27 @@
           <div class="rg-row">
             <div class="rg-field">
               <label>Taluka *</label>
-              <input type="text" name="taluka" id="talukaInput" class="rg-input"
-                     placeholder="Enter taluka name" required autocomplete="off">
+              <input
+                type="text"
+                name="taluka"
+                id="talukaInput"
+                class="rg-input"
+                placeholder="Enter taluka name"
+                required
+                autocomplete="off"
+              />
             </div>
             <div class="rg-field">
               <label>Village *</label>
-              <input type="text" name="village" id="villageInput" class="rg-input"
-                     placeholder="Enter village name" required autocomplete="off">
+              <input
+                type="text"
+                name="village"
+                id="villageInput"
+                class="rg-input"
+                placeholder="Enter village name"
+                required
+                autocomplete="off"
+              />
             </div>
           </div>
         </div>
@@ -203,111 +517,215 @@
       <div class="rg-footer">
         Already registered? <a href="{% url 'login' %}">Login here</a>
       </div>
-
     </div>
   </div>
 </div>
 
 <script>
-function getCookie(name){let v=null;document.cookie.split(";").forEach(c=>{c=c.trim();if(c.startsWith(name+"="))v=decodeURIComponent(c.slice(name.length+1));});return v;}
-let timeLeft=120,timerInterval=null;
-document.getElementById("sendOtpBtn").addEventListener("click",function(){
-  let mobile=document.getElementById("mobileInput").value.trim();
-  let error=document.getElementById("mobileError");
-  if(!mobile){error.innerHTML="Please enter mobile number";return;}
-  if(!/^[0-9]+$/.test(mobile)){error.innerHTML="Digits only";return;}
-  if(mobile.length!==10){error.innerHTML="Must be exactly 10 digits";return;}
-  error.innerHTML="";
-  fetch("{% url 'send_otp' %}",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","X-CSRFToken":getCookie("csrftoken")},body:new URLSearchParams({mobile})})
-  .then(r=>r.json()).then(data=>{
-    if(data.success){
-      document.getElementById("otpSection").style.display="block";
-      document.getElementById("sendOtpBtn").textContent="✅ OTP Sent";
-      document.getElementById("sendOtpBtn").disabled=true;
-      // Show OTP on screen for testing
-      if(data.otp || data.demo_otp){
-        var otpVal = data.otp || data.demo_otp;
-        document.getElementById("mobileError").innerHTML='<span style="color:#1b5e20;background:#e8f5e9;padding:4px 10px;border-radius:6px;font-weight:700;">OTP: '+otpVal+'</span>';
-      }
-      startTimer();
+  function getCookie(name) {
+    let v = null;
+    document.cookie.split(";").forEach((c) => {
+      c = c.trim();
+      if (c.startsWith(name + "="))
+        v = decodeURIComponent(c.slice(name.length + 1));
+    });
+    return v;
+  }
+  let timeLeft = 600,
+    timerInterval = null;
+  document.getElementById("sendOtpBtn").addEventListener("click", function () {
+    let email = document.getElementById("emailInput").value.trim();
+    let error = document.getElementById("emailError");
+    if (!email) {
+      error.innerHTML = "Please enter email address";
+      return;
     }
-    else{error.innerHTML=data.message;}
-  }).catch(()=>{error.innerHTML="Something went wrong.";});;
-});
-function startTimer(){
-  let timerDiv=document.getElementById("otpTimer");
-  if(timerInterval)clearInterval(timerInterval);
-  timeLeft=120;
-  timerInterval=setInterval(()=>{
-    let m=Math.floor(timeLeft/60),s=timeLeft%60;
-    timerDiv.innerHTML=`OTP expires in: ${m}:${s<10?'0'+s:s}`;
-    timeLeft--;
-    if(timeLeft<0){
-      clearInterval(timerInterval);
-      let btn=document.getElementById("sendOtpBtn");
-      btn.disabled=false;btn.textContent="Resend OTP";
-      timerDiv.innerHTML="OTP expired — please request a new OTP";
-      // Reset verify button and OTP input
-      document.getElementById("verifyOtpBtn").disabled=false;
-      document.getElementById("verifyOtpBtn").textContent="Verify";
-      document.getElementById("otpInput").value="";
-      document.getElementById("registerBtn").disabled=true;
-      document.getElementById("otpStatus").style.display="none";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      error.innerHTML = "Enter a valid email address";
+      return;
     }
-  },1000);
-}
-document.getElementById("verifyOtpBtn").addEventListener("click",function(){
-  let mobile=document.getElementById("mobileInput").value.trim();
-  let otp=document.getElementById("otpInput").value.trim();
-  let btn=document.getElementById("verifyOtpBtn");
-  let errDiv=document.getElementById("otpError");
-  if(!otp||otp.length!==6){errDiv.innerHTML="Please enter 6 digit OTP.";return;}
-  btn.disabled=true;btn.textContent="Verifying...";
-  fetch("{% url 'verify_otp' %}",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded","X-CSRFToken":getCookie("csrftoken")},body:new URLSearchParams({mobile,otp})})
-  .then(r=>r.json()).then(data=>{
-    if(data.success){
-      btn.style.display="none";
-      document.getElementById("otpStatus").style.display="inline";
-      errDiv.innerHTML="";
-      document.getElementById("registerBtn").disabled=false;
-      // Refresh CSRF token by fetching a fresh one
-      fetch("{% url 'register' %}").then(r=>r.text()).then(html=>{
-        let match=html.match(/csrfmiddlewaretoken.*?value="([^"]+)"/);
-        if(match){
-          document.querySelector('[name=csrfmiddlewaretoken]').value=match[1];
+    error.innerHTML = "";
+    this.disabled = true;
+    this.textContent = "Sending...";
+    let btn = this;
+    fetch("{% url 'send_otp' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: new URLSearchParams({ email }),
+    })
+      .then((r) => {
+        if (!r.ok)
+          return r.text().then((t) => {
+            throw new Error("Server " + r.status + ": " + t.substring(0, 200));
+          });
+        return r.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          document.getElementById("otpSection").style.display = "block";
+          btn.textContent = "✅ OTP Sent";
+          error.innerHTML =
+            '<span style="color:#1b5e20;background:#e8f5e9;padding:4px 10px;border-radius:6px;font-weight:700;">' +
+            data.message +
+            "</span>";
+          startTimer();
+        } else {
+          btn.disabled = false;
+          btn.textContent = "Get OTP on Email";
+          error.innerHTML = data.message;
         }
+      })
+      .catch((e) => {
+        btn.disabled = false;
+        btn.textContent = "Get OTP on Email";
+        error.innerHTML = "Error: " + e.message;
       });
-    }
-    else{errDiv.innerHTML=data.message;btn.disabled=false;btn.textContent="Verify";}
-  }).catch(()=>{errDiv.innerHTML="Error. Try again.";btn.disabled=false;btn.textContent="Verify";});
-});
-function populateSelect(sel,options,placeholder){sel.innerHTML=`<option value="" disabled selected>${placeholder}</option>`;options.forEach(v=>{let o=document.createElement("option");o.value=v;o.textContent=v;sel.appendChild(o);});sel.disabled=false;}
-function resetSelect(sel,placeholder){sel.innerHTML=`<option value="" disabled selected>${placeholder}</option>`;sel.disabled=true;}
-function populateDatalist(listId,options){let dl=document.getElementById(listId);if(dl)dl.innerHTML=options.map(v=>`<option value="${v}">`).join('');}
-function clearDatalist(listId,inputId){let dl=document.getElementById(listId);if(dl)dl.innerHTML='';let inp=document.getElementById(inputId);if(inp)inp.value='';}
-fetch("/api/states/").then(r=>r.json()).then(d=>populateSelect(document.getElementById("stateSelect"),d.states,"— State —"));
-function onStateChange(){
-  const state=document.getElementById("stateSelect").value;
-  resetSelect(document.getElementById("districtSelect"),"Loading...");
-  clearDatalist("talukaList","talukaInput");clearDatalist("villageList","villageInput");
-  fetch("/api/districts/?state="+encodeURIComponent(state)).then(r=>r.json()).then(d=>{
-    populateSelect(document.getElementById("districtSelect"),d.districts,"— District —");
-    document.getElementById("districtSelect").disabled=false;
   });
-}
-function onDistrictChange(){
-  const state=document.getElementById("stateSelect").value;
-  const district=document.getElementById("districtSelect").value;
-  clearDatalist("talukaList","talukaInput");clearDatalist("villageList","villageInput");
-  fetch("/api/talukas/?state="+encodeURIComponent(state)+"&district="+encodeURIComponent(district)).then(r=>r.json()).then(d=>populateDatalist("talukaList",d.talukas));
-}
-function onTalukaChange(){
-  const state=document.getElementById("stateSelect").value;
-  const district=document.getElementById("districtSelect").value;
-  const taluka=document.getElementById("talukaInput").value;
-  if(!taluka)return;
-  clearDatalist("villageList","villageInput");
-  fetch("/api/villages/?state="+encodeURIComponent(state)+"&district="+encodeURIComponent(district)+"&taluka="+encodeURIComponent(taluka)).then(r=>r.json()).then(d=>populateDatalist("villageList",d.villages));
-}
+  function startTimer() {
+    let timerDiv = document.getElementById("otpTimer");
+    if (timerInterval) clearInterval(timerInterval);
+    timeLeft = 600;
+    timerInterval = setInterval(() => {
+      let m = Math.floor(timeLeft / 60),
+        s = timeLeft % 60;
+      timerDiv.innerHTML = `OTP expires in: ${m}:${s < 10 ? "0" + s : s}`;
+      timeLeft--;
+      if (timeLeft < 0) {
+        clearInterval(timerInterval);
+        let btn = document.getElementById("sendOtpBtn");
+        btn.disabled = false;
+        btn.textContent = "Resend OTP";
+        timerDiv.innerHTML = "OTP expired — please request a new OTP";
+        document.getElementById("verifyOtpBtn").disabled = false;
+        document.getElementById("verifyOtpBtn").textContent = "Verify";
+        document.getElementById("otpInput").value = "";
+        document.getElementById("registerBtn").disabled = true;
+        document.getElementById("otpStatus").style.display = "none";
+      }
+    }, 1000);
+  }
+  document
+    .getElementById("verifyOtpBtn")
+    .addEventListener("click", function () {
+      let email = document.getElementById("emailInput").value.trim();
+      let otp = document.getElementById("otpInput").value.trim();
+      let btn = document.getElementById("verifyOtpBtn");
+      let errDiv = document.getElementById("otpError");
+      if (!otp || otp.length !== 6) {
+        errDiv.innerHTML = "Please enter 6 digit OTP.";
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = "Verifying...";
+      fetch("{% url 'verify_otp' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: new URLSearchParams({ email, otp }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success) {
+            btn.style.display = "none";
+            document.getElementById("otpStatus").style.display = "inline";
+            errDiv.innerHTML = "";
+            document.getElementById("registerBtn").disabled = false;
+          } else {
+            errDiv.innerHTML = data.message;
+            btn.disabled = false;
+            btn.textContent = "Verify";
+          }
+        })
+        .catch(() => {
+          errDiv.innerHTML = "Error. Try again.";
+          btn.disabled = false;
+          btn.textContent = "Verify";
+        });
+    });
+  function populateSelect(sel, options, placeholder) {
+    sel.innerHTML = `<option value="" disabled selected>${placeholder}</option>`;
+    options.forEach((v) => {
+      let o = document.createElement("option");
+      o.value = v;
+      o.textContent = v;
+      sel.appendChild(o);
+    });
+    sel.disabled = false;
+  }
+  function resetSelect(sel, placeholder) {
+    sel.innerHTML = `<option value="" disabled selected>${placeholder}</option>`;
+    sel.disabled = true;
+  }
+  function populateDatalist(listId, options) {
+    let dl = document.getElementById(listId);
+    if (dl) dl.innerHTML = options.map((v) => `<option value="${v}">`).join("");
+  }
+  function clearDatalist(listId, inputId) {
+    let dl = document.getElementById(listId);
+    if (dl) dl.innerHTML = "";
+    let inp = document.getElementById(inputId);
+    if (inp) inp.value = "";
+  }
+  fetch("/api/states/")
+    .then((r) => r.json())
+    .then((d) =>
+      populateSelect(
+        document.getElementById("stateSelect"),
+        d.states,
+        "— State —",
+      ),
+    );
+  function onStateChange() {
+    const state = document.getElementById("stateSelect").value;
+    resetSelect(document.getElementById("districtSelect"), "Loading...");
+    clearDatalist("talukaList", "talukaInput");
+    clearDatalist("villageList", "villageInput");
+    fetch("/api/districts/?state=" + encodeURIComponent(state))
+      .then((r) => r.json())
+      .then((d) => {
+        populateSelect(
+          document.getElementById("districtSelect"),
+          d.districts,
+          "— District —",
+        );
+        document.getElementById("districtSelect").disabled = false;
+      });
+  }
+  function onDistrictChange() {
+    const state = document.getElementById("stateSelect").value;
+    const district = document.getElementById("districtSelect").value;
+    clearDatalist("talukaList", "talukaInput");
+    clearDatalist("villageList", "villageInput");
+    fetch(
+      "/api/talukas/?state=" +
+        encodeURIComponent(state) +
+        "&district=" +
+        encodeURIComponent(district),
+    )
+      .then((r) => r.json())
+      .then((d) => populateDatalist("talukaList", d.talukas));
+  }
+  function onTalukaChange() {
+    const state = document.getElementById("stateSelect").value;
+    const district = document.getElementById("districtSelect").value;
+    const taluka = document.getElementById("talukaInput").value;
+    if (!taluka) return;
+    clearDatalist("villageList", "villageInput");
+    fetch(
+      "/api/villages/?state=" +
+        encodeURIComponent(state) +
+        "&district=" +
+        encodeURIComponent(district) +
+        "&taluka=" +
+        encodeURIComponent(taluka),
+    )
+      .then((r) => r.json())
+      .then((d) => populateDatalist("villageList", d.villages));
+  }
 </script>
 {% endblock %}
