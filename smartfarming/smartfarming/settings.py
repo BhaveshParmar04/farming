@@ -3,9 +3,9 @@ import os
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-load_dotenv(BASE_DIR / '.env')
+load_dotenv(BASE_DIR / '.env', override=False)  # silent if .env missing on Render
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-=&^@c9n)&vihiwptvx_wu9x(yvcb69)2m-=)rrn96ecn5=hw=')
 
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
@@ -81,6 +81,8 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -98,7 +100,7 @@ OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
 GEMINI_API_KEY      = os.environ.get('GEMINI_API_KEY', '')
 OPENAI_API_KEY      = os.environ.get('OPENAI_API_KEY', '')
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Email config (Gmail SMTP)
 # IMPORTANT: EMAIL_HOST_PASSWORD must be a Gmail App Password (not your regular Gmail password)
